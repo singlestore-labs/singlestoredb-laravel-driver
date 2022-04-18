@@ -1,0 +1,149 @@
+<?php
+/**
+ * @author Aaron Francis <aarondfrancis@gmail.com|https://twitter.com/aarondfrancis>
+ */
+
+namespace SingleStore\Laravel\Schema;
+
+use Exception;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\Grammars\MySqlGrammar;
+use Illuminate\Support\Fluent;
+use Illuminate\Support\Str;
+use SingleStore\Laravel\Schema\Blueprint as SingleStoreBlueprint;
+use SingleStore\Laravel\Schema\Grammar\CompilesKeys;
+use SingleStore\Laravel\Schema\Grammar\ModifiesColumns;
+
+class Grammar extends MySqlGrammar
+{
+    use CompilesKeys, ModifiesColumns;
+
+    /**
+     * Create the main create table clause.
+     *
+     * @param  Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Illuminate\Database\Connection  $connection
+     * @return array
+     * @throws Exception
+     */
+    protected function compileCreateTable($blueprint, $command, $connection)
+    {
+        // Before anything kicks off, we need to add the SingleStore modifiers
+        // so that they'll get used while the columns are all compiling.
+        $this->addSingleStoreModifiers();
+
+        // We want to do as little as possible ourselves, so we rely on the parent
+        // to compile everything and then potentially sneak some modifiers in.
+        return $this->insertCreateTableModifiers(
+            $blueprint, parent::compileCreateTable($blueprint, $command, $connection)
+        );
+    }
+
+    /**
+     * @param  Fluent  $column
+     * @return string
+     */
+    protected function getType(Fluent $column)
+    {
+        $type = parent::getType($column);
+
+        if (!is_null($column->storedAs)) {
+            // MySQL's syntax for stored columns is `<name> <datatype> as (<expression>) stored`,
+            // but for SingleStore it's `<name> as (<expression>) persisted <datatype>`. Here
+            // we sneak the expression in as a part of the type definition, so that it will
+            // end up in the right spot. `modifyStoredAs` is a noop to account for this.
+            $type = "as ($column->storedAs) persisted $type";
+        }
+
+        return $type;
+    }
+
+    /**
+     * Append the engine specifications to a command.
+     *
+     * @param  string  $sql
+     * @param  \Illuminate\Database\Connection  $connection
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @return string
+     */
+    protected function compileCreateEngine($sql, Connection $connection, Blueprint $blueprint)
+    {
+        $sql = parent::compileCreateEngine($sql, $connection, $blueprint);
+
+        // We're not actually messing with the engine part at all, this is just
+        // a good place to add `compression = sparse` if it's called for.
+        if ($blueprint->sparse) {
+            $sql .= ' compression = sparse';
+        }
+
+        return $sql;
+    }
+
+    /**
+     * @param $blueprint
+     * @param $compiled
+     * @return string
+     * @throws Exception
+     */
+    protected function insertCreateTableModifiers($blueprint, $compiled)
+    {
+        $replacement = 'create';
+
+        if ($blueprint->rowstore) {
+            $replacement .= ' rowstore';
+        }
+
+        if ($blueprint->reference) {
+            $replacement .= ' reference';
+        }
+
+        if ($blueprint->global) {
+            $replacement .= ' global';
+        }
+
+        return Str::replaceFirst('create ', "$replacement ", $compiled);
+    }
+
+    /**
+     * @param  Blueprint  $blueprint
+     * @return array
+     * @throws Exception
+     */
+    protected function getColumns(Blueprint $blueprint)
+    {
+        $columns = parent::getColumns($blueprint);
+
+        if ($blueprint->creating()) {
+            // Because all keys *must* be added at the time of table creation, we can't rely on
+            // the normal ALTER TABLE commands that Laravel generates. Instead we add a fake
+            // column so that it ends up in the right spot (last) inside the SQL statement.
+            $columns[] = SingleStoreBlueprint::INDEX_PLACEHOLDER;
+        }
+
+        return $columns;
+    }
+
+    /**
+     * @param  Blueprint  $blueprint
+     * @param  Fluent  $command
+     * @param $type
+     * @return array|string|string[]
+     */
+    protected function compileKey(Blueprint $blueprint, Fluent $command, $type)
+    {
+        $compiled = parent::compileKey($blueprint, $command, $type);
+
+        // We don't mess with ALTER statements at all.
+        if (!$blueprint->creating()) {
+            return $compiled;
+        }
+
+        // All keys are added as a part of the CREATE TABLE statement. Completely
+        // removing the `alter table %s add` gives us the right syntax for
+        // creating the indexes as a part of the create statement.
+        return str_replace(sprintf('alter table %s add ', $this->wrapTable($blueprint)), '', $compiled);
+    }
+
+}
