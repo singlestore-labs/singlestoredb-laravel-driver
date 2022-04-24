@@ -9,23 +9,24 @@ use Mockery;
 use SingleStore\Laravel\Connect\Connection;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Schema\Grammar;
+use SingleStore\Laravel\Tests\Unit\MocksGetConnection;
 
 trait AssertsTableCreation
 {
+    use MocksGetConnection;
+
     protected function getGrammar()
     {
         return new Grammar;
     }
 
-    protected function getConnection($mockConfig = true)
+    protected function versionAgnosticOverride()
     {
         $connection = Mockery::mock(Connection::class);
 
-        if ($mockConfig) {
-            $connection->shouldReceive('getConfig')->atMost()->once()->with('charset')->andReturn(null);
-            $connection->shouldReceive('getConfig')->atMost()->once()->with('collation')->andReturn(null);
-            $connection->shouldReceive('getConfig')->atMost()->once()->with('engine')->andReturn(null);
-        }
+        $connection->shouldReceive('getConfig')->atMost()->once()->with('charset')->andReturn(null);
+        $connection->shouldReceive('getConfig')->atMost()->once()->with('collation')->andReturn(null);
+        $connection->shouldReceive('getConfig')->atMost()->once()->with('engine')->andReturn(null);
 
         return $connection;
     }
