@@ -7,7 +7,7 @@ namespace SingleStore\Laravel\Tests\Unit;
 
 use Illuminate\Foundation\Application;
 
-if (version_compare(Application::VERSION, '9.0.0') >= 0) {
+if (version_compare(Application::VERSION, '9.0.0', '>=')) {
     trait MocksGetConnection
     {
         // Laravel 9
