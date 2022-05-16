@@ -142,15 +142,4 @@ class JsonWhereTest extends BaseTest
         );
     }
 
-    /** @test */
-    public function where_between()
-    {
-        $query = DB::table('test')->whereBetween('data->value1', [1, 10]);
-
-        $this->assertEquals(
-        // @TODO check docs
-            "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') is not null AND json_type(JSON_EXTRACT_JSON(data, 'value1')) != 'NULL')",
-            $query->toSql()
-        );
-    }
 }
