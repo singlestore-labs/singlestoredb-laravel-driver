@@ -18,6 +18,16 @@ class Blueprint extends BaseBlueprint
 
     public const INDEX_PLACEHOLDER = '__singlestore_indexes__';
 
+    public function geography($column)
+    {
+        return $this->addColumn('geography', $column);
+    }
+
+    public function geographyPoint($column)
+    {
+        return $this->point($column);
+    }
+
     public function toSql(Connection $connection, Grammar $grammar)
     {
         $statements = parent::toSql($connection, $grammar);

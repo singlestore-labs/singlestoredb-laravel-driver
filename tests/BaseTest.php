@@ -40,17 +40,4 @@ abstract class BaseTest extends TestCase
         $app['config']->set('database.default', 'mysql');
         $app['config']->set('database.connections.mysql.driver', 'singlestore');
     }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-//        $this->getConnection()->flushQueryLog();
-//        $this->getConnection()->enableQueryLog();
-    }
-
-    protected function queries()
-    {
-//        return $this->getConnection()->getQueryLog();
-    }
 }

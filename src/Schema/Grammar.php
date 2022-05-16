@@ -20,6 +20,29 @@ class Grammar extends MySqlGrammar
     use CompilesKeys, ModifiesColumns;
 
     /**
+     * Create the column definition for a spatial Geography type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typeGeography(Fluent $column)
+    {
+        return 'geography';
+    }
+
+    /**
+     * Create the column definition for a spatial Point type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    public function typePoint(Fluent $column)
+    {
+        // For SingleStore, `point` is invalid. It uses `geographypoint` instead.
+        return 'geographypoint';
+    }
+
+    /**
      * Create the main create table clause.
      *
      * @param  Blueprint  $blueprint

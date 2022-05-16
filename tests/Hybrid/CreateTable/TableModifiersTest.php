@@ -3,35 +3,36 @@
  * @author Aaron Francis <aarondfrancis@gmail.com|https://twitter.com/aarondfrancis>
  */
 
-namespace SingleStore\Laravel\Tests\Unit\CreateTable;
+namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
+use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
 
 class TableModifiersTest extends BaseTest
 {
-    use AssertsTableCreation;
+    use HybridTestHelpers;
 
-    /** @test */
-    public function all_modifiers_together()
-    {
-        // This shouldn't actually be done, as it doesn't produce
-        // a valid statement. This is just to test that the
-        // string interpolation / concatenation works.
-        $blueprint = $this->createTable(function (Blueprint $table) {
-            $table->rowstore();
-            $table->temporary();
-            $table->global();
-            $table->reference();
-
-            $table->string('name');
-        });
-
-        $this->assertCreateStatement(
-            $blueprint,
-            "create rowstore reference global temporary table `test` (`name` varchar(255) not null)"
-        );
-    }
+//    /** @test */
+//    public function all_modifiers_together()
+//    {
+//        // This shouldn't actually be done, as it doesn't produce
+//        // a valid statement. This is just to test that the
+//        // string interpolation / concatenation works.
+//        $blueprint = $this->createTable(function (Blueprint $table) {
+//            $table->rowstore();
+//            $table->temporary();
+//            $table->global();
+//            $table->reference();
+//
+//            $table->string('name');
+//        });
+//
+//        $this->assertCreateStatement(
+//            $blueprint,
+//            "create rowstore reference global temporary table `test` (`name` varchar(255) not null)"
+//        );
+//    }
 
     /** @test */
     public function it_creates_a_standard_temp()
@@ -53,6 +54,7 @@ class TableModifiersTest extends BaseTest
     public function it_creates_a_global_temp()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->rowstore();
             $table->temporary();
             $table->global();
 
@@ -61,7 +63,7 @@ class TableModifiersTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create global temporary table `test` (`name` varchar(255) not null)"
+            "create rowstore global temporary table `test` (`name` varchar(255) not null)"
         );
     }
 
@@ -70,14 +72,14 @@ class TableModifiersTest extends BaseTest
     public function it_creates_a_global_temp_chained()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
-            $table->temporary()->global();
+            $table->rowstore()->temporary()->global();
 
             $table->string('name');
         });
 
         $this->assertCreateStatement(
             $blueprint,
-            "create global temporary table `test` (`name` varchar(255) not null)"
+            "create rowstore global temporary table `test` (`name` varchar(255) not null)"
         );
     }
 
@@ -87,13 +89,14 @@ class TableModifiersTest extends BaseTest
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
             $table->temporary($global = true);
+            $table->rowstore();
 
             $table->string('name');
         });
 
         $this->assertCreateStatement(
             $blueprint,
-            "create global temporary table `test` (`name` varchar(255) not null)"
+            "create rowstore global temporary table `test` (`name` varchar(255) not null)"
         );
     }
 
@@ -136,12 +139,13 @@ class TableModifiersTest extends BaseTest
             $table->reference();
             $table->rowstore();
 
+            $table->id();
             $table->string('name');
         });
 
         $this->assertCreateStatement(
             $blueprint,
-            "create rowstore reference table `test` (`name` varchar(255) not null)"
+            "create rowstore reference table `test` (`id` bigint unsigned not null auto_increment primary key, `name` varchar(255) not null)"
         );
     }
 

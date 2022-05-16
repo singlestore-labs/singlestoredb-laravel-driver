@@ -3,15 +3,15 @@
  * @author Aaron Francis <aarondfrancis@gmail.com|https://twitter.com/aarondfrancis>
  */
 
-namespace SingleStore\Laravel\Tests\Unit\CreateTable;
+namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
-use Exception;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
+use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
 
 class SeriesTimestampTest extends BaseTest
 {
-    use AssertsTableCreation;
+    use HybridTestHelpers;
 
     /** @test */
     public function series_timestamp()

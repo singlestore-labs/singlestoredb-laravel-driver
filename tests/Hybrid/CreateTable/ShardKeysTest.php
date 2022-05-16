@@ -3,14 +3,15 @@
  * @author Aaron Francis <aarondfrancis@gmail.com|https://twitter.com/aarondfrancis>
  */
 
-namespace SingleStore\Laravel\Tests\Unit\CreateTable;
+namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
+use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
 
 class ShardKeysTest extends BaseTest
 {
-    use AssertsTableCreation;
+    use HybridTestHelpers;
 
     /** @test */
     public function it_adds_a_shard_key_standalone()

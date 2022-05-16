@@ -5,9 +5,180 @@
 
 namespace SingleStore\Laravel\Query;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
+use Illuminate\Support\Str;
+use SingleStore\Laravel\Exceptions\SingleStoreDriverException;
 
 class Grammar extends MySqlGrammar
 {
+    /**
+     * @param $column
+     * @param $value
+     * @return string
+     */
+    protected function compileJsonContains($column, $value)
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
 
+        // Add a placeholder that we'll swap out based on the type.
+        return "__SINGLE_STORE_JSON_TYPE__($field$path, $value)";
+    }
+
+    protected function compileJsonUpdateColumn($key, $value)
+    {
+//        $key = explode('->', $key);
+
+
+        dd($key);
+
+        if (is_string($value)) {
+
+        }
+
+
+        // JSON_SET_DOUBLE
+        // JSON_SET_STRING
+        // JSON_SET_JSON
+//        dd($parent);
+    }
+
+    /**
+     * @param  Builder  $query
+     * @param $where
+     * @return string
+     */
+    protected function whereJsonContainsString(Builder $query, $where)
+    {
+        return $this->whereSingleStoreJsonContains($query, $where);
+    }
+
+    /**
+     * @param  Builder  $query
+     * @param $where
+     * @return string
+     */
+    protected function whereJsonContainsDouble(Builder $query, $where)
+    {
+        return $this->whereSingleStoreJsonContains($query, $where);
+    }
+
+    /**
+     * @param  Builder  $query
+     * @param $where
+     * @return string
+     */
+    protected function whereJsonContainsJson(Builder $query, $where)
+    {
+        return $this->whereSingleStoreJsonContains($query, $where);
+    }
+
+    protected function whereSingleStoreJsonContains($query, $where)
+    {
+        // Leverage the BaseGrammar to compile everything correctly for us.
+        // The BaseGrammar defers to this class's `compileJsonContains`
+        // that inserts our placeholder, which is what we replace.
+        $placeheld = parent::whereJsonContains($query, $where);
+
+        // The `where` contains a type set by the SingleStore Query Builder.
+        // We use that type to determine the correct SingleStore method.
+        $singlestore = $this->jsonArrayContainsType($where);
+
+        return Str::replace('__SINGLE_STORE_JSON_TYPE__', $singlestore, $placeheld);
+    }
+
+    public function prepareBindingForJsonContains($binding)
+    {
+        // Don't json_encode these types.
+        if (is_string($binding) || is_numeric($binding) || is_bool($binding)) {
+            return $binding;
+        }
+
+        return parent::prepareBindingForJsonContains($binding);
+    }
+
+    protected function wrapJsonSelector($value)
+    {
+        // First we need to break out the SingleStore extraction
+        // type from the actual column definition.
+        [$type, $column] = Json::unwrap($value);
+
+        // Then we break apart the column name from the JSON keypath.
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        if (!$path) {
+            return $field;
+        }
+
+        // Then based on the type we get the right extraction
+        // method and concat it all together.
+        return $this->jsonExtractionMethod($type) . "($field$path)";
+    }
+
+    protected function wrapJsonBooleanSelector($value)
+    {
+        return $this->wrapJsonSelector(Json::DOUBLE($value));
+    }
+
+    protected function wrapJsonFieldAndPath($column)
+    {
+        // Matches numbers surrounded by brackets.
+        $arrayAccessPattern = "/\\[(\d+)\\]/";
+
+        // Turn all array access e.g. `data[0]` into `data->[0]`
+        $column = preg_replace_callback($arrayAccessPattern, function ($matches) {
+            return "->[$matches[1]]";
+        }, $column);
+
+        $parts = explode('->', $column);
+
+        // The field must be unquoted, so shift it off first.
+        $field = array_shift($parts);
+
+        $parts = array_map(function ($part) use ($arrayAccessPattern) {
+            // Array access indexes need to be real numbers, not strings.
+            if (preg_match($arrayAccessPattern, $part, $matches)) {
+                return (int) $matches[1];
+            }
+
+            // Named keys need to be strings.
+            return "'$part'";
+        }, $parts);
+
+        $path = count($parts) ? ', ' . implode(", ", $parts) : '';
+
+        return [$field, $path];
+    }
+
+    protected function jsonArrayContainsType($where)
+    {
+        switch ($where['type']) {
+            case 'JsonContainsString':
+                return 'JSON_ARRAY_CONTAINS_STRING';
+
+            case 'JsonContainsDouble':
+                return 'JSON_ARRAY_CONTAINS_DOUBLE';
+
+            case 'JsonContainsJson':
+                return 'JSON_ARRAY_CONTAINS_JSON';
+        }
+
+        throw new SingleStoreDriverException('Unknown JSON_CONTAINS type.');
+    }
+
+    protected function jsonExtractionMethod($type)
+    {
+        switch ($type) {
+            case Json::DOUBLE:
+                return 'JSON_EXTRACT_DOUBLE';
+            case Json::STRING:
+                return 'JSON_EXTRACT_STRING';
+            case Json::JSON:
+                return 'JSON_EXTRACT_JSON';
+            case Json::BIGINT:
+                return 'JSON_EXTRACT_BIGINT';
+        }
+
+        throw new SingleStoreDriverException('Unknown JSON extraction type.');
+    }
 }
