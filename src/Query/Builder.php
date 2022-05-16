@@ -13,7 +13,7 @@ class Builder extends BaseBuilder
 {
     use JsonContainsMethods;
 
-    protected $validateJsonTypes = true;
+    protected static $withJsonType;
 
     public function where($column, $operator = null, $value = null, $boolean = 'and')
     {
@@ -22,15 +22,15 @@ class Builder extends BaseBuilder
         $result = parent::where($column, $operator, $value, $boolean);
 
         // Test each `where` that was added to see if it was a column with a JSON accessor.
-        // If so, we need to warn the developer that that isn't supported. We could
-        // potentially infer the correct casting type based on the data, but that
-        // could lead to runtime errors based on user input, which is not ideal.
+        // If so, we'll try to set the JSON type, but if we can't we throw an exception.
+        // We could potentially infer the correct casting type based on the data, but
+        // that could lead to runtime errors based on user input, which is not ideal.
         $this->mapAddedWheres($before, function ($where) {
-            if (!$this->validateJsonTypes || !$this->isJsonColumn($where)) {
+            if (!$this->isJsonColumn($where)) {
                 return $where;
             }
 
-            return $this->validateJsonType($where);
+            return $this->addJsonTypeModifier($where);
         });
 
         return $result;
@@ -38,23 +38,9 @@ class Builder extends BaseBuilder
 
     public function whereJson($type, $column, $operator = null, $value = null, $boolean = 'and')
     {
-        $before = count($this->wheres);
-
-        $return = $this->withoutJsonTypeValidation(function () use ($column, $operator, $value, $boolean) {
+        return $this->withJsonType($type, function () use ($column, $operator, $value, $boolean) {
             return $this->where($column, $operator, $value, $boolean);
         });
-
-        $this->mapAddedWheres($before, function ($where) use ($type) {
-            if (!is_string($where['column'])) {
-                throw new SingleStoreDriverException('Cannot extract JSON from a column that is not a string.');
-            }
-
-            $where['column'] = Json::wrap($type, $where['column']);
-
-            return $where;
-        });
-
-        return $return;
     }
 
     public function whereJsonDouble($column, $operator = null, $value = null, $boolean = 'and')
@@ -77,33 +63,35 @@ class Builder extends BaseBuilder
         return $this->whereJson(Json::BIGINT, $column, $operator, $value, $boolean);
     }
 
-    public function withoutJsonTypeValidation($callable)
+    public function withJsonType($type, $callable)
     {
-        $cached = $this->validateJsonTypes;
+        $cached = static::$withJsonType;
 
-        $this->validateJsonTypes = false;
+        static::$withJsonType = $type;
 
         $result = call_user_func($callable);
 
-        $this->validateJsonTypes = $cached;
+        static::$withJsonType = $cached;
 
         return $result;
     }
 
-    protected function validateJsonType($where)
+    protected function addJsonTypeModifier($where)
     {
-        if ($where['type'] === 'Basic') {
-            // It's possible they used the Json::TYPE() helper to
-            // wrap their column name, so we'll check for that.
-            // If they haven't we have to throw an error.
-            [$type,] = Json::unwrap($where['column']);
+        // It's possible they used the Json::{TYPE}() helper to wrap the column name. If
+        // they have, then we defer to that. Otherwise we'll check to see if there's a
+        // global JSON type set. If neither of those work then we throw an exception.
+        [$type, $column] = Json::unwrap($where['column']);
 
-            if (is_null($type)) {
-                throw new SingleStoreDriverException(
-                    'You must use the `whereJson` method to specify the JSON extraction type.'
-                );
-            }
+        $type = $type ?? static::$withJsonType;
+
+        if (is_null($type)) {
+            throw new SingleStoreDriverException(
+                'You must use one of the `whereJson*` methods to specify the JSON extraction type.'
+            );
         }
+
+        $where['column'] = Json::wrap($type, $column);
 
         return $where;
     }
@@ -112,6 +100,7 @@ class Builder extends BaseBuilder
     {
         return array_key_exists('column', $where)
             && is_string($where['column'])
+            && $where['type'] === 'Basic'
             && Str::contains($where['column'], '->');
     }
 

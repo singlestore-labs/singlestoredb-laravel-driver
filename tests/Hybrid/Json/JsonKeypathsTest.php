@@ -20,7 +20,7 @@ class JsonKeypathsTest extends BaseTest
         $query = DB::table('test')->whereJsonJson('data', json_encode('{}'));
 
         $this->assertEquals(
-            "select * from `test` where data = ?",
+            "select * from `test` where `data` = ?",
             $query->toSql()
         );
 
