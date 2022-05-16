@@ -11,7 +11,7 @@ use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
 
-class JsonQueryTypesTest extends BaseTest
+class JsonTypeCompilationTest extends BaseTest
 {
     use HybridTestHelpers;
 
@@ -183,66 +183,13 @@ class JsonQueryTypesTest extends BaseTest
         $this->assertEquals(1, $query->count());
     }
 
-    /** @test */
-    public function supports_columns_as_array_style()
-    {
-        // The particular type (bigint) doesn't matter here, we're just testing that the method works at all.
-        $query = DB::table('test')->whereJsonBigint([
-            'data->value1' => 1,
-            'data->value2' => 2,
-        ]);
-
-        $this->assertEquals(
-            "select * from `test` where (JSON_EXTRACT_BIGINT(data, 'value1') = ? and JSON_EXTRACT_BIGINT(data, 'value2') = ?)",
-            $query->toSql()
-        );
-    }
-
-    /** @test */
-    public function supports_columns_as_array_style_wrapped_takes_priority()
-    {
-        $query = DB::table('test')->whereJsonBigint([
-            Json::STRING('data->value1') => 1,
-            'data->value2' => 2,
-        ]);
-
-        $this->assertEquals(
-            "select * from `test` where (JSON_EXTRACT_STRING(data, 'value1') = ? and JSON_EXTRACT_BIGINT(data, 'value2') = ?)",
-            $query->toSql()
-        );
-    }
-
 
 //    /** @test */
 //    public function compile_json()
 //    {
-//        // JSON_EXTRACT_DOUBLE
-//        // JSON_EXTRACT_STRING
-//        // JSON_EXTRACT_JSON
-//        // JSON_EXTRACT_BIGINT
-//
 //        // GEOGRAPHY_INTERSECTS ( geo1, geo2 )
 //        // GEOGRAPHY_WITHIN_DISTANCE("POINT(-73.94990499 40.69150746)", shape, 10000);
 //
 //    }
 
-    /** @test */
-    public function updates_a_json_value()
-    {
-
-//        $this->createTable(function (Blueprint $table) {
-//            $table->id();
-//            $table->json('data');
-//        });
-//
-//        DB::table('test')->insert([
-//            'data' => json_encode([
-//                'enabled' => false
-//            ])
-//        ]);
-
-//        DB::table('test')->where('id', 1)->update([
-//            'data->bar[0]->baz' => true
-//        ]);
-    }
 }

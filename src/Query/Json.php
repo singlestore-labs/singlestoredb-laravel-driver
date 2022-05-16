@@ -6,6 +6,7 @@
 namespace SingleStore\Laravel\Query;
 
 use Illuminate\Support\Str;
+use SingleStore\Laravel\Exceptions\SingleStoreDriverException;
 
 abstract class Json
 {
@@ -27,6 +28,10 @@ abstract class Json
 
             return '';
         }, $column);
+
+        if ($type && !in_array($type, [self::DOUBLE, self::STRING, self::JSON, self::BIGINT])) {
+            throw new SingleStoreDriverException('Unknown JSON type ' . json_encode($type));
+        }
 
         return [$type, $column];
     }

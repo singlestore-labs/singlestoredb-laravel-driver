@@ -43,9 +43,19 @@ class Builder extends BaseBuilder
         });
     }
 
+    public function orWhereJson($type, $column, $operator = null, $value = null)
+    {
+        $this->whereJson($type, $column, $operator, $value, 'or');
+    }
+
     public function whereJsonDouble($column, $operator = null, $value = null, $boolean = 'and')
     {
         return $this->whereJson(Json::DOUBLE, $column, $operator, $value, $boolean);
+    }
+
+    public function orWhereJsonDouble($column, $operator = null, $value = null)
+    {
+        return $this->whereJsonDouble($column, $operator, $value, 'or');
     }
 
     public function whereJsonString($column, $operator = null, $value = null, $boolean = 'and')
@@ -53,14 +63,29 @@ class Builder extends BaseBuilder
         return $this->whereJson(Json::STRING, $column, $operator, $value, $boolean);
     }
 
+    public function orWhereJsonString($column, $operator = null, $value = null)
+    {
+        return $this->whereJsonString($column, $operator, $value, 'or');
+    }
+
     public function whereJsonJson($column, $operator = null, $value = null, $boolean = 'and')
     {
         return $this->whereJson(Json::JSON, $column, $operator, $value, $boolean);
     }
 
+    public function orWhereJsonJson($column, $operator = null, $value = null)
+    {
+        return $this->whereJsonJson($column, $operator, $value, 'or');
+    }
+
     public function whereJsonBigint($column, $operator = null, $value = null, $boolean = 'and')
     {
         return $this->whereJson(Json::BIGINT, $column, $operator, $value, $boolean);
+    }
+
+    public function orWhereJsonBigint($column, $operator = null, $value = null)
+    {
+        return $this->whereJsonBigint($column, $operator, $value, 'or');
     }
 
     public function withJsonType($type, $callable)

@@ -41,5 +41,4 @@ class ComputedColumnsTest extends BaseTest
             'create table `test` (`a` int not null, `b` int not null, `c` as (a + b) persisted int)'
         );
     }
-
 }

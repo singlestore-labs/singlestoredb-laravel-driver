@@ -27,20 +27,28 @@ class Grammar extends MySqlGrammar
 
     protected function compileJsonUpdateColumn($key, $value)
     {
-//        $key = explode('->', $key);
-
-
-        dd($key);
-
-        if (is_string($value)) {
-
+        if (is_bool($value)) {
+            $value = $value ? "'true'" : "'false'";
+        } elseif (is_array($value)) {
+            $value = 'cast(? as json)';
+        } else {
+            $value = $this->parameter($value);
         }
 
+        // First we need to break out the SingleStore extraction
+        // type from the actual column definition.
+        [$type, $column] = Json::unwrap($key);
 
-        // JSON_SET_DOUBLE
-        // JSON_SET_STRING
-        // JSON_SET_JSON
-//        dd($parent);
+        // Then we break apart the column name from the JSON keypath.
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        if (!$type) {
+            throw new SingleStoreDriverException(
+                'You must provide a JSON type when performing an update. Please use one of the Json::[TYPE] methods.'
+            );
+        }
+
+        return "$field = JSON_SET_$type($field$path, $value)";
     }
 
     /**
@@ -86,6 +94,22 @@ class Grammar extends MySqlGrammar
 
         return Str::replace('__SINGLE_STORE_JSON_TYPE__', $singlestore, $placeheld);
     }
+
+    protected function whereNull(Builder $query, $where)
+    {
+        return $this->modifyNullJsonExtract(parent::whereNull($query, $where));
+    }
+
+    protected function whereNotNull(Builder $query, $where)
+    {
+        return $this->modifyNullJsonExtract(parent::whereNotNull($query, $where));
+    }
+
+    protected function modifyNullJsonExtract($statement)
+    {
+        return Str::replace('json_extract(', 'JSON_EXTRACT_JSON(', $statement);
+    }
+
 
     public function prepareBindingForJsonContains($binding)
     {
