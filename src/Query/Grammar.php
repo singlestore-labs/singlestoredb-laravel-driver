@@ -92,7 +92,7 @@ class Grammar extends MySqlGrammar
         // We use that type to determine the correct SingleStore method.
         $singlestore = $this->jsonArrayContainsType($where);
 
-        return Str::replace('__SINGLE_STORE_JSON_TYPE__', $singlestore, $placeheld);
+        return str_replace('__SINGLE_STORE_JSON_TYPE__', $singlestore, $placeheld);
     }
 
     protected function whereNull(Builder $query, $where)
@@ -107,7 +107,7 @@ class Grammar extends MySqlGrammar
 
     protected function modifyNullJsonExtract($statement)
     {
-        return Str::replace('json_extract(', 'JSON_EXTRACT_JSON(', $statement);
+        return str_replace('json_extract(', 'JSON_EXTRACT_JSON(', $statement);
     }
 
 
