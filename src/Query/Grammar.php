@@ -7,7 +7,6 @@ namespace SingleStore\Laravel\Query;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
-use SingleStore\Laravel\Exceptions\SingleStoreDriverException;
 
 class Grammar extends MySqlGrammar
 {
@@ -20,7 +19,8 @@ class Grammar extends MySqlGrammar
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($column);
 
-        // JSON_ARRAY_CONTAINS_[TYPE] doesn't support paths.
+        // JSON_ARRAY_CONTAINS_[TYPE] doesn't support paths, so
+        // we have to pass it through JSON_EXTRACT_JSON first.
         if ($path) {
             $field = "JSON_EXTRACT_JSON($field$path)";
         }
@@ -32,26 +32,25 @@ class Grammar extends MySqlGrammar
     {
         if (is_bool($value)) {
             $value = $value ? "'true'" : "'false'";
-        } elseif (is_array($value)) {
-            $value = 'cast(? as json)';
         } else {
             $value = $this->parameter($value);
         }
 
-        // First we need to break out the SingleStore extraction
-        // type from the actual column definition.
-        [$type, $column] = Json::unwrap($key);
+        // Break apart the column name from the JSON keypath.
+        [$field, $path] = $this->wrapJsonFieldAndPath($key);
 
-        // Then we break apart the column name from the JSON keypath.
-        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+        return "$field = JSON_SET_JSON($field$path, $value)";
+    }
 
-        if (!$type) {
-            throw new SingleStoreDriverException(
-                'You must provide a JSON type when performing an update. Please use one of the Json::[TYPE] methods.'
-            );
-        }
+    public function prepareBindingsForUpdate(array $bindings, array $values)
+    {
+        // We need to encode strings for JSON columns, but we'll
+        // let the parent class handle everything else.
+        $values = collect($values)->map(function ($value, $column) {
+            return $this->isJsonSelector($column) && is_string($value) ? json_encode($value) : $value;
+        })->all();
 
-        return "$field = JSON_SET_$type($field$path, $value)";
+        return parent::prepareBindingsForUpdate($bindings, $values);
     }
 
     protected function whereNull(Builder $query, $where)
@@ -83,7 +82,9 @@ class Grammar extends MySqlGrammar
 
     protected function wrapJsonBooleanSelector($value)
     {
-        return $this->wrapJsonSelector(Json::DOUBLE($value));
+        return str_replace(
+            'JSON_EXTRACT_STRING', 'JSON_EXTRACT_DOUBLE', $this->wrapJsonSelector($value)
+        );
     }
 
     protected function wrapJsonFieldAndPath($column)

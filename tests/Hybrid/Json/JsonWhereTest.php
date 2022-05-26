@@ -62,6 +62,39 @@ class JsonWhereTest extends BaseTest
     }
 
     /** @test */
+    public function json_boolean()
+    {
+        $query1 = DB::table('test')->where('data->value1->value2', true);
+        $query2 = DB::table('test')->where('data->value1->value2', false);
+
+        $this->assertEquals(
+            "select * from `test` where JSON_EXTRACT_DOUBLE(data, 'value1', 'value2') = true",
+            $query1->toSql()
+        );
+
+        $this->assertEquals(
+            "select * from `test` where JSON_EXTRACT_DOUBLE(data, 'value1', 'value2') = false",
+            $query2->toSql()
+        );
+
+        if (!$this->runHybridIntegrations()) {
+            return;
+        }
+
+        [$id1, $id2] = $this->insertJsonData([
+            ['value1' => ['value2' => true]],
+            ['value1' => ['value2' => false]],
+        ]);
+
+        $this->assertEquals($id1, $query1->first()->id);
+        $this->assertEquals(1, $query1->count());
+
+        $this->assertEquals($id2, $query2->first()->id);
+        $this->assertEquals(1, $query1->count());
+    }
+
+
+    /** @test */
     public function nested_where()
     {
         $query = DB::table('test')->where(function ($query) {

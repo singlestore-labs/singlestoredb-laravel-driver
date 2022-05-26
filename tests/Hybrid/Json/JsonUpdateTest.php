@@ -17,130 +17,155 @@ class JsonUpdateTest extends BaseTest
     use HybridTestHelpers;
 
     /** @test */
-    public function set_boolean()
+    public function set_boolean_syntax()
     {
         [$logs] = DB::pretend(function ($database) {
             $database->table('test')->update([
-                Json::JSON('data->bar[0]->baz') => true
+                'data->value1' => true
             ]);
         });
 
         $this->assertEquals(
-            "update `test` set data = JSON_SET_JSON(data, 'bar', 0, 'baz', 'true')",
+            "update `test` set data = JSON_SET_JSON(data, 'value1', 'true')",
             $logs['query']
         );
     }
 
     /** @test */
-    public function set_string()
+    public function set_boolean_execution()
+    {
+        if (!$this->runHybridIntegrations()) {
+            return;
+        }
+
+        $this->insertJsonData([
+            ['value1' => false],
+        ]);
+
+        $this->assertEquals(1, DB::table('test')->where('data->value1', false)->count());
+
+        DB::table('test')->update([
+            'data->value1' => true
+        ]);
+
+        $this->assertEquals(0, DB::table('test')->where('data->value1', false)->count());
+        $this->assertEquals(1, DB::table('test')->where('data->value1', true)->count());
+    }
+
+    /** @test */
+    public function set_string_syntax()
     {
         [$logs] = DB::pretend(function ($database) {
             $database->table('test')->update([
-                Json::STRING('data->bar[0]->baz') => "foo"
+                'data->value1' => "foo"
             ]);
         });
 
         $this->assertEquals(
-            "update `test` set data = JSON_SET_STRING(data, 'bar', 0, 'baz', ?)",
+            "update `test` set data = JSON_SET_JSON(data, 'value1', ?)",
             $logs['query']
         );
 
-        $this->assertSame(
-            "foo",
-            $logs['bindings'][0]
-        );
+        $this->assertSame('"foo"', $logs['bindings'][0]);
+    }
+
+    /** @test */
+    public function set_string_execution()
+    {
+        if (!$this->runHybridIntegrations()) {
+            return;
+        }
+
+        $this->insertJsonData([
+            ['value1' => "foo"],
+        ]);
+
+        $this->assertEquals(1, DB::table('test')->where('data->value1', "foo")->count());
+
+        DB::table('test')->update([
+            'data->value1' => "bar"
+        ]);
+
+        $this->assertEquals(0, DB::table('test')->where('data->value1', "foo")->count());
+        $this->assertEquals(1, DB::table('test')->where('data->value1', "bar")->count());
     }
 
 
     /** @test */
-    public function set_double()
+    public function set_double_syntax()
     {
         [$logs] = DB::pretend(function ($database) {
             $database->table('test')->update([
-                Json::DOUBLE('data->bar[0]->baz') => 1.3
+                'data->value1' => 1.3
             ]);
         });
 
         $this->assertEquals(
-            "update `test` set data = JSON_SET_DOUBLE(data, 'bar', 0, 'baz', ?)",
+            "update `test` set data = JSON_SET_JSON(data, 'value1', ?)",
             $logs['query']
         );
 
-        $this->assertSame(
-            1.3,
-            $logs['bindings'][0]
-        );
+        $this->assertSame(1.3, $logs['bindings'][0]);
     }
 
     /** @test */
-    public function set_bigint()
+    public function set_double_execution()
+    {
+        if (!$this->runHybridIntegrations()) {
+            return;
+        }
+
+        $this->insertJsonData([
+            ['value1' => 1.3],
+        ]);
+
+        $this->assertEquals(1, DB::table('test')->where('data->value1', 1.3)->count());
+
+        DB::table('test')->update([
+            'data->value1' => 1.5
+        ]);
+
+        $this->assertEquals(0, DB::table('test')->where('data->value1', 1.3)->count());
+        $this->assertEquals(1, DB::table('test')->where('data->value1', 1.5)->count());
+    }
+
+    /** @test */
+    public function set_json_syntax()
     {
         [$logs] = DB::pretend(function ($database) {
             $database->table('test')->update([
-                Json::BIGINT('data->bar[0]->baz') => 10
+                'data->value1' => ['foo' => 'bar']
             ]);
         });
 
         $this->assertEquals(
-            "update `test` set data = JSON_SET_BIGINT(data, 'bar', 0, 'baz', ?)",
+            "update `test` set data = JSON_SET_JSON(data, 'value1', ?)",
             $logs['query']
         );
 
-        $this->assertSame(
-            10,
-            $logs['bindings'][0]
-        );
+        $this->assertSame('{"foo":"bar"}', $logs['bindings'][0]);
     }
 
     /** @test */
-    public function set_json()
+    public function set_json_execution()
     {
-        [$logs] = DB::pretend(function ($database) {
-            $database->table('test')->update([
-                Json::JSON('data->bar[0]->baz') => ['foo' => 'bar']
-            ]);
-        });
+        if (!$this->runHybridIntegrations()) {
+            return;
+        }
 
-        $this->assertEquals(
-        // @TODO is cast as json right?
-            "update `test` set data = JSON_SET_JSON(data, 'bar', 0, 'baz', cast(? as json))",
-            $logs['query']
-        );
+        $this->insertJsonData([
+            ['value1' => ['foo' => 'bar']],
+        ]);
 
-        $this->assertSame(
-            '{"foo":"bar"}',
-            $logs['bindings'][0]
-        );
+        $this->assertEquals(1, DB::table('test')->where('data->value1', json_encode(['foo' => 'bar']))->count());
+
+        DB::table('test')->update([
+            'data->value1' => ["foo" => "baz"]
+        ]);
+
+        $this->assertEquals(0, DB::table('test')->where('data->value1', json_encode(['foo' => 'bar']))->count());
+
+        $this->assertEquals(1, DB::table('test')->where('data->value1', json_encode(['foo' => 'baz']))->count());
     }
 
-
-    /** @test */
-    public function must_provide_a_type()
-    {
-        $this->expectException(SingleStoreDriverException::class);
-        $this->expectExceptionMessage(
-            'You must provide a JSON type when performing an update. Please use one of the Json::[TYPE] methods.'
-        );
-
-        DB::pretend(function ($database) {
-            $database->table('test')->update([
-                'data->bar[0]->baz' => 10
-            ]);
-        });
-    }
-
-    /** @test */
-    public function must_provide_a_valid_type()
-    {
-        $this->expectException(SingleStoreDriverException::class);
-        $this->expectExceptionMessage(
-            'Unknown JSON type "FIZ"'
-        );
-
-        DB::pretend(function ($database) {
-            $database->table('test')->update([
-                Json::wrap('FIZ', 'data->bar[0]->baz') => 10
-            ]);
-        });
-    }
 }
