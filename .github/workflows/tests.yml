@@ -74,14 +74,27 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
 
-      - name: Execute tests
+      - name: Execute Unit Tests
         run: vendor/bin/phpunit
 
-      - name: wait for singlestore to start
+      - name: Wait for SingleStore to start
         run: |
           until mysql -h 127.0.0.1 -u root -ptest -e "select 1"; do
             echo "waiting for mysql..."
             sleep 1
           done
-      - name: singlestore container logs
+
+      - name: SingleStore Container Logs
         run: docker logs $(docker ps -ql)
+
+      - name: Create Test Database
+        run: |
+          mysql -h 127.0.0.1 -u root -ptest -e "create database test"        
+
+      - name: Execute Integration Tests
+        run: HYBRID_INTEGRATION=1 vendor/bin/phpunit
+        env:
+          DB_DATABASE: test
+          DB_USERNAME: root
+          DB_PASSWORD: test
+          DB_HOST: 127.0.0.1
