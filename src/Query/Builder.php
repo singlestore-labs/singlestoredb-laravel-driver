@@ -9,6 +9,5 @@ use Illuminate\Database\Query\Builder as BaseBuilder;
 
 class Builder extends BaseBuilder
 {
-    use JsonContainsMethods;
 
 }
