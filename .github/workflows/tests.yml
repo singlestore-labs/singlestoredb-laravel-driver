@@ -40,6 +40,17 @@ jobs:
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
+    services:
+      singlestore:
+        # check for new versions at https://hub.docker.com/r/singlestore/cluster-in-a-box/tags
+        image: singlestore/cluster-in-a-box:alma-7.8.2-8c7b918527-4.0.5-1.13.6
+        ports:
+          - "3306:3306"
+        env:
+          LICENSE_KEY: ${{ secrets.SINGLESTORE_LICENSE }}
+          ROOT_PASSWORD: "test"
+          START_AFTER_INIT: "Y"
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -65,3 +76,12 @@ jobs:
 
       - name: Execute tests
         run: vendor/bin/phpunit
+
+      - name: wait for singlestore to start
+        run: |
+          until mysql -h 127.0.0.1 -u root -ptest -e "select 1"; do
+            echo "waiting for mysql..."
+            sleep 1
+          done
+      - name: singlestore container logs
+        run: docker logs $(docker ps -ql)
