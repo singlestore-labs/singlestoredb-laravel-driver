@@ -81,6 +81,8 @@ trait HybridTestHelpers
     protected function createTable($fn)
     {
         if ($this->runHybridIntegrations()) {
+            $cached = $this->mockDatabaseConnection;
+
             $this->mockDatabaseConnection = false;
 
             Schema::dropIfExists('test');
@@ -92,7 +94,7 @@ trait HybridTestHelpers
             // just asserting a blank set of results comes back.
             $this->assertTrue(DB::table('test')->select('*')->get() instanceof Collection);
 
-            $this->mockDatabaseConnection = true;
+            $this->mockDatabaseConnection = $cached;
         }
 
         $blueprint = new Blueprint('test');

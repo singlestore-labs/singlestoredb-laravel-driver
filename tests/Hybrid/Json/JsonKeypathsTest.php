@@ -17,7 +17,7 @@ class JsonKeypathsTest extends BaseTest
     /** @test */
     public function it_compiles_column_only_without_path()
     {
-        $query = DB::table('test')->whereJsonJson('data', json_encode('{}'));
+        $query = DB::table('test')->where('data', '[]');
 
         $this->assertEquals(
             "select * from `test` where `data` = ?",
@@ -41,10 +41,10 @@ class JsonKeypathsTest extends BaseTest
     /** @test */
     public function it_compiles_nested_json_path()
     {
-        $query = DB::table('test')->whereJsonBigint('data->value1->value2->value3->value4', 2);
+        $query = DB::table('test')->where('data->value1->value2->value3->value4', 2);
 
         $this->assertEquals(
-            "select * from `test` where JSON_EXTRACT_BIGINT(data, 'value1', 'value2', 'value3', 'value4') = ?",
+            "select * from `test` where JSON_EXTRACT_STRING(data, 'value1', 'value2', 'value3', 'value4') = ?",
             $query->toSql()
         );
 
@@ -67,10 +67,10 @@ class JsonKeypathsTest extends BaseTest
     /** @test */
     public function it_compiles_nested_json_path_with_array_access()
     {
-        $query = DB::table('test')->whereJsonBigint('data->value1[0]->value2[1][2]', 1);
+        $query = DB::table('test')->where('data->value1[0]->value2[2][0]', 1);
 
         $this->assertEquals(
-            "select * from `test` where JSON_EXTRACT_BIGINT(data, 'value1', 0, 'value2', 1, 2) = ?",
+            "select * from `test` where JSON_EXTRACT_STRING(data, 'value1', 0, 'value2', 2, 0) = ?",
             $query->toSql()
         );
 

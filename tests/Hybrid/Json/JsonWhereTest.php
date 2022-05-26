@@ -16,104 +16,62 @@ class JsonWhereTest extends BaseTest
     use HybridTestHelpers;
 
     /** @test */
-    public function where_string()
+    public function compile_unknown_as_string()
     {
-        $query = DB::table('test')->where('foo', 'bar')->whereJsonString('data->value1', 'foo');
+        $query = DB::table('test')->where('data->value1->value2', 1);
 
         $this->assertEquals(
-            "select * from `test` where `foo` = ? and JSON_EXTRACT_STRING(data, 'value1') = ?",
+            "select * from `test` where JSON_EXTRACT_STRING(data, 'value1', 'value2') = ?",
             $query->toSql()
         );
+
+        $this->assertSame(1, $query->getBindings()[0]);
     }
 
     /** @test */
-    public function or_where_string()
+    public function singlestore_will_cast_all_types()
     {
-        $query = DB::table('test')->where('foo', 'bar')->orWhereJsonString('data->value1', 'foo');
+        $query1 = DB::table('test')->where('data->value1->value2', "string");
+        $query2 = DB::table('test')->where('data->value1->value2', 1);
+        $query3 = DB::table('test')->where('data->value1->value2', 1.5);
+        $query4 = DB::table('test')->where('data->value1->value2', json_encode(['a' => 'b']));
 
-        $this->assertEquals(
-            "select * from `test` where `foo` = ? or JSON_EXTRACT_STRING(data, 'value1') = ?",
-            $query->toSql()
-        );
-    }
 
-    /** @test */
-    public function where_double()
-    {
-        $query = DB::table('test')->where('foo', 'bar')->whereJsonDouble('data->value1', 'foo');
+        if (!$this->runHybridIntegrations()) {
+            return;
+        }
 
-        $this->assertEquals(
-            "select * from `test` where `foo` = ? and JSON_EXTRACT_DOUBLE(data, 'value1') = ?",
-            $query->toSql()
-        );
-    }
+        [$id1, $id2, $id3, $id4] = $this->insertJsonData([
+            ['value1' => ['value2' => 'string']],
+            ['value1' => ['value2' => 1]],
+            ['value1' => ['value2' => 1.5]],
+            ['value1' => ['value2' => ['a' => 'b']]],
+        ]);
 
-    /** @test */
-    public function or_where_double()
-    {
-        $query = DB::table('test')->where('foo', 'bar')->orWhereJsonDouble('data->value1', 'foo');
+        $this->assertEquals($id1, $query1->first()->id);
+        $this->assertEquals(1, $query1->count());
 
-        $this->assertEquals(
-            "select * from `test` where `foo` = ? or JSON_EXTRACT_DOUBLE(data, 'value1') = ?",
-            $query->toSql()
-        );
-    }
+        $this->assertEquals($id2, $query2->first()->id);
+        $this->assertEquals(1, $query2->count());
 
-    /** @test */
-    public function where_bigint()
-    {
-        $query = DB::table('test')->where('foo', 'bar')->whereJsonBigint('data->value1', 'foo');
+        $this->assertEquals($id3, $query3->first()->id);
+        $this->assertEquals(1, $query3->count());
 
-        $this->assertEquals(
-            "select * from `test` where `foo` = ? and JSON_EXTRACT_BIGINT(data, 'value1') = ?",
-            $query->toSql()
-        );
-    }
-
-    /** @test */
-    public function or_where_bigint()
-    {
-        $query = DB::table('test')->where('foo', 'bar')->orWhereJsonBigint('data->value1', 'foo');
-
-        $this->assertEquals(
-            "select * from `test` where `foo` = ? or JSON_EXTRACT_BIGINT(data, 'value1') = ?",
-            $query->toSql()
-        );
-    }
-
-    /** @test */
-    public function where_json()
-    {
-        $query = DB::table('test')->where('foo', 'bar')->whereJsonJson('data->value1', 'foo');
-
-        $this->assertEquals(
-            "select * from `test` where `foo` = ? and JSON_EXTRACT_JSON(data, 'value1') = ?",
-            $query->toSql()
-        );
-    }
-
-    /** @test */
-    public function or_where_json()
-    {
-        $query = DB::table('test')->where('foo', 'bar')->orWhereJsonJson('data->value1', 'foo');
-
-        $this->assertEquals(
-            "select * from `test` where `foo` = ? or JSON_EXTRACT_JSON(data, 'value1') = ?",
-            $query->toSql()
-        );
+        $this->assertEquals($id4, $query4->first()->id);
+        $this->assertEquals(1, $query4->count());
     }
 
     /** @test */
     public function nested_where()
     {
         $query = DB::table('test')->where(function ($query) {
-            $query->whereJsonString('data->value1', 'foo')->orWhere(function ($query) {
-                $query->whereJsonBigint('data->value2', 1);
+            $query->where('data->value1', 'foo')->orWhere(function ($query) {
+                $query->where('data->value2', 1);
             });
         });
 
         $this->assertEquals(
-            "select * from `test` where (JSON_EXTRACT_STRING(data, 'value1') = ? or (JSON_EXTRACT_BIGINT(data, 'value2') = ?))",
+            "select * from `test` where (JSON_EXTRACT_STRING(data, 'value1') = ? or (JSON_EXTRACT_STRING(data, 'value2') = ?))",
             $query->toSql()
         );
     }

@@ -7,7 +7,6 @@ namespace SingleStore\Laravel\Query;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
-use Illuminate\Support\Str;
 use SingleStore\Laravel\Exceptions\SingleStoreDriverException;
 
 class Grammar extends MySqlGrammar
@@ -21,8 +20,13 @@ class Grammar extends MySqlGrammar
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($column);
 
+        // JSON_ARRAY_CONTAINS_[TYPE] doesn't support paths.
+        if ($path) {
+            $field = "JSON_EXTRACT_JSON($field$path)";
+        }
+
         // Add a placeholder that we'll swap out based on the type.
-        return "__SINGLE_STORE_JSON_TYPE__($field$path, $value)";
+        return "__SINGLE_STORE_JSON_TYPE__($field, $value)";
     }
 
     protected function compileJsonUpdateColumn($key, $value)
@@ -123,20 +127,14 @@ class Grammar extends MySqlGrammar
 
     protected function wrapJsonSelector($value)
     {
-        // First we need to break out the SingleStore extraction
-        // type from the actual column definition.
-        [$type, $column] = Json::unwrap($value);
-
-        // Then we break apart the column name from the JSON keypath.
-        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+        // Break apart the column name from the JSON keypath.
+        [$field, $path] = $this->wrapJsonFieldAndPath($value);
 
         if (!$path) {
             return $field;
         }
 
-        // Then based on the type we get the right extraction
-        // method and concat it all together.
-        return $this->jsonExtractionMethod($type) . "($field$path)";
+        return "JSON_EXTRACT_STRING($field$path)";
     }
 
     protected function wrapJsonBooleanSelector($value)
@@ -190,19 +188,4 @@ class Grammar extends MySqlGrammar
         throw new SingleStoreDriverException('Unknown JSON_CONTAINS type.');
     }
 
-    protected function jsonExtractionMethod($type)
-    {
-        switch ($type) {
-            case Json::DOUBLE:
-                return 'JSON_EXTRACT_DOUBLE';
-            case Json::STRING:
-                return 'JSON_EXTRACT_STRING';
-            case Json::JSON:
-                return 'JSON_EXTRACT_JSON';
-            case Json::BIGINT:
-                return 'JSON_EXTRACT_BIGINT';
-        }
-
-        throw new SingleStoreDriverException('Unknown JSON extraction type.');
-    }
 }
