@@ -8,6 +8,9 @@ on:
   pull_request:
     types: [ opened, synchronize, reopened ]
 
+  schedule:
+    - cron: '0 0 * * *'
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -92,8 +95,9 @@ jobs:
           mysql -h 127.0.0.1 -u root -ptest -e "create database test"        
 
       - name: Execute Integration Tests
-        run: HYBRID_INTEGRATION=1 vendor/bin/phpunit
+        run: vendor/bin/phpunit
         env:
+          HYBRID_INTEGRATION: 1
           DB_DATABASE: test
           DB_USERNAME: root
           DB_PASSWORD: test
