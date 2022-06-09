@@ -14,7 +14,7 @@ composer require singlestore/singlestore-laravel
 
 ## Usage
 
-To enable the driver, head to your `config/databases.php` file and create a new entry for SingleStore in your `connections`, and update your `default` to point to that new connection:
+To enable the driver, head to your `config/database.php` file and create a new entry for SingleStore in your `connections`, and update your `default` to point to that new connection:
 
 ```php
 [
@@ -45,6 +45,16 @@ To enable the driver, head to your `config/databases.php` file and create a new 
 ```
 
 > The SingleStore driver is an extension of the MySQL driver, so you could also just change your `driver` from `mysql` to `singlestore`.
+
+In case you want to store failed jobs in SingleStore, then make sure you also set it as the `database` in your `config/queue.php` file. At which point, you may actually preffer to set `DB_CONNECTION='singlestore'` in your environment variables.
+
+```php
+'failed' => [
+    'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
+    'database' => env('DB_CONNECTION', 'singlestore'),
+    'table' => 'failed_jobs',
+],
+```
 
 ## Migrations
 
