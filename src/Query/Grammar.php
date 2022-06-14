@@ -116,4 +116,20 @@ class Grammar extends MySqlGrammar
 
         return [$field, $path];
     }
+
+    /**
+     * Compile a "where fulltext" clause.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
+     */
+    public function whereFullText(Builder $query, $where)
+    {
+        $columns = $this->columnize($where['columns']);
+
+        $value = $this->parameter($where['value']);
+
+        return "MATCH ({$columns}) AGAINST (".$value.")";
+    }
 }
