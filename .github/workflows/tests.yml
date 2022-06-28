@@ -6,10 +6,10 @@ on:
       - main
 
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [opened, synchronize, reopened]
 
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 
 jobs:
   test:
@@ -18,9 +18,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [ 7.3, 7.4, 8.0, 8.1 ]
-        laravel: [ 8.*, 9.* ]
-        dependency-version: [ prefer-lowest, prefer-stable ]
+        php: [7.3, 7.4, 8.0, 8.1]
+        laravel: [8.*, 9.*]
+        dependency-version: [prefer-lowest, prefer-stable]
         include:
           - laravel: 8.*
             testbench: 6.*
@@ -45,14 +45,13 @@ jobs:
 
     services:
       singlestore:
-        # check for new versions at https://hub.docker.com/r/singlestore/cluster-in-a-box/tags
-        image: singlestore/cluster-in-a-box:alma-7.8.6-4f052c9b50-4.0.7-1.13.8
+        # check for new versions at https://github.com/singlestore-labs/singlestoredb-dev-image/pkgs/container/singlestoredb-dev/versions
+        image: ghcr.io/singlestore-labs/singlestoredb-dev:0.0.8
         ports:
           - "3306:3306"
         env:
-          LICENSE_KEY: ${{ secrets.SINGLESTORE_LICENSE }}
+          SINGLESTORE_LICENSE: ${{ secrets.SINGLESTORE_LICENSE }}
           ROOT_PASSWORD: "test"
-          START_AFTER_INIT: "Y"
 
     steps:
       - name: Checkout code
@@ -80,24 +79,12 @@ jobs:
       - name: Execute Unit Tests
         run: vendor/bin/phpunit
 
-      - name: Wait for SingleStore to start
-        run: |
-          attempts=0
-          until mysql -h 127.0.0.1 -u root -ptest -e "select 1"; do
-            echo "waiting for mysql..."
-            ((attempts=attempts+1))
-            if [[ $attempts -gt 5 ]]; then
-              docker logs $(docker ps -ql)
-            fi
-            sleep 1
-          done
-
       - name: SingleStore Container Logs
         run: docker logs $(docker ps -ql)
 
       - name: Create Test Database
         run: |
-          mysql -h 127.0.0.1 -u root -ptest -e "create database test"        
+          mysql -h 127.0.0.1 -u root -ptest -e "create database test"
 
       - name: Execute Integration Tests
         run: vendor/bin/phpunit
