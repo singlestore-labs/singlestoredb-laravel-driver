@@ -27,4 +27,34 @@ class Builder extends MySqlBuilder
 
         return parent::createBlueprint($table, $callback);
     }
+
+    /**
+     * Drop all tables from the database.
+     *
+     * @return void
+     */
+    public function dropAllTables()
+    {
+        $tables = [];
+
+        foreach ($this->getAllTables() as $row) {
+            $row = (array) $row;
+
+            $tables[] = reset($row);
+        }
+
+        if (empty($tables)) {
+            return;
+        }
+
+        $this->disableForeignKeyConstraints();
+
+        foreach ($tables as $table) {
+            $this->connection->statement(
+                $this->grammar->compileDropAllTables([$table])
+            );
+        }
+
+        $this->enableForeignKeyConstraints();
+    }
 }
