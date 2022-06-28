@@ -46,7 +46,7 @@ jobs:
     services:
       singlestore:
         # check for new versions at https://hub.docker.com/r/singlestore/cluster-in-a-box/tags
-        image: singlestore/cluster-in-a-box:alma-7.8.2-8c7b918527-4.0.5-1.13.6
+        image: singlestore/cluster-in-a-box:alma-7.8.6-4f052c9b50-4.0.7-1.13.8
         ports:
           - "3306:3306"
         env:
@@ -82,8 +82,13 @@ jobs:
 
       - name: Wait for SingleStore to start
         run: |
+          attempts=0
           until mysql -h 127.0.0.1 -u root -ptest -e "select 1"; do
             echo "waiting for mysql..."
+            ((attempts=attempts+1))
+            if [[ $attempts -gt 5 ]]; then
+              docker logs $(docker ps -ql)
+            fi
             sleep 1
           done
 
