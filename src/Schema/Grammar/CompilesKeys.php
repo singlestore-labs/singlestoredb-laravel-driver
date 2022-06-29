@@ -10,7 +10,6 @@ use Illuminate\Support\Fluent;
 
 trait CompilesKeys
 {
-
     public function compileShardKey(Blueprint $blueprint, Fluent $command)
     {
         return "shard key({$this->columnize($command->columns)})";
@@ -32,5 +31,4 @@ trait CompilesKeys
 
         return $compiled;
     }
-
 }

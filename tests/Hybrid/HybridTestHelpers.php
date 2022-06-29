@@ -117,7 +117,7 @@ trait HybridTestHelpers
         foreach ($records as $record) {
             DB::table('test')->insert([
                 'id' => static::$counter,
-                'data' => json_encode($record)
+                'data' => json_encode($record),
             ]);
 
             $ids[] = static::$counter++;

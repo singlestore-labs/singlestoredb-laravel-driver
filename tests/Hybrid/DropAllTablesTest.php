@@ -5,8 +5,6 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid;
 
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
@@ -18,7 +16,7 @@ class DropAllTablesTest extends BaseTest
     /** @test */
     public function it_drops_all_tables_sequentially()
     {
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
@@ -30,7 +28,7 @@ class DropAllTablesTest extends BaseTest
         $this->assertFalse(Schema::hasTable('test_drop_1'));
         $this->assertFalse(Schema::hasTable('test_drop_2'));
 
-        Schema::create('test_drop_1', function(Blueprint $table) {
+        Schema::create('test_drop_1', function (Blueprint $table) {
             $table->id();
         });
 
@@ -43,5 +41,4 @@ class DropAllTablesTest extends BaseTest
 
         $this->getConnection()->getSchemaBuilder()->dropAllTables();
     }
-
 }

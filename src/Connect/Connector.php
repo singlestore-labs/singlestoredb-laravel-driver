@@ -9,5 +9,4 @@ use Illuminate\Database\Connectors\MySqlConnector;
 
 class Connector extends MySqlConnector
 {
-
 }

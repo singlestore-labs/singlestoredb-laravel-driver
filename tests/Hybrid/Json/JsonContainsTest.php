@@ -31,13 +31,13 @@ class JsonContainsTest extends BaseTest
 
         $this->assertSame('"en"', $query->getBindings()[0]);
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
         [$id1,] = $this->insertJsonData([
             ['array' => ['en', 1, true, ['a' => 'b']]],
-            ['array' => ['es', 2, false, ['c' => 'd']]]
+            ['array' => ['es', 2, false, ['c' => 'd']]],
         ]);
 
         $this->assertEquals($id1, $query->first()->id);
@@ -56,13 +56,13 @@ class JsonContainsTest extends BaseTest
 
         $this->assertSame('1.5', $query->getBindings()[0]);
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
         [$id1,] = $this->insertJsonData([
             ['array' => ['en', 1.5, true, ['a' => 'b']]],
-            ['array' => ['es', 2.5, false, ['c' => 'd']]]
+            ['array' => ['es', 2.5, false, ['c' => 'd']]],
         ]);
 
         $this->assertEquals($id1, $query->first()->id);
@@ -81,13 +81,13 @@ class JsonContainsTest extends BaseTest
 
         $this->assertSame('1', $query->getBindings()[0]);
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
         [$id1,] = $this->insertJsonData([
             ['array' => ['en', 1, true, ['a' => 'b']]],
-            ['array' => ['es', 2, false, ['c' => 'd']]]
+            ['array' => ['es', 2, false, ['c' => 'd']]],
         ]);
 
         $this->assertEquals($id1, $query->first()->id);
@@ -106,13 +106,13 @@ class JsonContainsTest extends BaseTest
 
         $this->assertSame('true', $query->getBindings()[0]);
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
         [$id1,] = $this->insertJsonData([
             ['array' => ['en', 1, true, ['a' => 'b']]],
-            ['array' => ['es', 2, false, ['c' => 'd']]]
+            ['array' => ['es', 2, false, ['c' => 'd']]],
         ]);
 
         $this->assertEquals($id1, $query->first()->id);
@@ -131,17 +131,16 @@ class JsonContainsTest extends BaseTest
 
         $this->assertEquals('{"a":"b"}', $query->getBindings()[0]);
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
         [$id1,] = $this->insertJsonData([
             ['array' => ['en', 1, true, ['a' => 'b']]],
-            ['array' => ['es', 2, false, ['c' => 'd']]]
+            ['array' => ['es', 2, false, ['c' => 'd']]],
         ]);
 
         $this->assertEquals($id1, $query->first()->id);
         $this->assertEquals(1, $query->count());
     }
-
 }

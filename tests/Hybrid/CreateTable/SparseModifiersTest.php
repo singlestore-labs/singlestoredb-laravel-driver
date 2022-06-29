@@ -24,7 +24,7 @@ class SparseModifiersTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create rowstore table `test` (`name` varchar(255) null sparse)"
+            'create rowstore table `test` (`name` varchar(255) null sparse)'
         );
     }
 
@@ -41,7 +41,7 @@ class SparseModifiersTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create rowstore table `test` (`name` varchar(255) not null) compression = sparse"
+            'create rowstore table `test` (`name` varchar(255) not null) compression = sparse'
         );
     }
 }

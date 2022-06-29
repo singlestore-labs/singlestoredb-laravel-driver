@@ -5,9 +5,6 @@
 
 namespace SingleStore\Laravel\Tests;
 
-use Dotenv\Dotenv;
-use Hammerstone\Sidecar\Providers\SidecarServiceProvider;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Orchestra\Testbench\TestCase;
 use PDO;
 use SingleStore\Laravel\SingleStoreProvider;
@@ -28,7 +25,7 @@ abstract class BaseTest extends TestCase
     protected function getPackageProviders($app)
     {
         return [
-            SingleStoreProvider::class
+            SingleStoreProvider::class,
         ];
     }
 
@@ -39,6 +36,6 @@ abstract class BaseTest extends TestCase
         // configuration possible, making for the ideal developer experience.
         $app['config']->set('database.default', 'mysql');
         $app['config']->set('database.connections.mysql.driver', 'singlestore');
-        $app['config']->set('database.connections.mysql.options.' . PDO::ATTR_EMULATE_PREPARES, true);
+        $app['config']->set('database.connections.mysql.options.'.PDO::ATTR_EMULATE_PREPARES, true);
     }
 }

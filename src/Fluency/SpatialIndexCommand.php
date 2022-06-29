@@ -12,5 +12,4 @@ use Illuminate\Support\Fluent;
  */
 class SpatialIndexCommand extends Fluent
 {
-
 }

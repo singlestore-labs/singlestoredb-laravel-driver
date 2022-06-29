@@ -6,9 +6,6 @@
 namespace SingleStore\Laravel\Tests\Hybrid\Json;
 
 use Illuminate\Support\Facades\DB;
-use SingleStore\Laravel\Exceptions\SingleStoreDriverException;
-use SingleStore\Laravel\Exceptions\UnsupportedFunctionException;
-use SingleStore\Laravel\Query\Json;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
 
@@ -21,7 +18,7 @@ class JsonUpdateTest extends BaseTest
     {
         [$logs] = DB::pretend(function ($database) {
             $database->table('test')->update([
-                'data->value1' => true
+                'data->value1' => true,
             ]);
         });
 
@@ -34,7 +31,7 @@ class JsonUpdateTest extends BaseTest
     /** @test */
     public function set_boolean_execution()
     {
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
@@ -45,7 +42,7 @@ class JsonUpdateTest extends BaseTest
         $this->assertEquals(1, DB::table('test')->where('data->value1', false)->count());
 
         DB::table('test')->update([
-            'data->value1' => true
+            'data->value1' => true,
         ]);
 
         $this->assertEquals(0, DB::table('test')->where('data->value1', false)->count());
@@ -57,7 +54,7 @@ class JsonUpdateTest extends BaseTest
     {
         [$logs] = DB::pretend(function ($database) {
             $database->table('test')->update([
-                'data->value1' => "foo"
+                'data->value1' => 'foo',
             ]);
         });
 
@@ -72,31 +69,30 @@ class JsonUpdateTest extends BaseTest
     /** @test */
     public function set_string_execution()
     {
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
         $this->insertJsonData([
-            ['value1' => "foo"],
+            ['value1' => 'foo'],
         ]);
 
-        $this->assertEquals(1, DB::table('test')->where('data->value1', "foo")->count());
+        $this->assertEquals(1, DB::table('test')->where('data->value1', 'foo')->count());
 
         DB::table('test')->update([
-            'data->value1' => "bar"
+            'data->value1' => 'bar',
         ]);
 
-        $this->assertEquals(0, DB::table('test')->where('data->value1', "foo")->count());
-        $this->assertEquals(1, DB::table('test')->where('data->value1', "bar")->count());
+        $this->assertEquals(0, DB::table('test')->where('data->value1', 'foo')->count());
+        $this->assertEquals(1, DB::table('test')->where('data->value1', 'bar')->count());
     }
-
 
     /** @test */
     public function set_double_syntax()
     {
         [$logs] = DB::pretend(function ($database) {
             $database->table('test')->update([
-                'data->value1' => 1.3
+                'data->value1' => 1.3,
             ]);
         });
 
@@ -111,7 +107,7 @@ class JsonUpdateTest extends BaseTest
     /** @test */
     public function set_double_execution()
     {
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
@@ -122,7 +118,7 @@ class JsonUpdateTest extends BaseTest
         $this->assertEquals(1, DB::table('test')->where('data->value1', 1.3)->count());
 
         DB::table('test')->update([
-            'data->value1' => 1.5
+            'data->value1' => 1.5,
         ]);
 
         $this->assertEquals(0, DB::table('test')->where('data->value1', 1.3)->count());
@@ -134,7 +130,7 @@ class JsonUpdateTest extends BaseTest
     {
         [$logs] = DB::pretend(function ($database) {
             $database->table('test')->update([
-                'data->value1' => ['foo' => 'bar']
+                'data->value1' => ['foo' => 'bar'],
             ]);
         });
 
@@ -149,7 +145,7 @@ class JsonUpdateTest extends BaseTest
     /** @test */
     public function set_json_execution()
     {
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
@@ -160,12 +156,11 @@ class JsonUpdateTest extends BaseTest
         $this->assertEquals(1, DB::table('test')->where('data->value1', json_encode(['foo' => 'bar']))->count());
 
         DB::table('test')->update([
-            'data->value1' => ["foo" => "baz"]
+            'data->value1' => ['foo' => 'baz'],
         ]);
 
         $this->assertEquals(0, DB::table('test')->where('data->value1', json_encode(['foo' => 'bar']))->count());
 
         $this->assertEquals(1, DB::table('test')->where('data->value1', json_encode(['foo' => 'baz']))->count());
     }
-
 }

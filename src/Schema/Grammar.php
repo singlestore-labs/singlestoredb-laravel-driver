@@ -49,6 +49,7 @@ class Grammar extends MySqlGrammar
      * @param  \Illuminate\Support\Fluent  $command
      * @param  \Illuminate\Database\Connection  $connection
      * @return array
+     *
      * @throws Exception
      */
     protected function compileCreateTable($blueprint, $command, $connection)
@@ -72,7 +73,7 @@ class Grammar extends MySqlGrammar
     {
         $type = parent::getType($column);
 
-        if (!is_null($column->storedAs)) {
+        if (! is_null($column->storedAs)) {
             // MySQL's syntax for stored columns is `<name> <datatype> as (<expression>) stored`,
             // but for SingleStore it's `<name> as (<expression>) persisted <datatype>`. Here
             // we sneak the expression in as a part of the type definition, so that it will
@@ -108,6 +109,7 @@ class Grammar extends MySqlGrammar
      * @param $blueprint
      * @param $compiled
      * @return string
+     *
      * @throws Exception
      */
     protected function insertCreateTableModifiers($blueprint, $compiled)
@@ -132,6 +134,7 @@ class Grammar extends MySqlGrammar
     /**
      * @param  Blueprint  $blueprint
      * @return array
+     *
      * @throws Exception
      */
     protected function getColumns(Blueprint $blueprint)
@@ -159,7 +162,7 @@ class Grammar extends MySqlGrammar
         $compiled = parent::compileKey($blueprint, $command, $type);
 
         // We don't mess with ALTER statements at all.
-        if (!$blueprint->creating()) {
+        if (! $blueprint->creating()) {
             return $compiled;
         }
 
@@ -168,5 +171,4 @@ class Grammar extends MySqlGrammar
         // creating the indexes as a part of the create statement.
         return str_replace(sprintf('alter table %s add ', $this->wrapTable($blueprint)), '', $compiled);
     }
-
 }

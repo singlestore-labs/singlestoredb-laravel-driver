@@ -22,10 +22,9 @@ class SeriesTimestampTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create table `test` (`created_at` date not null series timestamp)"
+            'create table `test` (`created_at` date not null series timestamp)'
         );
     }
-
 
     /** @test */
     public function series_timestamp_sparse()
@@ -38,7 +37,7 @@ class SeriesTimestampTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create rowstore table `test` (`created_at` date null sparse series timestamp)"
+            'create rowstore table `test` (`created_at` date null sparse series timestamp)'
         );
     }
 }
