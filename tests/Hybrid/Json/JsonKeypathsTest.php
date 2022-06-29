@@ -6,7 +6,6 @@
 namespace SingleStore\Laravel\Tests\Hybrid\Json;
 
 use Illuminate\Support\Facades\DB;
-use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
 
@@ -20,18 +19,18 @@ class JsonKeypathsTest extends BaseTest
         $query = DB::table('test')->where('data', '[]');
 
         $this->assertEquals(
-            "select * from `test` where `data` = ?",
+            'select * from `test` where `data` = ?',
             $query->toSql()
         );
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
         [$id1,] = $this->insertJsonData([[
             //
         ], [
-            1
+            1,
         ]]);
 
         $this->assertEquals($id1, $query->first()->id);
@@ -48,16 +47,16 @@ class JsonKeypathsTest extends BaseTest
             $query->toSql()
         );
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
         [, $id2,] = $this->insertJsonData([[
-            'value1' => ['value2' => ['value3' => ['value4' => 1]]]
+            'value1' => ['value2' => ['value3' => ['value4' => 1]]],
         ], [
-            'value1' => ['value2' => ['value3' => ['value4' => 2]]]
+            'value1' => ['value2' => ['value3' => ['value4' => 2]]],
         ], [
-            'value1' => ['value2' => ['value3' => ['value4' => 3]]]
+            'value1' => ['value2' => ['value3' => ['value4' => 3]]],
         ]]);
 
         $this->assertEquals($id2, $query->first()->id);
@@ -74,14 +73,14 @@ class JsonKeypathsTest extends BaseTest
             $query->toSql()
         );
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
         [$id1,] = $this->insertJsonData([[
-            'value1' => [['value2' => [[], [], [1]]]]
+            'value1' => [['value2' => [[], [], [1]]]],
         ], [
-            'value1' => [['value2' => [[], [], [2]]]]
+            'value1' => [['value2' => [[], [], [2]]]],
         ]]);
 
         $this->assertEquals($id1, $query->first()->id);

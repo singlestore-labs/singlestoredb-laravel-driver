@@ -25,7 +25,7 @@ class MiscCreateTests extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `spatialIndex` geometry not null, `fulltext` varchar(255) not null, primary key `name1`(`primary`), index `name2`(`index`), index `name3`(`spatialIndex`), fulltext `name4`(`fulltext`))"
+            'create table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `spatialIndex` geometry not null, `fulltext` varchar(255) not null, primary key `name1`(`primary`), index `name2`(`index`), index `name3`(`spatialIndex`), fulltext `name4`(`fulltext`))'
         );
     }
 
@@ -40,7 +40,7 @@ class MiscCreateTests extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create table `test` (`name` varchar(255) not null, fulltext `idx`(`name`))"
+            'create table `test` (`name` varchar(255) not null, fulltext `idx`(`name`))'
         );
     }
 

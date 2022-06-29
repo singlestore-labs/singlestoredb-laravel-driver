@@ -6,8 +6,6 @@
 namespace SingleStore\Laravel\Tests\Hybrid\Json;
 
 use Illuminate\Support\Facades\DB;
-use SingleStore\Laravel\Query\Json;
-use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
 
@@ -31,13 +29,12 @@ class JsonWhereTest extends BaseTest
     /** @test */
     public function singlestore_will_cast_all_types()
     {
-        $query1 = DB::table('test')->where('data->value1->value2', "string");
+        $query1 = DB::table('test')->where('data->value1->value2', 'string');
         $query2 = DB::table('test')->where('data->value1->value2', 1);
         $query3 = DB::table('test')->where('data->value1->value2', 1.5);
         $query4 = DB::table('test')->where('data->value1->value2', json_encode(['a' => 'b']));
 
-
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
@@ -77,7 +74,7 @@ class JsonWhereTest extends BaseTest
             $query2->toSql()
         );
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
@@ -92,7 +89,6 @@ class JsonWhereTest extends BaseTest
         $this->assertEquals($id2, $query2->first()->id);
         $this->assertEquals(1, $query1->count());
     }
-
 
     /** @test */
     public function nested_where()
@@ -132,5 +128,4 @@ class JsonWhereTest extends BaseTest
             $query->toSql()
         );
     }
-
 }

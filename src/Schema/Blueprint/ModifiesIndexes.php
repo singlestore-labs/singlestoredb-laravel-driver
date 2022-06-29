@@ -46,6 +46,7 @@ trait ModifiesIndexes
      * which is helpful for IDE completion.
      *
      * @template T
+     *
      * @param  class-string<T>  $class
      * @return T
      */

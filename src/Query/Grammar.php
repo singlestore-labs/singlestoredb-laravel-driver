@@ -73,7 +73,7 @@ class Grammar extends MySqlGrammar
         // Break apart the column name from the JSON keypath.
         [$field, $path] = $this->wrapJsonFieldAndPath($value);
 
-        if (!$path) {
+        if (! $path) {
             return $field;
         }
 
@@ -112,9 +112,8 @@ class Grammar extends MySqlGrammar
             return "'$part'";
         }, $parts);
 
-        $path = count($parts) ? ', ' . implode(", ", $parts) : '';
+        $path = count($parts) ? ', '.implode(', ', $parts) : '';
 
         return [$field, $path];
     }
-
 }

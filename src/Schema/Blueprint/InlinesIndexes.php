@@ -7,7 +7,6 @@ namespace SingleStore\Laravel\Schema\Blueprint;
 
 use Illuminate\Database\Schema\Grammars\Grammar;
 use Illuminate\Support\Arr;
-use SingleStore\Laravel\Fluency\SpatialIndexCommand;
 
 trait InlinesIndexes
 {
@@ -18,7 +17,7 @@ trait InlinesIndexes
      */
     protected $singleStoreIndexes = [
         'shardKey',
-        'sortKey'
+        'sortKey',
     ];
 
     /**
@@ -32,13 +31,13 @@ trait InlinesIndexes
         'index',
         'fulltext',
         'fullText',
-        'spatialIndex'
+        'spatialIndex',
     ];
 
     /**
      * The keys of the commands that are indexes
      *
-     * @var integer[]
+     * @var int[]
      */
     protected $indexCommandKeys = [];
 
@@ -62,7 +61,7 @@ trait InlinesIndexes
 
         $search = static::INDEX_PLACEHOLDER;
 
-        if (!$indexStatements) {
+        if (! $indexStatements) {
             // If there are no index statements at all, we need to replace the preceding comma as well.
             $search = ", $search";
         }

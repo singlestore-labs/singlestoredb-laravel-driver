@@ -45,10 +45,9 @@ class TableModifiersTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create temporary table `test` (`name` varchar(255) not null)"
+            'create temporary table `test` (`name` varchar(255) not null)'
         );
     }
-
 
     /** @test */
     public function it_creates_a_global_temp()
@@ -63,10 +62,9 @@ class TableModifiersTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create rowstore global temporary table `test` (`name` varchar(255) not null)"
+            'create rowstore global temporary table `test` (`name` varchar(255) not null)'
         );
     }
-
 
     /** @test */
     public function it_creates_a_global_temp_chained()
@@ -79,10 +77,9 @@ class TableModifiersTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create rowstore global temporary table `test` (`name` varchar(255) not null)"
+            'create rowstore global temporary table `test` (`name` varchar(255) not null)'
         );
     }
-
 
     /** @test */
     public function it_creates_a_global_temp_style_two()
@@ -96,7 +93,7 @@ class TableModifiersTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create rowstore global temporary table `test` (`name` varchar(255) not null)"
+            'create rowstore global temporary table `test` (`name` varchar(255) not null)'
         );
     }
 
@@ -113,7 +110,7 @@ class TableModifiersTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create rowstore global temporary table `test` (`name` varchar(255) not null)"
+            'create rowstore global temporary table `test` (`name` varchar(255) not null)'
         );
     }
 
@@ -128,7 +125,7 @@ class TableModifiersTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create reference table `test` (`name` varchar(255) not null)"
+            'create reference table `test` (`name` varchar(255) not null)'
         );
     }
 
@@ -145,10 +142,9 @@ class TableModifiersTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create rowstore reference table `test` (`id` bigint unsigned not null auto_increment primary key, `name` varchar(255) not null)"
+            'create rowstore reference table `test` (`id` bigint unsigned not null auto_increment primary key, `name` varchar(255) not null)'
         );
     }
-
 
     /** @test */
     public function it_creates_a_default()
@@ -160,7 +156,7 @@ class TableModifiersTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            "create table `test` (`name` varchar(255) not null)"
+            'create table `test` (`name` varchar(255) not null)'
         );
     }
 }

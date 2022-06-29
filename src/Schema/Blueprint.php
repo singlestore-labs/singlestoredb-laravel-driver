@@ -8,9 +8,9 @@ namespace SingleStore\Laravel\Schema;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Blueprint as BaseBlueprint;
 use Illuminate\Database\Schema\Grammars\Grammar;
+use SingleStore\Laravel\Schema\Blueprint\AddsTableFlags;
 use SingleStore\Laravel\Schema\Blueprint\InlinesIndexes;
 use SingleStore\Laravel\Schema\Blueprint\ModifiesIndexes;
-use SingleStore\Laravel\Schema\Blueprint\AddsTableFlags;
 
 class Blueprint extends BaseBlueprint
 {
@@ -34,5 +34,4 @@ class Blueprint extends BaseBlueprint
 
         return $this->creating() ? $this->inlineCreateIndexStatements($statements) : $statements;
     }
-
 }

@@ -19,12 +19,12 @@ trait ModifiesColumns
      * @var string[]
      */
     protected $singleStoreModifiers = [
-        'Sparse', 'Option', 'SeriesTimestamp'
+        'Sparse', 'Option', 'SeriesTimestamp',
     ];
 
     protected function addSingleStoreModifiers()
     {
-        if (!$this->singleStoreModifiersAdded) {
+        if (! $this->singleStoreModifiersAdded) {
             $this->modifiers = array_merge($this->modifiers, $this->singleStoreModifiers);
             $this->singleStoreModifiersAdded = true;
         }
@@ -32,21 +32,21 @@ trait ModifiesColumns
 
     public function modifySparse(Blueprint $blueprint, Fluent $column)
     {
-        if (!is_null($column->sparse)) {
-            return " sparse";
+        if (! is_null($column->sparse)) {
+            return ' sparse';
         }
     }
 
     public function modifySeriesTimestamp(Blueprint $blueprint, Fluent $column)
     {
-        if (!is_null($column->seriesTimestamp)) {
-            return " series timestamp";
+        if (! is_null($column->seriesTimestamp)) {
+            return ' series timestamp';
         }
     }
 
     public function modifyOption(Blueprint $blueprint, Fluent $column)
     {
-        if (!is_null($column->option)) {
+        if (! is_null($column->option)) {
             // @TODO docs?
             return " option '$column->option'";
         }
@@ -60,7 +60,7 @@ trait ModifiesColumns
 
     protected function modifyVirtualAs(Blueprint $blueprint, Fluent $column)
     {
-        if (!is_null($column->virtualAs)) {
+        if (! is_null($column->virtualAs)) {
             throw new Exception('SingleStore does not support virtual computed columns. Use `storedAs` instead.');
         }
     }
