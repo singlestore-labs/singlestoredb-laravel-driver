@@ -11,6 +11,22 @@ use Illuminate\Database\Query\Grammars\MySqlGrammar;
 class Grammar extends MySqlGrammar
 {
     /**
+     * Compile a "where fulltext" clause.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
+     */
+    public function whereFullText(Builder $query, $where)
+    {
+        $columns = $this->columnize($where['columns']);
+
+        $value = $this->parameter($where['value']);
+
+        return "MATCH ({$columns}) AGAINST (" . $value . ")";
+    }
+
+    /**
      * @param $column
      * @param $value
      * @return string
@@ -115,21 +131,5 @@ class Grammar extends MySqlGrammar
         $path = count($parts) ? ', '.implode(', ', $parts) : '';
 
         return [$field, $path];
-    }
-
-    /**
-     * Compile a "where fulltext" clause.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    public function whereFullText(Builder $query, $where)
-    {
-        $columns = $this->columnize($where['columns']);
-
-        $value = $this->parameter($where['value']);
-
-        return "MATCH ({$columns}) AGAINST (".$value.")";
     }
 }
