@@ -47,14 +47,10 @@ class Builder extends MySqlBuilder
             return;
         }
 
-        $this->disableForeignKeyConstraints();
-
         foreach ($tables as $table) {
             $this->connection->statement(
                 $this->grammar->compileDropAllTables([$table])
             );
         }
-
-        $this->enableForeignKeyConstraints();
     }
 }
