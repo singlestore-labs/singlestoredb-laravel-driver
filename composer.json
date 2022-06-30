@@ -1,6 +1,6 @@
 {
     "name": "singlestoredb/singlestoredb-laravel",
-    "description": "A SingleStore database driver for Laravel.",
+    "description": "A SingleStoreDB database driver for Laravel.",
     "type": "library",
     "license": "Apache-2.0",
     "autoload": {
