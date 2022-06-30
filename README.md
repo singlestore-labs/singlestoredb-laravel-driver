@@ -2,8 +2,6 @@
 
 This repository contains a SingleStore Driver for Laravel.
 
-This package is currently in a pre-release beta, please use with caution and open any issues that you run into.
-
 ## Install
 
 You can install the package via composer:
