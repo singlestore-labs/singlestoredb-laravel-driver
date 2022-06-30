@@ -55,6 +55,21 @@ In case you want to store failed jobs in SingleStore, then make sure you also se
 ],
 ```
 
+## PHP Versions before 8.1
+
+In PHP versions before 8.1, the flag `PDO::ATTR_EMULATE_PREPARES` results in a bug by which all attributes returned by MySQL (and
+SingleStoreDB) are returned as strings.
+
+For example, a table with a column named `user_id` and a type of `int(10)`, if the row value is `5423` we would
+get a string like `"5423"` in PHP.
+
+This is a historic and known bug:
+
+- [https://stackoverflow.com/a/58830039/3275796](https://stackoverflow.com/a/58830039/3275796)
+- [https://github.com/php/php-src/blob/7b34db0659dda933b1146a0ff249f25acca1d669/UPGRADING#L130-L134](https://github.com/php/php-src/blob/7b34db0659dda933b1146a0ff249f25acca1d669/UPGRADING#L130-L134)
+
+The best method to solve this is to upgrade to PHP 8.1 or higher. If that's not possible, [Eloquent's attribute casting](https://laravel.com/docs/9.x/eloquent-mutators#attribute-casting) is the next best solution. 
+
 ## Migrations
 
 This driver provides many SingleStore specific methods for creating or modifying tables. They are listed below. For more information see the [Create Table](https://docs.singlestore.com/managed-service/en/reference/sql-reference/data-definition-language-ddl/create-table.html) docs on SingleStore.
