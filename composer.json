@@ -1,5 +1,5 @@
 {
-    "name": "singlestore/singlestore-laravel",
+    "name": "singlestoredb/singlestoredb-laravel",
     "description": "A SingleStore database driver for Laravel.",
     "type": "library",
     "license": "Apache-2.0",
