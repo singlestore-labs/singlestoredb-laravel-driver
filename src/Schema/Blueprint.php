@@ -34,4 +34,24 @@ class Blueprint extends BaseBlueprint
 
         return $this->creating() ? $this->inlineCreateIndexStatements($statements) : $statements;
     }
+
+    /**
+     * Specify a fulltext for the table.
+     *
+     * @param string|array $columns
+     * @param string|null $name
+     * @param string|null $algorithm
+     * @return \Illuminate\Database\Schema\IndexDefinition
+     */
+    public function fullText($columns, $name = null, $algorithm = null)
+    {
+        /**
+         * SingleStore only supports FULLTEXT indexes when using the utf8 collation.
+         * https://docs.singlestore.com/managed-service/en/reference/sql-reference/data-definition-language-ddl/create-table.html#fulltext-behavior
+         */
+        $this->charset = 'utf8';
+        $this->collation = 'utf8_unicode_ci';
+
+        return $this->indexCommand('fulltext', $columns, $name, $algorithm);
+    }
 }
