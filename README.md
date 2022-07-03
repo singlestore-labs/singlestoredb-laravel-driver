@@ -150,7 +150,7 @@ Schema::create('table', function (Blueprint $table) {
 
 ### Shard Keys
 
-You can add a [shard key](https://docs.singlestore.com/managed-service/en/getting-started-with-managed-service/about-managed-service/sharding.html) to your tables using the standalone `shardKey` method, or fluently by appending `shardKey` to the column definition.
+You can add a [shard key](https://docs.singlestore.com/managed-service/en/developer-resources/porting-tables-to-singlestoredb-cloud/shard-keys.html) to your tables using the standalone `shardKey` method, or fluently by appending `shardKey` to the column definition.
 
 ```php
 Schema::create('table', function (Blueprint $table) {
