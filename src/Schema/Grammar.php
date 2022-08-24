@@ -19,6 +19,13 @@ class Grammar extends MySqlGrammar
 {
     use CompilesKeys, ModifiesColumns;
 
+    public function __construct()
+    {
+        // Before anything kicks off, we need to add the SingleStore modifiers
+        // so that they'll get used while the columns are all compiling.
+        $this->addSingleStoreModifiers();
+    }
+
     /**
      * Create the column definition for a spatial Geography type.
      *
@@ -54,10 +61,6 @@ class Grammar extends MySqlGrammar
      */
     protected function compileCreateTable($blueprint, $command, $connection)
     {
-        // Before anything kicks off, we need to add the SingleStore modifiers
-        // so that they'll get used while the columns are all compiling.
-        $this->addSingleStoreModifiers();
-
         // We want to do as little as possible ourselves, so we rely on the parent
         // to compile everything and then potentially sneak some modifiers in.
         return $this->insertCreateTableModifiers(
