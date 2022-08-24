@@ -19,7 +19,7 @@ trait ModifiesColumns
      * @var string[]
      */
     protected $singleStoreModifiers = [
-        'SeriesTimestamp', 'Sparse', 'Option',
+        'Sparse', 'SeriesTimestamp', 'Option',
     ];
 
     protected function addSingleStoreModifiers()
