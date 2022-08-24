@@ -44,4 +44,23 @@ class SparseModifiersTest extends BaseTest
             'create rowstore table `test` (`name` varchar(255) not null) compression = sparse'
         );
     }
+
+    /** @test */
+    public function sparse_with_after()
+    {
+        // See https://github.com/singlestore-labs/singlestoredb-laravel-driver/issues/18
+        $blueprint = new Blueprint('test');
+
+        $blueprint->string('two_factor_secret')
+            ->after('password')
+            ->nullable()
+            ->sparse();
+
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertEquals(
+            'alter table `test` add `two_factor_secret` varchar(255) null sparse after `password`',
+            $statements[0]
+        );
+    }
 }

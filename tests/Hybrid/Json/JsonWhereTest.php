@@ -111,7 +111,7 @@ class JsonWhereTest extends BaseTest
         $query = DB::table('test')->whereNull('data->value1');
 
         $this->assertEquals(
-        // @TODO check docs
+            // @TODO check docs
             "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') is null OR json_type(JSON_EXTRACT_JSON(data, 'value1')) = 'NULL')",
             $query->toSql()
         );
@@ -123,7 +123,7 @@ class JsonWhereTest extends BaseTest
         $query = DB::table('test')->whereNotNull('data->value1');
 
         $this->assertEquals(
-        // @TODO check docs
+            // @TODO check docs
             "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') is not null AND json_type(JSON_EXTRACT_JSON(data, 'value1')) != 'NULL')",
             $query->toSql()
         );
