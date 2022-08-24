@@ -19,13 +19,24 @@ trait ModifiesColumns
      * @var string[]
      */
     protected $singleStoreModifiers = [
-        'Sparse', 'Option', 'SeriesTimestamp',
+        'SeriesTimestamp', 'Sparse', 'Option',
     ];
 
     protected function addSingleStoreModifiers()
     {
         if (! $this->singleStoreModifiersAdded) {
-            $this->modifiers = array_merge($this->modifiers, $this->singleStoreModifiers);
+            // We need to insert all of our modifiers before the "after" modifier,
+            // otherwise things like "sparse" will come after "after", which is
+            // invalid SQL. So we find the position of the "after" modifier in
+            // the parent, and then slot our modifiers in before it.
+            $index = array_search('After', $this->modifiers);
+
+            $this->modifiers = array_merge(
+                array_slice($this->modifiers, 0, $index),
+                $this->singleStoreModifiers,
+                array_slice($this->modifiers, $index)
+            );
+
             $this->singleStoreModifiersAdded = true;
         }
     }
