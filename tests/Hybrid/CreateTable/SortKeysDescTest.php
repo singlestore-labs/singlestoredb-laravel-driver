@@ -31,7 +31,7 @@ class SortKeysDescTest extends BaseTest
     public function it_adds_a_sort_key_desc_fluent()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
-            $table->string('name')->sortKey();
+            $table->string('name')->sortKeyDesc();
         });
 
         $this->assertCreateStatement(
