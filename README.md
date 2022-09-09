@@ -195,6 +195,20 @@ Schema::create('table', function (Blueprint $table) {
 
 ```
 
+Sort keys by default works for `asc` sort queries. If you would like to create a sort key with `desc` order, you can use the `sortKeyDesc` method.
+
+```php
+Schema::create('table', function (Blueprint $table) {
+    $table->string('name');
+
+    $table->sortKeyDesc('name');
+});
+
+Schema::create('table', function (Blueprint $table) {
+    $table->string('name')->sortKeyDesc();
+});
+```
+
 ### Series Timestamps
 To denote a column as a series timestamp, use the `seriesTimestamp` column modifier.
 
