@@ -32,6 +32,16 @@ trait ModifiesIndexes
     /**
      * @param $columns
      * @param $name
+     * @return \Illuminate\Support\Fluent
+     */
+    public function sortKeyDesc($columns, $name = null)
+    {
+        return $this->indexCommand('sortKeyDesc', $columns, $name);
+    }
+
+    /**
+     * @param $columns
+     * @param $name
      * @return SpatialIndexCommand
      */
     public function spatialIndex($columns, $name = null)

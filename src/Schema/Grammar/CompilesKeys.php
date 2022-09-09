@@ -20,6 +20,11 @@ trait CompilesKeys
         return "sort key({$this->columnize($command->columns)})";
     }
 
+    public function compileSortKeyDesc(Blueprint $blueprint, Fluent $command)
+    {
+        return "sort key({$this->columnize($command->columns)} desc)";
+    }
+
     public function compileSpatialIndex(Blueprint $blueprint, Fluent $command)
     {
         // SingleStore's spatial indexes just use the keyword `index`, not `spatial index`.

@@ -18,6 +18,7 @@ trait InlinesIndexes
     protected $singleStoreIndexes = [
         'shardKey',
         'sortKey',
+        'sortKeyDesc'
     ];
 
     /**
@@ -81,7 +82,8 @@ trait InlinesIndexes
     protected function indexCommands()
     {
         return $this->commandsNamed(array_merge(
-            $this->singleStoreIndexes, $this->mysqlIndexes
+            $this->singleStoreIndexes,
+            $this->mysqlIndexes
         ));
     }
 
