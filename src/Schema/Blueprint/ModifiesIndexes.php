@@ -24,19 +24,12 @@ trait ModifiesIndexes
      * @param $name
      * @return \Illuminate\Support\Fluent
      */
-    public function sortKey($columns, $name = null)
+    public function sortKey($columns, $name = null, $direction = 'asc')
     {
-        return $this->indexCommand('sortKey', $columns, $name);
-    }
+        $command = $this->indexCommand('sortKey', $columns, $name);
+        $command->direction = $direction;
 
-    /**
-     * @param $columns
-     * @param $name
-     * @return \Illuminate\Support\Fluent
-     */
-    public function sortKeyDesc($columns, $name = null)
-    {
-        return $this->indexCommand('sortKeyDesc', $columns, $name);
+        return $command;
     }
 
     /**

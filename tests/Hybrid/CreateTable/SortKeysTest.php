@@ -23,7 +23,21 @@ class SortKeysTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            'create table `test` (`name` varchar(255) not null, sort key(`name`))'
+            'create table `test` (`name` varchar(255) not null, sort key(`name` asc))'
+        );
+    }
+
+    /** @test */
+    public function it_adds_a_sort_key_desc_standalone()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->string('name');
+            $table->sortKey(columns: 'name', direction: 'desc');
+        });
+
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`name` varchar(255) not null, sort key(`name` desc))'
         );
     }
 
@@ -36,7 +50,7 @@ class SortKeysTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            'create table `test` (`name` varchar(255) not null, sort key(`name`))'
+            'create table `test` (`name` varchar(255) not null, sort key(`name` asc))'
         );
     }
 
@@ -51,7 +65,7 @@ class SortKeysTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            'create table `test` (`f_name` varchar(255) not null, `l_name` varchar(255) not null, sort key(`f_name`, `l_name`))'
+            'create table `test` (`f_name` varchar(255) not null, `l_name` varchar(255) not null, sort key(`f_name`, `l_name` asc))'
         );
     }
 
@@ -64,7 +78,7 @@ class SortKeysTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            'create table `test` (`name` varchar(255) not null, shard key(`name`), sort key(`name`))'
+            'create table `test` (`name` varchar(255) not null, shard key(`name`), sort key(`name` asc))'
         );
     }
 }

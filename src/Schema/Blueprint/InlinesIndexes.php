@@ -18,7 +18,6 @@ trait InlinesIndexes
     protected $singleStoreIndexes = [
         'shardKey',
         'sortKey',
-        'sortKeyDesc'
     ];
 
     /**
