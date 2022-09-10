@@ -28,11 +28,11 @@ class SortKeysTest extends BaseTest
     }
 
     /** @test */
-    public function it_adds_a_sort_key_desc_standalone()
+    public function it_adds_a_sort_key_with_desc_direction_standalone()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
             $table->string('name');
-            $table->sortKey(columns: 'name', direction: 'desc');
+            $table->sortKey('name', 'desc');
         });
 
         $this->assertCreateStatement(
@@ -51,6 +51,19 @@ class SortKeysTest extends BaseTest
         $this->assertCreateStatement(
             $blueprint,
             'create table `test` (`name` varchar(255) not null, sort key(`name` asc))'
+        );
+    }
+
+    /** @test */
+    public function it_adds_a_sort_key_with_desc_direction_fluent()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->string('name')->sortKey('desc');
+        });
+
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`name` varchar(255) not null, sort key(`name` desc))'
         );
     }
 

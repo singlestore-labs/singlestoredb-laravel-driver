@@ -195,17 +195,17 @@ Schema::create('table', function (Blueprint $table) {
 
 ```
 
-Sort keys by default works for `asc` sort queries. If you would like to create a sort key with `desc` order, you can use the `sortKeyDesc` method.
+Sort keys by default works only for `asc` sort queries. If you would like to create a sort key with `desc` order, you can set the key direction.
 
 ```php
 Schema::create('table', function (Blueprint $table) {
     $table->string('name');
 
-    $table->sortKeyDesc('name');
+    $table->sortKey('name', 'desc');
 });
 
 Schema::create('table', function (Blueprint $table) {
-    $table->string('name')->sortKeyDesc();
+    $table->string('name')->sortKey('desc');
 });
 ```
 

@@ -117,7 +117,12 @@ trait InlinesIndexes
         foreach ($this->columns as $column) {
             foreach ($this->singleStoreIndexes as $index) {
                 if (isset($column->{$index})) {
-                    $this->{$index}($column->name, ($column->{$index} === true ? null : $column->{$index}));
+                    if ($column->{$index} === true) {
+                        $this->{$index}($column->name);
+                    } else {
+                        $this->{$index}($column->name, $column->{$index});
+                    }
+
                     $column->{$index} = false;
                 }
             }
