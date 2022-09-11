@@ -81,7 +81,8 @@ trait InlinesIndexes
     protected function indexCommands()
     {
         return $this->commandsNamed(array_merge(
-            $this->singleStoreIndexes, $this->mysqlIndexes
+            $this->singleStoreIndexes,
+            $this->mysqlIndexes
         ));
     }
 
@@ -116,7 +117,14 @@ trait InlinesIndexes
         foreach ($this->columns as $column) {
             foreach ($this->singleStoreIndexes as $index) {
                 if (isset($column->{$index})) {
-                    $this->{$index}($column->name, ($column->{$index} === true ? null : $column->{$index}));
+                    $command = $this->{$index}($column->name, ($column->{$index} === true ? null : $column->{$index}));
+
+                    // Forward with attributes if sortKey
+                    if ($index === 'sortKey' && isset($column->with)) {
+                        $command->with($column->with);
+                        $column->with = null;
+                    }
+
                     $column->{$index} = false;
                 }
             }
