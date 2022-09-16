@@ -15,6 +15,7 @@ This package is currently in a pre-release beta, please use with caution and ope
   - [Sparse Tables](#sparse-tables)
   - [Shard Keys](#shard-keys)
   - [Sort Keys](#sort-keys)
+  - [Unique Keys](#unique-keys)
   - [Series Timestamps](#series-timestamps)
   - [Computed Columns](#computed-columns)
 - [Testing](#testing)
@@ -214,7 +215,6 @@ Schema::create('table', function (Blueprint $table) {
 
     $table->sortKey(['f_name', 'l_name']);
 });
-
 ```
 
 Sort keys by default works only for `asc` sort queries. If you would like to create a sort key with `desc` order, you can set the key direction.
@@ -228,6 +228,28 @@ Schema::create('table', function (Blueprint $table) {
 
 Schema::create('table', function (Blueprint $table) {
     $table->string('name')->sortKey('desc');
+});
+```
+
+### Unique Keys
+
+You can add an `unique key` to your tables using the standalone `unique` method, or fluently by appending `unique` to the column definition.
+
+> **Note:**
+> SingleStore requires that the shard key is contained within an unique key. This means that in most cases you can't use the fluent api as you will likely need to specify more than one column. This restriction does not apply to reference tables.
+
+```php
+Schema::create('table', function (Blueprint $table) {
+    $table->string('key');
+    $table->string('val');
+
+    $table->shardKey('key');
+    $table->unique(['key', 'val']);
+});
+
+Schema::create('table', function (Blueprint $table) {
+    $table->reference();
+    $table->string('name')->unique();
 });
 ```
 
