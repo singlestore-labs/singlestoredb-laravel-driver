@@ -250,7 +250,7 @@ Schema::create('table', function (Blueprint $table) {
 
 You can add an `unique key` to your tables using the standalone `unique` method, or fluently by appending `unique` to the column definition.
 
-> **Note:**
+> **Note**
 > SingleStore requires that the shard key is contained within an unique key. This means that in most cases you can't use the fluent api as you will likely need to specify more than one column. This restriction does not apply to reference tables.
 
 ```php
