@@ -6,6 +6,7 @@ This package is currently in a pre-release beta, please use with caution and ope
 
 - [Install](#install)
 - [Usage](#usage)
+- [Issues connecting to SingleStore Managed Service](#issues-connecting-to-singlestore-managed-service)
 - [PHP Versions before 8.1](#php-versions-before-81)
 - [Migrations](#migrations)
   - [Rowstore Tables](#rowstore-tables)
@@ -76,6 +77,20 @@ In case you want to store failed jobs in SingleStore, then make sure you also se
     'database' => env('DB_CONNECTION', 'singlestore'),
     'table' => 'failed_jobs',
 ],
+```
+
+## Issues connecting to SingleStore Managed Service
+
+If you are encountering issues connecting to the SingleStore Managed Service, it may be due to your environment not being able to verify the SSL certificate used to secure connections. You can fix this by downloading and manually specifying the SingleStore certificate file.
+
+* [Download the file here](https://portal.singlestore.com/static/ca/singlestore_bundle.pem)
+* In the Laravel SingleStore connection configuration, point the variable `PDO::MYSQL_ATTR_SSL_CA` at `singlestore_bundle.pem`:
+
+```php
+'options' => extension_loaded('pdo_mysql') ? array_filter([
+    PDO::MYSQL_ATTR_SSL_CA => 'path/to/singlestore_bundle.pem',
+    PDO::ATTR_EMULATE_PREPARES => true,
+]) : [],
 ```
 
 ## PHP Versions before 8.1
