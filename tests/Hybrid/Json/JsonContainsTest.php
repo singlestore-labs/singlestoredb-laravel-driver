@@ -35,7 +35,7 @@ class JsonContainsTest extends BaseTest
             return;
         }
 
-        [$id1,] = $this->insertJsonData([
+        [$id1] = $this->insertJsonData([
             ['array' => ['en', 1, true, ['a' => 'b']]],
             ['array' => ['es', 2, false, ['c' => 'd']]],
         ]);
@@ -60,7 +60,7 @@ class JsonContainsTest extends BaseTest
             return;
         }
 
-        [$id1,] = $this->insertJsonData([
+        [$id1] = $this->insertJsonData([
             ['array' => ['en', 1.5, true, ['a' => 'b']]],
             ['array' => ['es', 2.5, false, ['c' => 'd']]],
         ]);
@@ -85,7 +85,7 @@ class JsonContainsTest extends BaseTest
             return;
         }
 
-        [$id1,] = $this->insertJsonData([
+        [$id1] = $this->insertJsonData([
             ['array' => ['en', 1, true, ['a' => 'b']]],
             ['array' => ['es', 2, false, ['c' => 'd']]],
         ]);
@@ -110,7 +110,7 @@ class JsonContainsTest extends BaseTest
             return;
         }
 
-        [$id1,] = $this->insertJsonData([
+        [$id1] = $this->insertJsonData([
             ['array' => ['en', 1, true, ['a' => 'b']]],
             ['array' => ['es', 2, false, ['c' => 'd']]],
         ]);
@@ -135,7 +135,7 @@ class JsonContainsTest extends BaseTest
             return;
         }
 
-        [$id1,] = $this->insertJsonData([
+        [$id1] = $this->insertJsonData([
             ['array' => ['en', 1, true, ['a' => 'b']]],
             ['array' => ['es', 2, false, ['c' => 'd']]],
         ]);

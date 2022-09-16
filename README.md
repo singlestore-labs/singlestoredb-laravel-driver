@@ -1,6 +1,26 @@
-# SingleStore Driver for Laravel
+# SingleStore Driver for Laravel <!-- omit in toc -->
 
 This repository contains a SingleStore Driver for Laravel.
+
+This package is currently in a pre-release beta, please use with caution and open any issues that you run into.
+
+- [Install](#install)
+- [Usage](#usage)
+- [PHP Versions before 8.1](#php-versions-before-81)
+- [Migrations](#migrations)
+  - [Rowstore Tables](#rowstore-tables)
+  - [Reference Tables](#reference-tables)
+  - [Global Temporary Tables](#global-temporary-tables)
+  - [Sparse Columns](#sparse-columns)
+  - [Sparse Tables](#sparse-tables)
+  - [Shard Keys](#shard-keys)
+  - [Sort Keys](#sort-keys)
+  - [Series Timestamps](#series-timestamps)
+  - [Computed Columns](#computed-columns)
+- [Testing](#testing)
+- [License](#license)
+- [Resources](#resources)
+- [User agreement](#user-agreement)
 
 ## Install
 
@@ -9,6 +29,8 @@ You can install the package via composer:
 ```shell
 composer require singlestoredb/singlestoredb-laravel
 ```
+
+**This package requires pdo_mysql** to be installed. If you aren't sure check to see if `pdo_mysql` is listed when you run `php -i`.
 
 ## Usage
 

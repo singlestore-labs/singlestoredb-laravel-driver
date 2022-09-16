@@ -27,7 +27,7 @@ class JsonKeypathsTest extends BaseTest
             return;
         }
 
-        [$id1,] = $this->insertJsonData([[
+        [$id1] = $this->insertJsonData([[
             //
         ], [
             1,
@@ -51,7 +51,7 @@ class JsonKeypathsTest extends BaseTest
             return;
         }
 
-        [, $id2,] = $this->insertJsonData([[
+        [, $id2] = $this->insertJsonData([[
             'value1' => ['value2' => ['value3' => ['value4' => 1]]],
         ], [
             'value1' => ['value2' => ['value3' => ['value4' => 2]]],
@@ -77,7 +77,7 @@ class JsonKeypathsTest extends BaseTest
             return;
         }
 
-        [$id1,] = $this->insertJsonData([[
+        [$id1] = $this->insertJsonData([[
             'value1' => [['value2' => [[], [], [1]]]],
         ], [
             'value1' => [['value2' => [[], [], [2]]]],
