@@ -17,7 +17,7 @@ trait CompilesKeys
 
     public function compileSortKey(Blueprint $blueprint, Fluent $command)
     {
-        return "sort key({$this->columnize($command->columns)})";
+        return "sort key({$this->columnize($command->columns)} {$command->direction})";
     }
 
     public function compileSpatialIndex(Blueprint $blueprint, Fluent $command)
