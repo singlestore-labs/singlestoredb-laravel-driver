@@ -105,7 +105,7 @@ class SortKeysTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            'create table `test` (`name` varchar(255) not null, sort key(`name`) with (columnstore_segment_rows=100000))'
+            'create table `test` (`name` varchar(255) not null, sort key(`name` asc) with (columnstore_segment_rows=100000))'
         );
     }
 
@@ -118,7 +118,7 @@ class SortKeysTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            'create table `test` (`name` varchar(255) not null, sort key(`name`) with (columnstore_segment_rows=100000))'
+            'create table `test` (`name` varchar(255) not null, sort key(`name` asc) with (columnstore_segment_rows=100000))'
         );
     }
 
@@ -134,7 +134,7 @@ class SortKeysTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            'create table `test` (`name` varchar(255) not null, sort key(`name`) with (columnstore_segment_rows=100000,columnstore_flush_bytes=4194304))'
+            'create table `test` (`name` varchar(255) not null, sort key(`name` asc) with (columnstore_segment_rows=100000,columnstore_flush_bytes=4194304))'
         );
     }
 }
