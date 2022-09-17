@@ -11,22 +11,24 @@ trait ModifiesIndexes
 {
     /**
      * @param $columns
-     * @param $name
      * @return \Illuminate\Support\Fluent
      */
-    public function shardKey($columns, $name = null)
+    public function shardKey($columns)
     {
-        return $this->indexCommand('shardKey', $columns, $name);
+        return $this->indexCommand('shardKey', $columns, null);
     }
 
     /**
      * @param $columns
-     * @param $name
+     * @param $direction
      * @return \Illuminate\Support\Fluent
      */
-    public function sortKey($columns, $name = null)
+    public function sortKey($columns, $direction = 'asc')
     {
-        return $this->indexCommand('sortKey', $columns, $name);
+        $command = $this->indexCommand('sortKey', $columns, null);
+        $command->direction = $direction;
+
+        return $command;
     }
 
     /**
