@@ -1,6 +1,30 @@
-# SingleStore Driver for Laravel
+# SingleStore Driver for Laravel <!-- omit in toc -->
+
+[![Latest Stable Version](http://poser.pugx.org/singlestoredb/singlestoredb-laravel/v)](https://packagist.org/packages/singlestoredb/singlestoredb-laravel) [![Total Downloads](http://poser.pugx.org/singlestoredb/singlestoredb-laravel/downloads)](https://packagist.org/packages/singlestoredb/singlestoredb-laravel) [![License](http://poser.pugx.org/singlestoredb/singlestoredb-laravel/license)](https://packagist.org/packages/singlestoredb/singlestoredb-laravel) [![PHP Version Require](http://poser.pugx.org/singlestoredb/singlestoredb-laravel/require/php)](https://packagist.org/packages/singlestoredb/singlestoredb-laravel) [![Github Actions status image](https://github.com/singlestore-labs/singlestoredb-laravel-driver/actions/workflows/tests.yml/badge.svg)](https://github.com/singlestore-labs/singlestoredb-laravel-driver/actions)
 
 This repository contains a SingleStore Driver for Laravel.
+
+This package is currently in a pre-release beta, please use with caution and open any issues that you run into.
+
+- [Install](#install)
+- [Usage](#usage)
+- [Issues connecting to SingleStore Managed Service](#issues-connecting-to-singlestore-managed-service)
+- [PHP Versions before 8.1](#php-versions-before-81)
+- [Migrations](#migrations)
+  - [Rowstore Tables](#rowstore-tables)
+  - [Reference Tables](#reference-tables)
+  - [Global Temporary Tables](#global-temporary-tables)
+  - [Sparse Columns](#sparse-columns)
+  - [Sparse Tables](#sparse-tables)
+  - [Shard Keys](#shard-keys)
+  - [Sort Keys](#sort-keys)
+  - [Unique Keys](#unique-keys)
+  - [Series Timestamps](#series-timestamps)
+  - [Computed Columns](#computed-columns)
+- [Testing](#testing)
+- [License](#license)
+- [Resources](#resources)
+- [User agreement](#user-agreement)
 
 ## Install
 
@@ -9,6 +33,8 @@ You can install the package via composer:
 ```shell
 composer require singlestoredb/singlestoredb-laravel
 ```
+
+**This package requires pdo_mysql** to be installed. If you aren't sure check to see if `pdo_mysql` is listed when you run `php -i`.
 
 ## Usage
 
@@ -53,6 +79,20 @@ In case you want to store failed jobs in SingleStore, then make sure you also se
     'database' => env('DB_CONNECTION', 'singlestore'),
     'table' => 'failed_jobs',
 ],
+```
+
+## Issues connecting to SingleStore Managed Service
+
+If you are encountering issues connecting to the SingleStore Managed Service, it may be due to your environment not being able to verify the SSL certificate used to secure connections. You can fix this by downloading and manually specifying the SingleStore certificate file.
+
+* [Download the file here](https://portal.singlestore.com/static/ca/singlestore_bundle.pem)
+* In the Laravel SingleStore connection configuration, point the variable `PDO::MYSQL_ATTR_SSL_CA` at `singlestore_bundle.pem`:
+
+```php
+'options' => extension_loaded('pdo_mysql') ? array_filter([
+    PDO::MYSQL_ATTR_SSL_CA => 'path/to/singlestore_bundle.pem',
+    PDO::ATTR_EMULATE_PREPARES => true,
+]) : [],
 ```
 
 ## PHP Versions before 8.1
@@ -192,7 +232,42 @@ Schema::create('table', function (Blueprint $table) {
 
     $table->sortKey(['f_name', 'l_name']);
 });
+```
 
+Sort keys by default works only for `asc` sort queries. If you would like to create a sort key with `desc` order, you can set the key direction.
+
+```php
+Schema::create('table', function (Blueprint $table) {
+    $table->string('name');
+
+    $table->sortKey('name', 'desc');
+});
+
+Schema::create('table', function (Blueprint $table) {
+    $table->string('name')->sortKey('desc');
+});
+```
+
+### Unique Keys
+
+You can add an `unique key` to your tables using the standalone `unique` method, or fluently by appending `unique` to the column definition.
+
+> **Note**
+> SingleStore requires that the shard key is contained within an unique key. This means that in most cases you can't use the fluent api as you will likely need to specify more than one column. This restriction does not apply to reference tables.
+
+```php
+Schema::create('table', function (Blueprint $table) {
+    $table->string('key');
+    $table->string('val');
+
+    $table->shardKey('key');
+    $table->unique(['key', 'val']);
+});
+
+Schema::create('table', function (Blueprint $table) {
+    $table->reference();
+    $table->string('name')->unique();
+});
 ```
 
 ### Series Timestamps
