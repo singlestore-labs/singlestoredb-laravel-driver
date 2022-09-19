@@ -18,11 +18,14 @@ class IncrementWithoutPrimaryKeyTest extends BaseTest
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
             $table->bigIncrements('id')->withoutPrimaryKey();
+            $table->uuid('uuid');
+
+            $table->primary(['id', 'uuid']);
         });
 
         $this->assertCreateStatement(
             $blueprint,
-            'create table `test` (`id` bigint unsigned not null auto_increment)'
+            'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key `test_id_uuid_primary`(`id`, `uuid`))'
         );
     }
 
@@ -31,11 +34,14 @@ class IncrementWithoutPrimaryKeyTest extends BaseTest
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
             $table->id()->withoutPrimaryKey();
+            $table->uuid('uuid');
+
+            $table->primary(['id', 'uuid']);
         });
 
         $this->assertCreateStatement(
             $blueprint,
-            'create table `test` (`id` bigint unsigned not null auto_increment)'
+            'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key `test_id_uuid_primary`(`id`, `uuid`))'
         );
     }
 }
