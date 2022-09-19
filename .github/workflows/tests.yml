@@ -50,7 +50,9 @@ jobs:
         ports:
           - "3306:3306"
         env:
-          SINGLESTORE_LICENSE: ${{ secrets.SINGLESTORE_LICENSE }}
+          # this license key is only authorized for use in SingleStore laravel tests and is heavily restricted
+          # if you want a free SingleStore license for your own use please visit https://www.singlestore.com/cloud-trial/
+          SINGLESTORE_LICENSE: BGIxODZiYTg1YWUxYjRlODRhYzRjMGFmYTA1OTkxYzgyAAAAAAAAAAABAAAAAAAAACgwNQIZANx4NIXJ7CWvKYYb3wIyRXxBY7fdAnLeSwIYLy2Q0jA124GAkl04yuGrD59Zpv85DVYXAA==
           ROOT_PASSWORD: "test"
 
     steps:
