@@ -294,6 +294,20 @@ Schema::create('test', function (Blueprint $table) {
 });
 ```
 
+### Increment Columns without Primary Key
+
+Sometimes you may want to set a custom primary key. However if your table has an int `increment` column,
+Laravel, by default, always sets this column as the primary key. Even if you manually set another one. This behavior can be disabled using the `withoutPrimaryKey` method.
+
+```php
+Schema::create('test', function (Blueprint $table) {
+    $table->id()->withoutPrimaryKey();
+    $table->uuid('uuid');
+    
+    $table->primaryKey(['id',  'uuid']);
+});
+```
+
 ## Testing
 
 Execute the tests using PHPUnit
