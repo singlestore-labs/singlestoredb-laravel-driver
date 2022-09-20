@@ -17,6 +17,14 @@ trait CompilesKeys
 
     public function compileSortKey(Blueprint $blueprint, Fluent $command)
     {
+        if (is_array($command->with)) {
+            $compiled = collect($command->with)->map(function ($value, $variable) {
+                return "{$variable}={$value}";
+            })->join(',');
+
+            return "sort key({$this->columnize($command->columns)} {$command->direction}) with ({$compiled})";
+        }
+
         return "sort key({$this->columnize($command->columns)} {$command->direction})";
     }
 
