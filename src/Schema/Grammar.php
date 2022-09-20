@@ -187,11 +187,11 @@ class Grammar extends MySqlGrammar
     {
         $wrapped = array_map([$this, 'wrap'], $columns);
 
-        return implode(", ", array_map(function ($column) use ($direction) {
-            return $column . ' ' . $direction;
+        return implode(', ', array_map(function ($column) use ($direction) {
+            return $column.' '.$direction;
         }, $wrapped));
-     }
-     
+    }
+
     /**
      * Get the SQL for an auto-increment column modifier.
      *
