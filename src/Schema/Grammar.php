@@ -17,7 +17,8 @@ use SingleStore\Laravel\Schema\Grammar\ModifiesColumns;
 
 class Grammar extends MySqlGrammar
 {
-    use CompilesKeys, ModifiesColumns;
+    use CompilesKeys;
+    use ModifiesColumns;
 
     public function __construct()
     {
@@ -64,7 +65,8 @@ class Grammar extends MySqlGrammar
         // We want to do as little as possible ourselves, so we rely on the parent
         // to compile everything and then potentially sneak some modifiers in.
         return $this->insertCreateTableModifiers(
-            $blueprint, parent::compileCreateTable($blueprint, $command, $connection)
+            $blueprint,
+            parent::compileCreateTable($blueprint, $command, $connection)
         );
     }
 
@@ -173,5 +175,20 @@ class Grammar extends MySqlGrammar
         // removing the `alter table %s add` gives us the right syntax for
         // creating the indexes as a part of the create statement.
         return str_replace(sprintf('alter table %s add ', $this->wrapTable($blueprint)), '', $compiled);
+    }
+
+    /**
+     * Convert an array of column names into a delimited string (with direction parameter).
+     *
+     * @param  array  $columns
+     * @return string
+     */
+    protected function columnizeWithDirection(array $columns, string $direction)
+    {
+        $wrapped = array_map([$this, 'wrap'], $columns);
+
+        return implode(", ", array_map(function ($column) use ($direction) {
+            return $column . ' ' . $direction;
+        }, $wrapped));
     }
 }
