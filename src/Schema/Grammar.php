@@ -190,5 +190,21 @@ class Grammar extends MySqlGrammar
         return implode(", ", array_map(function ($column) use ($direction) {
             return $column . ' ' . $direction;
         }, $wrapped));
+     }
+     
+    /**
+     * Get the SQL for an auto-increment column modifier.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string|null
+     */
+    protected function modifyIncrement(Blueprint $blueprint, Fluent $column)
+    {
+        if (in_array($column->type, $this->serials) && $column->autoIncrement) {
+            return ($column->withoutPrimaryKey === true)
+                ? ' auto_increment'
+                : ' auto_increment primary key';
+        }
     }
 }

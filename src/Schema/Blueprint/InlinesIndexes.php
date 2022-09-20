@@ -118,9 +118,15 @@ trait InlinesIndexes
             foreach ($this->singleStoreIndexes as $index) {
                 if (isset($column->{$index})) {
                     if ($column->{$index} === true) {
-                        $this->{$index}($column->name);
+                        $command = $this->{$index}($column->name);
                     } else {
-                        $this->{$index}($column->name, $column->{$index});
+                        $command = $this->{$index}($column->name, $column->{$index});
+                    }
+
+                    // Forward with attributes if sortKey
+                    if ($index === 'sortKey' && isset($column->with)) {
+                        $command->with($column->with);
+                        $column->with = null;
                     }
 
                     $column->{$index} = false;

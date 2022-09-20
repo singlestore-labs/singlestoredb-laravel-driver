@@ -270,6 +270,22 @@ Schema::create('table', function (Blueprint $table) {
 });
 ```
 
+### Sort Keys - Columnstore variables
+
+Sometimes you may want to customize your [columstore variables](https://docs.singlestore.com/managed-service/en/create-a-database/physical-database-schema-design/procedures-for-physical-database-schema-design/configuring-the-columnstore-to-work-effectively.html) individually per table. You can do it by appending `with` fluently to the `sortKey` definition.
+
+```php
+Schema::create('table', function (Blueprint $table) {
+    $table->string('name');
+
+    $table->sortKey('name')->with(['columnstore_segment_rows' => 100000]);
+});
+
+Schema::create('table', function (Blueprint $table) {
+    $table->string('name')->sortKey()->with(['columnstore_segment_rows' => 100000]);
+});
+```
+
 ### Series Timestamps
 To denote a column as a series timestamp, use the `seriesTimestamp` column modifier.
 
@@ -291,6 +307,20 @@ Schema::create('test', function (Blueprint $table) {
     $table->integer('a');
     $table->integer('b');
     $table->integer('c')->storedAs('a + b');
+});
+```
+
+### Increment Columns without Primary Key
+
+Sometimes you may want to set a custom primary key. However if your table has an int `increment` column,
+Laravel, by default, always sets this column as the primary key. Even if you manually set another one. This behavior can be disabled using the `withoutPrimaryKey` method.
+
+```php
+Schema::create('test', function (Blueprint $table) {
+    $table->id()->withoutPrimaryKey();
+    $table->uuid('uuid');
+    
+    $table->primaryKey(['id',  'uuid']);
 });
 ```
 

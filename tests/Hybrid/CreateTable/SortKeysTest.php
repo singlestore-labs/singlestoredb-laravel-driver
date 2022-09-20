@@ -94,4 +94,47 @@ class SortKeysTest extends BaseTest
             'create table `test` (`name` varchar(255) not null, shard key(`name`), sort key(`name` asc))'
         );
     }
+
+    /** @test */
+    public function it_adds_a_sort_key_with_with_statement()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->string('name');
+            $table->sortKey('name')->with(['columnstore_segment_rows' => 100000]);
+        });
+
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`name` varchar(255) not null, sort key(`name` asc) with (columnstore_segment_rows=100000))'
+        );
+    }
+
+    /** @test */
+    public function it_adds_a_sort_key_fluent_with_with_statement()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->string('name')->sortKey()->with(['columnstore_segment_rows' => 100000]);
+        });
+
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`name` varchar(255) not null, sort key(`name` asc) with (columnstore_segment_rows=100000))'
+        );
+    }
+
+    /** @test */
+    public function it_adds_a_sort_key_fluent_with_dual_with_statement()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->string('name')->sortKey()->with([
+                'columnstore_segment_rows' => 100000,
+                'columnstore_flush_bytes' => 4194304,
+            ]);
+        });
+
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`name` varchar(255) not null, sort key(`name` asc) with (columnstore_segment_rows=100000,columnstore_flush_bytes=4194304))'
+        );
+    }
 }
