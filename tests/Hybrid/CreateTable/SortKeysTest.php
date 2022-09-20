@@ -78,7 +78,7 @@ class SortKeysTest extends BaseTest
 
         $this->assertCreateStatement(
             $blueprint,
-            'create table `test` (`f_name` varchar(255) not null, `l_name` varchar(255) not null, sort key(`f_name`, `l_name` asc))'
+            'create table `test` (`f_name` varchar(255) not null, `l_name` varchar(255) not null, sort key(`f_name` asc, `l_name` asc))'
         );
     }
 

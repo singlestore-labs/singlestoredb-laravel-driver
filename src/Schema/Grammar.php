@@ -178,6 +178,21 @@ class Grammar extends MySqlGrammar
     }
 
     /**
+     * Convert an array of column names into a delimited string (with direction parameter).
+     *
+     * @param  array  $columns
+     * @return string
+     */
+    protected function columnizeWithDirection(array $columns, string $direction)
+    {
+        $wrapped = array_map([$this, 'wrap'], $columns);
+
+        return implode(", ", array_map(function ($column) use ($direction) {
+            return $column . ' ' . $direction;
+        }, $wrapped));
+     }
+     
+    /**
      * Get the SQL for an auto-increment column modifier.
      *
      * @param  \Illuminate\Database\Schema\Blueprint  $blueprint

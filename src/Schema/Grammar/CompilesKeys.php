@@ -22,10 +22,10 @@ trait CompilesKeys
                 return "{$variable}={$value}";
             })->join(',');
 
-            return "sort key({$this->columnize($command->columns)} {$command->direction}) with ({$compiled})";
+            return "sort key({$this->columnizeWithDirection($command->columns, $command->direction)}) with ({$compiled})";
         }
 
-        return "sort key({$this->columnize($command->columns)} {$command->direction})";
+        return "sort key({$this->columnizeWithDirection($command->columns, $command->direction)})";
     }
 
     public function compileSpatialIndex(Blueprint $blueprint, Fluent $command)
