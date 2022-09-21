@@ -200,13 +200,13 @@ class Grammar extends MySqlGrammar
             }, $columnNames, $columnDirections));
         }
 
+        if (array_filter($columns, 'is_array') !== []) {
+            throw new InvalidArgumentException('You must set the direction for each sort key column or use the second parameter to set the direction for all sort key columns');
+        }
+
         $wrapped = array_map([$this, 'wrap'], $columns);
 
         return implode(', ', array_map(function ($column) use ($direction) {
-            if (is_array($column)) {
-                throw new InvalidArgumentException('You must set the direction for each sort key column or use the second parameter to set the direction for all sort key columns');
-            }
-
             return $column.' '.$direction;
         }, $wrapped));
     }

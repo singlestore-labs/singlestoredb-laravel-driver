@@ -5,6 +5,7 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
+use InvalidArgumentException;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
@@ -110,6 +111,34 @@ class SortKeysTest extends BaseTest
             $blueprint,
             'create table `test` (`f_name` varchar(255) not null, `l_name` varchar(255) not null, sort key(`f_name` asc, `l_name` desc))'
         );
+    }
+
+    /** @test */
+    public function it_cannot_add_a_dual_sort_key_with_only_one_direction()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->string('f_name');
+            $table->string('l_name');
+            $table->sortKey(['f_name', ['l_name', 'desc']]);
+        });
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $blueprint->toSql($this->getConnection(), $this->getGrammar());
+    }
+
+    /** @test */
+    public function it_cannot_add_a_dual_sort_key_with_only_one_direction_desc()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->string('f_name');
+            $table->string('l_name');
+            $table->sortKey(['f_name', ['l_name', 'asc']], 'desc');
+        });
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $blueprint->toSql($this->getConnection(), $this->getGrammar());
     }
 
     /** @test */
