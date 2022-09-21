@@ -204,7 +204,7 @@ class Grammar extends MySqlGrammar
 
         return implode(', ', array_map(function ($column) use ($direction) {
             if (is_array($column)) {
-                throw new InvalidArgumentException('You must set the direction for each key column or use the second parameter to set the direction for all key columns');
+                throw new InvalidArgumentException('You must set the direction for each sort key column or use the second parameter to set the direction for all sort key columns');
             }
 
             return $column.' '.$direction;

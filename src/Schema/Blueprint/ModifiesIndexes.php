@@ -15,7 +15,7 @@ trait ModifiesIndexes
      */
     public function shardKey($columns)
     {
-        return $this->indexCommand('shardKey', $columns, 'shardKeyName');
+        return $this->indexCommand('shardKey', $columns, 'shardKeyDummyName');
     }
 
     /**
@@ -25,7 +25,7 @@ trait ModifiesIndexes
      */
     public function sortKey($columns, $direction = 'asc')
     {
-        $command = $this->indexCommand('sortKey', $columns, 'sortKeyName');
+        $command = $this->indexCommand('sortKey', $columns, 'sortKeyDummyName');
         $command->direction = $direction;
 
         return $command;
