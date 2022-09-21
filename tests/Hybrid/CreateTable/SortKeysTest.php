@@ -83,6 +83,36 @@ class SortKeysTest extends BaseTest
     }
 
     /** @test */
+    public function it_adds_a_dual_sort_key_with_desc_direction()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->string('f_name');
+            $table->string('l_name');
+            $table->sortKey(['f_name', 'l_name'], 'desc');
+        });
+
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`f_name` varchar(255) not null, `l_name` varchar(255) not null, sort key(`f_name` desc, `l_name` desc))'
+        );
+    }
+
+    /** @test */
+    public function it_adds_a_dual_sort_key_with_different_directions()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->string('f_name');
+            $table->string('l_name');
+            $table->sortKey([['f_name', 'asc'], ['l_name', 'desc']]);
+        });
+
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`f_name` varchar(255) not null, `l_name` varchar(255) not null, sort key(`f_name` asc, `l_name` desc))'
+        );
+    }
+
+    /** @test */
     public function shard_and_sort_keys()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
