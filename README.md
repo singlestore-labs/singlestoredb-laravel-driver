@@ -248,6 +248,17 @@ Schema::create('table', function (Blueprint $table) {
 });
 ```
 
+You may also define the sort key direction per-column using the following syntax:
+
+```php
+Schema::create('table', function (Blueprint $table) {
+    $table->string('f_name');
+    $table->string('l_name');
+
+    $table->sortKey([['f_name', 'asc'], ['l_name', 'desc']]);
+});
+```
+
 ### Unique Keys
 
 You can add an `unique key` to your tables using the standalone `unique` method, or fluently by appending `unique` to the column definition.
