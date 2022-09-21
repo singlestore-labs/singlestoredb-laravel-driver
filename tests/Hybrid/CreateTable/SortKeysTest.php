@@ -116,13 +116,13 @@ class SortKeysTest extends BaseTest
     /** @test */
     public function it_cannot_add_a_dual_sort_key_with_only_one_direction()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $blueprint = $this->createTable(function (Blueprint $table) {
             $table->string('f_name');
             $table->string('l_name');
             $table->sortKey(['f_name', ['l_name', 'desc']]);
         });
-
-        $this->expectException(InvalidArgumentException::class);
 
         $blueprint->toSql($this->getConnection(), $this->getGrammar());
     }
@@ -130,13 +130,13 @@ class SortKeysTest extends BaseTest
     /** @test */
     public function it_cannot_add_a_dual_sort_key_with_only_one_direction_desc()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $blueprint = $this->createTable(function (Blueprint $table) {
             $table->string('f_name');
             $table->string('l_name');
             $table->sortKey(['f_name', ['l_name', 'asc']], 'desc');
         });
-
-        $this->expectException(InvalidArgumentException::class);
 
         $blueprint->toSql($this->getConnection(), $this->getGrammar());
     }
