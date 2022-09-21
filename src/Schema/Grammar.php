@@ -11,6 +11,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\Grammars\MySqlGrammar;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use SingleStore\Laravel\Schema\Blueprint as SingleStoreBlueprint;
 use SingleStore\Laravel\Schema\Grammar\CompilesKeys;
 use SingleStore\Laravel\Schema\Grammar\ModifiesColumns;
@@ -185,6 +186,24 @@ class Grammar extends MySqlGrammar
      */
     protected function columnizeWithDirection(array $columns, string $direction)
     {
+        if ($columns === array_filter($columns, 'is_array')) {
+            $columnNames = array_map(function ($column) {
+                return $this->wrap($column[0]);
+            }, $columns);
+
+            $columnDirections = array_map(function ($column) {
+                return $column[1];
+            }, $columns);
+
+            return implode(', ', array_map(function ($column, $direction) {
+                return "$column $direction";
+            }, $columnNames, $columnDirections));
+        }
+
+        if (array_filter($columns, 'is_array') !== []) {
+            throw new InvalidArgumentException('You must set the direction for each sort key column or use the second parameter to set the direction for all sort key columns');
+        }
+
         $wrapped = array_map([$this, 'wrap'], $columns);
 
         return implode(', ', array_map(function ($column) use ($direction) {
