@@ -6,7 +6,6 @@
 namespace SingleStore\Laravel\Tests\Hybrid\Json;
 
 use Illuminate\Support\Facades\DB;
-use SingleStore\Laravel\Query\Json;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
@@ -21,13 +20,13 @@ class FulltextTest extends BaseTest
         $query = DB::table('test')->whereFullText('first_name', 'aaron');
 
         $this->assertEquals(
-            "select * from `test` where MATCH (`first_name`) AGAINST (?)",
+            'select * from `test` where MATCH (`first_name`) AGAINST (?)',
             $query->toSql()
         );
 
         $this->assertSame('aaron', $query->getBindings()[0]);
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
@@ -47,18 +46,16 @@ class FulltextTest extends BaseTest
         // @TODO Assert query returns
     }
 
-
     /** @test */
     public function fulltext_multicolumn()
     {
         $query = DB::table('test')->whereFullText(['first_name', 'last_name'], 'aaron');
 
         $this->assertEquals(
-            "select * from `test` where MATCH (`first_name`, `last_name`) AGAINST (?)",
+            'select * from `test` where MATCH (`first_name`, `last_name`) AGAINST (?)',
             $query->toSql()
         );
 
         $this->assertSame('aaron', $query->getBindings()[0]);
     }
-
 }

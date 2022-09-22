@@ -38,9 +38,9 @@ class Blueprint extends BaseBlueprint
     /**
      * Specify a fulltext for the table.
      *
-     * @param string|array $columns
-     * @param string|null $name
-     * @param string|null $algorithm
+     * @param  string|array  $columns
+     * @param  string|null  $name
+     * @param  string|null  $algorithm
      * @return \Illuminate\Database\Schema\IndexDefinition
      */
     public function fullText($columns, $name = null, $algorithm = null)
