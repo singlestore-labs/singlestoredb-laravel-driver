@@ -20,7 +20,7 @@ class FulltextTest extends BaseTest
         $query = DB::table('test')->whereFullText('title', 'performance');
 
         $this->assertEquals(
-            "select * from `test` where MATCH (`title`) AGAINST (?)",
+            'select * from `test` where MATCH (`title`) AGAINST (?)',
             $query->toSql()
         );
 
@@ -64,7 +64,7 @@ class FulltextTest extends BaseTest
 
         $this->assertSame('aaron', $query->getBindings()[0]);
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
