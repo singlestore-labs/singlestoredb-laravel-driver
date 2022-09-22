@@ -17,14 +17,14 @@ class FulltextTest extends BaseTest
     /** @test */
     public function fulltext()
     {
-        $query = DB::table('test')->whereFullText('first_name', 'aaron');
+        $query = DB::table('test')->whereFullText('title', 'performance');
 
         $this->assertEquals(
-            'select * from `test` where MATCH (`first_name`) AGAINST (?)',
+            "select * from `test` where MATCH (`title`) AGAINST (?)",
             $query->toSql()
         );
 
-        $this->assertSame('aaron', $query->getBindings()[0]);
+        $this->assertSame('performance', $query->getBindings()[0]);
 
         if (! $this->runHybridIntegrations()) {
             return;
@@ -32,15 +32,21 @@ class FulltextTest extends BaseTest
 
         $this->createTable(function (Blueprint $table) {
             $table->id();
-            $table->text('first_name');
+            $table->text('title');
 
-            $table->fullText(['first_name']);
+            $table->charset = 'utf8';
+            $table->collation = 'utf8_unicode_ci';
+            $table->fullText(['title']);
         });
 
         DB::table('test')->insert([[
-            'first_name' => 'aaron',
+            'title' => 'Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems',
         ], [
-            'first_name' => 'taylor',
+            'title' => 'Data Pipelines Pocket Reference: Moving and Processing Data for Analytics',
+        ], [
+            'title' => 'Data Quality Fundamentals',
+        ], [
+            'title' => 'High Performance MySQL: Optimization, Backups, and Replication',
         ]]);
 
         // @TODO Assert query returns
@@ -57,5 +63,29 @@ class FulltextTest extends BaseTest
         );
 
         $this->assertSame('aaron', $query->getBindings()[0]);
+
+        if (!$this->runHybridIntegrations()) {
+            return;
+        }
+
+        $this->createTable(function (Blueprint $table) {
+            $table->id();
+            $table->text('first_name');
+            $table->text('last_name');
+
+            $table->charset = 'utf8';
+            $table->collation = 'utf8_unicode_ci';
+            $table->fullText(['first_name']);
+        });
+
+        DB::table('test')->insert([[
+            'first_name' => 'aaron',
+            'last_name' => 'francis',
+        ], [
+            'first_name' => 'franco',
+            'last_name' => 'gilio',
+        ]]);
+
+        // @TODO Assert query returns
     }
 }

@@ -6,8 +6,10 @@
 namespace SingleStore\Laravel\Schema;
 
 use Illuminate\Database\Connection;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint as BaseBlueprint;
 use Illuminate\Database\Schema\Grammars\Grammar;
+use Exception;
 use SingleStore\Laravel\Schema\Blueprint\AddsTableFlags;
 use SingleStore\Laravel\Schema\Blueprint\InlinesIndexes;
 use SingleStore\Laravel\Schema\Blueprint\ModifiesIndexes;
@@ -36,22 +38,24 @@ class Blueprint extends BaseBlueprint
     }
 
     /**
-     * Specify a fulltext for the table.
+     * Execute the blueprint against the database.
      *
-     * @param  string|array  $columns
-     * @param  string|null  $name
-     * @param  string|null  $algorithm
-     * @return \Illuminate\Database\Schema\IndexDefinition
+     * @param  \Illuminate\Database\Connection  $connection
+     * @param  \Illuminate\Database\Schema\Grammars\Grammar  $grammar
+     * @return void
      */
-    public function fullText($columns, $name = null, $algorithm = null)
+    public function build(Connection $connection, Grammar $grammar)
     {
-        /**
-         * SingleStore only supports FULLTEXT indexes when using the utf8 collation.
-         * https://docs.singlestore.com/managed-service/en/reference/sql-reference/data-definition-language-ddl/create-table.html#fulltext-behavior
-         */
-        $this->charset = 'utf8';
-        $this->collation = 'utf8_unicode_ci';
-
-        return $this->indexCommand('fulltext', $columns, $name, $algorithm);
+        try {
+            foreach ($this->toSql($connection, $grammar) as $statement) {
+                $connection->statement($statement);
+            }
+        } catch (QueryException $exception) {
+            if (str_contains($exception->getMessage(), 'FULLTEXT KEY with unsupported type')){
+                throw new Exception('FULLTEXT is not supported when using the utf8mb4 collation.');
+            } else {
+                throw $exception;
+            }
+        }
     }
 }
