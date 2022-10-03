@@ -9,6 +9,7 @@ This package is currently in a pre-release beta, please use with caution and ope
 - [Install](#install)
 - [Usage](#usage)
 - [Issues connecting to SingleStore Managed Service](#issues-connecting-to-singlestore-managed-service)
+- [Persistent Connections (performance optimization)](#persistent-connections-performance-optimization)
 - [PHP Versions before 8.1](#php-versions-before-81)
 - [Migrations](#migrations)
   - [Universal Storage Tables (Columnstore)](#universal-storage-tables-columnstore)
@@ -94,6 +95,24 @@ If you are encountering issues connecting to the SingleStore Managed Service, it
 'options' => extension_loaded('pdo_mysql') ? array_filter([
     PDO::MYSQL_ATTR_SSL_CA => 'path/to/singlestore_bundle.pem',
     PDO::ATTR_EMULATE_PREPARES => true,
+]) : [],
+```
+
+## Persistent Connections (performance optimization)
+
+In general, we recommend enabling `PDO::ATTR_PERSISTENT` when connecting to SingleStoreDB. This is because opening new connections to SingleStoreDB is very expensive compared to running many transactional queries. By using `PDO::ATTR_PERSISTENT`, you can greatly improve the performance of transactional workloads.
+
+The only downside to using persistent connections is that you need to ensure that transactions are correctly cleaned up as well as being careful when changing session variables or the context database. [You can read more about this feature in the official documentation on php.net][attr_persistent].
+
+Also, note that SingleStoreDB in it's default configuration can handle very large numbers of idle connections with no performance impact. The default is roughly 100,000 idle connections per aggregator, but that can be set much higher if your server can handle it.
+
+To enable this feature, simply update your options to include `PDO::ATTR_PERSISTENT => true`:
+
+```php
+'options' => extension_loaded('pdo_mysql') ? array_filter([
+    PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+    PDO::ATTR_EMULATE_PREPARES => true,
+    PDO::ATTR_PERSISTENT => true,
 ]) : [],
 ```
 
@@ -404,3 +423,4 @@ IF YOU OR YOUR COMPANY DO NOT AGREE TO THESE TERMS AND CONDITIONS, DO NOT CHECK 
 [singlestore-pem]: https://portal.singlestore.com/static/ca/singlestore_bundle.pem
 [Eloquent's attribute casting]: https://laravel.com/docs/9.x/eloquent-mutators#attribute-casting
 [create table]: https://docs.singlestore.com/managed-service/en/reference/sql-reference/data-definition-language-ddl/create-table.html
+[attr_persistent]: https://www.php.net/manual/en/features.persistent-connections.php
