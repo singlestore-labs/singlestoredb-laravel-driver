@@ -169,6 +169,20 @@ class SortKeysTest extends BaseTest
     }
 
     /** @test */
+    public function it_adds_a_empty_sort_key_with_with_statement()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->string('name');
+            $table->sortKey()->with(['columnstore_segment_rows' => 100000]);
+        });
+
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`name` varchar(255) not null, sort key() with (columnstore_segment_rows=100000))'
+        );
+    }
+
+    /** @test */
     public function it_adds_a_sort_key_fluent_with_with_statement()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
