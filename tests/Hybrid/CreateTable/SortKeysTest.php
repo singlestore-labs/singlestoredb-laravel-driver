@@ -169,7 +169,7 @@ class SortKeysTest extends BaseTest
     }
 
     /** @test */
-    public function it_adds_a_empty_sort_key_with_with_statement()
+    public function it_adds_an_empty_sort_key_with_with_statement()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
             $table->string('name');
