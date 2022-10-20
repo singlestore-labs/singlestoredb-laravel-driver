@@ -306,6 +306,16 @@ Schema::create('table', function (Blueprint $table) {
 });
 ```
 
+However, you may want to tune it without setting a column as sort key. You can do that by creating an empty `sortKey` definition:
+
+```php
+Schema::create('table', function (Blueprint $table) {
+    $table->string('name');
+
+    $table->sortKey()->with(['columnstore_segment_rows' => 100000]);
+});
+```
+
 ### Unique Keys
 
 You can add an `unique key` to your tables using the standalone `unique` method, or fluently by appending `unique` to the column definition.
