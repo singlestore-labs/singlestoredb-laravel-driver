@@ -5,6 +5,7 @@ namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
+use Illuminate\Foundation\Application;
 
 class MiscCreateTest extends BaseTest
 {
@@ -13,6 +14,11 @@ class MiscCreateTest extends BaseTest
     /** @test */
     public function all_keys_are_added_in_create_columnstore()
     {
+        if (version_compare(Application::VERSION, '8.0.0', '=')) {
+            // fulltext not added until later on in laravel 8 releases
+            $this->markTestSkipped('requires higher laravel version');
+        }
+
         $blueprint = $this->createTable(function (Blueprint $table) {
             $table->string('primary')->primary('name1');
             $table->string('index')->index('name2');
@@ -44,6 +50,11 @@ class MiscCreateTest extends BaseTest
     /** @test */
     public function fulltext_index()
     {
+        if (version_compare(Application::VERSION, '8.0.0', '=')) {
+            // fulltext not added until later on in laravel 8 releases
+            $this->markTestSkipped('requires higher laravel version');
+        }
+
         $blueprint = $this->createTable(function (Blueprint $table) {
             $table->string('name')->charset('utf8');
             $table->fullText('name', 'idx');
