@@ -17,6 +17,7 @@ class MiscCreateTest extends BaseTest
         if (version_compare(Application::VERSION, '8.12.0', '<=')) {
             // fulltext not added until later on in laravel 8 releases
             $this->markTestSkipped('requires higher laravel version');
+
             return;
         }
 
@@ -54,6 +55,7 @@ class MiscCreateTest extends BaseTest
         if (version_compare(Application::VERSION, '8.12.0', '<=')) {
             // fulltext not added until later on in laravel 8 releases
             $this->markTestSkipped('requires higher laravel version');
+
             return;
         }
 
