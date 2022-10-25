@@ -17,6 +17,10 @@
     {
       "name": "Aaron Francis",
       "email": "aarondfrancis@gmail.com"
+    },
+    {
+      "name": "Carl Sverre",
+      "email": "carl@singlestore.com"
     }
   ],
   "require": {

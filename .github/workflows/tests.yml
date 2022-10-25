@@ -46,7 +46,7 @@ jobs:
     services:
       singlestore:
         # check for new versions at https://github.com/singlestore-labs/singlestoredb-dev-image/pkgs/container/singlestoredb-dev/versions
-        image: ghcr.io/singlestore-labs/singlestoredb-dev:0.0.8
+        image: ghcr.io/singlestore-labs/singlestoredb-dev:0.1.3
         ports:
           - "3306:3306"
         env:

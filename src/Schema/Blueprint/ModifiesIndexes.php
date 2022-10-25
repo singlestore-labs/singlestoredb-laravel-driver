@@ -16,6 +16,20 @@ trait ModifiesIndexes
     }
 
     /**
+     * Specify an fulltext for the table.
+     * Redefined due to old laravel version compat
+     *
+     * @param  string|array  $columns
+     * @param  string|null  $name
+     * @param  string|null  $algorithm
+     * @return \Illuminate\Database\Schema\IndexDefinition
+     */
+    public function fullText($columns, $name = null, $algorithm = null)
+    {
+        return $this->indexCommand('fulltext', $columns, $name, $algorithm);
+    }
+
+    /**
      * @param $columns
      * @param $direction
      * @return \Illuminate\Support\Fluent
