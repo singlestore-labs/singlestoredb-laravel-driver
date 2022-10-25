@@ -2,9 +2,9 @@
 
 namespace SingleStore\Laravel\Schema\Blueprint;
 
-use SingleStore\Laravel\Schema\Blueprint as SingleStoreBlueprint;
 use Illuminate\Database\Schema\Grammars\Grammar;
 use Illuminate\Support\Arr;
+use SingleStore\Laravel\Schema\Blueprint as SingleStoreBlueprint;
 
 trait InlinesIndexes
 {
@@ -59,7 +59,7 @@ trait InlinesIndexes
 
         $search = SingleStoreBlueprint::INDEX_PLACEHOLDER;
 
-        if (!$indexStatements) {
+        if (! $indexStatements) {
             // If there are no index statements at all, we need to replace the preceding comma as well.
             $search = ", $search";
         }
