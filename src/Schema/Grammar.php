@@ -1,7 +1,4 @@
 <?php
-/**
- * @author Aaron Francis <aarondfrancis@gmail.com|https://twitter.com/aarondfrancis>
- */
 
 namespace SingleStore\Laravel\Schema;
 
@@ -79,7 +76,7 @@ class Grammar extends MySqlGrammar
     {
         $type = parent::getType($column);
 
-        if (! is_null($column->storedAs)) {
+        if (!is_null($column->storedAs)) {
             // MySQL's syntax for stored columns is `<name> <datatype> as (<expression>) stored`,
             // but for SingleStore it's `<name> as (<expression>) persisted <datatype>`. Here
             // we sneak the expression in as a part of the type definition, so that it will
@@ -168,7 +165,7 @@ class Grammar extends MySqlGrammar
         $compiled = parent::compileKey($blueprint, $command, $type);
 
         // We don't mess with ALTER statements at all.
-        if (! $blueprint->creating()) {
+        if (!$blueprint->creating()) {
             return $compiled;
         }
 
@@ -207,7 +204,7 @@ class Grammar extends MySqlGrammar
         $wrapped = array_map([$this, 'wrap'], $columns);
 
         return implode(', ', array_map(function ($column) use ($direction) {
-            return $column.' '.$direction;
+            return $column . ' ' . $direction;
         }, $wrapped));
     }
 

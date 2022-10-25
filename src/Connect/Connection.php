@@ -1,7 +1,4 @@
 <?php
-/**
- * @author Aaron Francis <aarondfrancis@gmail.com|https://twitter.com/aarondfrancis>
- */
 
 namespace SingleStore\Laravel\Connect;
 
@@ -54,7 +51,9 @@ class Connection extends MySqlConnection
     public function query()
     {
         return new Query\Builder(
-            $this, $this->getQueryGrammar(), $this->getPostProcessor()
+            $this,
+            $this->getQueryGrammar(),
+            $this->getPostProcessor()
         );
     }
 }
