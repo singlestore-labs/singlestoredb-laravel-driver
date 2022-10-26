@@ -371,7 +371,7 @@ Schema::create('test', function (Blueprint $table) {
     $table->id()->withoutPrimaryKey();
     $table->uuid('uuid');
     
-    $table->primaryKey(['id',  'uuid']);
+    $table->primary(['id',  'uuid']);
 });
 ```
 
