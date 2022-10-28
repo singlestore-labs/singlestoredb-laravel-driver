@@ -46,7 +46,7 @@ jobs:
     services:
       singlestore:
         # check for new versions at https://github.com/singlestore-labs/singlestoredb-dev-image/pkgs/container/singlestoredb-dev/versions
-        image: ghcr.io/singlestore-labs/singlestoredb-dev:0.0.8
+        image: ghcr.io/singlestore-labs/singlestoredb-dev:0.1.3
         ports:
           - "3306:3306"
         env:
@@ -57,10 +57,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.composer/cache/files
           key: dependencies-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}

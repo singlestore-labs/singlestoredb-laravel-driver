@@ -1,7 +1,4 @@
 <?php
-/**
- * @author Aaron Francis <aarondfrancis@gmail.com|https://twitter.com/aarondfrancis>
- */
 
 namespace SingleStore\Laravel\Query;
 
@@ -83,7 +80,9 @@ class Grammar extends MySqlGrammar
     protected function wrapJsonBooleanSelector($value)
     {
         return str_replace(
-            'JSON_EXTRACT_STRING', 'JSON_EXTRACT_DOUBLE', $this->wrapJsonSelector($value)
+            'JSON_EXTRACT_STRING',
+            'JSON_EXTRACT_DOUBLE',
+            $this->wrapJsonSelector($value)
         );
     }
 
