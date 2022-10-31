@@ -21,6 +21,7 @@ This package is currently in a pre-release beta, please use with caution and ope
   - [Shard Keys](#shard-keys)
   - [Sort Keys](#sort-keys)
   - [Unique Keys](#unique-keys)
+  - [Hash Keys](#hash-keys)
   - [Series Timestamps](#series-timestamps)
   - [Computed Columns](#computed-columns)
   - [Increment Columns without Primary Key](#increment-columns-without-primary-key)
@@ -335,6 +336,20 @@ Schema::create('table', function (Blueprint $table) {
 Schema::create('table', function (Blueprint $table) {
     $table->reference();
     $table->string('name')->unique();
+});
+```
+
+### Hash Keys
+
+You can add a `hash key` to your tables using the third argument to the `index`
+function. Note that by default, indexes on Universal Storage Tables
+(Columnstore) are always hash indexes, so a simple `.index(foo)` is usually
+sufficient. On Rowstore tables this syntax is needed to create a hash index.
+
+```php
+Schema::create('table', function (Blueprint $table) {
+    $table->string('name');
+    $table->index('name', 'name_idx', 'hash');
 });
 ```
 

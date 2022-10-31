@@ -24,12 +24,14 @@ class MiscCreateTest extends BaseTest
         $blueprint = $this->createTable(function (Blueprint $table) {
             $table->string('primary')->primary('name1');
             $table->string('index')->index('name2');
+            $table->string('foo');
+            $table->index('foo', 'name3', 'hash');
             $table->string('fulltext')->fulltext('name5')->charset('utf8');
         });
 
         $this->assertCreateStatement(
             $blueprint,
-            'create table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `fulltext` varchar(255) character set utf8 not null, primary key `name1`(`primary`), index `name2`(`index`), fulltext `name5`(`fulltext`))'
+            'create table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `foo` varchar(255) not null, `fulltext` varchar(255) character set utf8 not null, index `name3` using hash(`foo`), primary key `name1`(`primary`), index `name2`(`index`), fulltext `name5`(`fulltext`))'
         );
     }
 
