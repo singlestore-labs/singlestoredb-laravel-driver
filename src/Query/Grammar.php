@@ -23,7 +23,7 @@ class Grammar extends MySqlGrammar
 
         $value = $this->parameter($where['value']);
 
-        return "MATCH ({$columns}) AGAINST (".$value.')';
+        return "MATCH ({$columns}) AGAINST ({$value})";
     }
 
     /**
