@@ -21,6 +21,7 @@ This package is currently in a pre-release beta, please use with caution and ope
   - [Unique Keys](#unique-keys)
   - [Series Timestamps](#series-timestamps)
   - [Computed Columns](#computed-columns)
+  - [Full-text search](#full-text-search-using-fulltext-indexes)
 - [Testing](#testing)
 - [License](#license)
 - [Resources](#resources)
