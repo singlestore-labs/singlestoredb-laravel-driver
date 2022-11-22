@@ -47,9 +47,7 @@ class Blueprint extends BaseBlueprint
     public function build(Connection $connection, Grammar $grammar)
     {
         try {
-            foreach ($this->toSql($connection, $grammar) as $statement) {
-                $connection->statement($statement);
-            }
+            parent::build($connection, $grammar);
         } catch (QueryException $exception) {
             if (str_contains($exception->getMessage(), 'FULLTEXT KEY with unsupported type')) {
                 throw new Exception('FULLTEXT is not supported when using the utf8mb4 collation.');
