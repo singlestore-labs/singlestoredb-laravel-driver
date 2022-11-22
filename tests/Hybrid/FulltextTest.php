@@ -49,20 +49,26 @@ class FulltextTest extends BaseTest
             'title' => 'High Performance MySQL: Optimization, Backups, and Replication',
         ]]);
 
-        // @TODO Assert query returns
+        // Force the index to be updated immediately, as it may happen async a little later
+        DB::statement('OPTIMIZE TABLE test FLUSH');
+
+        $this->assertSame(
+            'High Performance MySQL: Optimization, Backups, and Replication',
+            $query->get()[0]->title
+        );
     }
 
     /** @test */
     public function fulltext_multicolumn()
     {
-        $query = DB::table('test')->whereFullText(['first_name', 'last_name'], 'aaron');
+        $query = DB::table('test')->whereFullText(['name', 'race'], 'Laika');
 
         $this->assertEquals(
-            'select * from `test` where MATCH (`first_name`, `last_name`) AGAINST (?)',
+            'select * from `test` where MATCH (`name`, `race`) AGAINST (?)',
             $query->toSql()
         );
 
-        $this->assertSame('aaron', $query->getBindings()[0]);
+        $this->assertSame('Laika', $query->getBindings()[0]);
 
         if (! $this->runHybridIntegrations()) {
             return;
@@ -70,22 +76,25 @@ class FulltextTest extends BaseTest
 
         $this->createTable(function (Blueprint $table) {
             $table->id();
-            $table->text('first_name');
-            $table->text('last_name');
+            $table->text('name');
+            $table->text('race');
 
             $table->charset = 'utf8';
             $table->collation = 'utf8_unicode_ci';
-            $table->fullText(['first_name']);
+            $table->fullText(['name', 'race']);
         });
 
         DB::table('test')->insert([[
-            'first_name' => 'aaron',
-            'last_name' => 'francis',
+            'name' => 'Laika',
+            'race' => 'Dog',
         ], [
-            'first_name' => 'franco',
-            'last_name' => 'gilio',
+            'name' => 'Ham',
+            'race' => 'Monkey',
         ]]);
 
-        // @TODO Assert query returns
+        // Force the index to be updated immediately, as it may happen async a little later
+        DB::statement('OPTIMIZE TABLE test FLUSH');
+
+        $this->assertSame('Laika', $query->get()[0]->name);
     }
 }
