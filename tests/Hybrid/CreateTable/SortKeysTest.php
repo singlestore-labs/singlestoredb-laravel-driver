@@ -1,7 +1,4 @@
 <?php
-/**
- * @author Aaron Francis <aarondfrancis@gmail.com|https://twitter.com/aarondfrancis>
- */
 
 namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
@@ -165,6 +162,20 @@ class SortKeysTest extends BaseTest
         $this->assertCreateStatement(
             $blueprint,
             'create table `test` (`name` varchar(255) not null, sort key(`name` asc) with (columnstore_segment_rows=100000))'
+        );
+    }
+
+    /** @test */
+    public function it_adds_an_empty_sort_key_with_with_statement()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->string('name');
+            $table->sortKey()->with(['columnstore_segment_rows' => 100000]);
+        });
+
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`name` varchar(255) not null, sort key() with (columnstore_segment_rows=100000))'
         );
     }
 

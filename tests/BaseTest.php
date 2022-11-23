@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @author Aaron Francis <aaron@hammerstone.dev|https://twitter.com/aarondfrancis>
- */
-
 namespace SingleStore\Laravel\Tests;
 
 use Orchestra\Testbench\TestCase;

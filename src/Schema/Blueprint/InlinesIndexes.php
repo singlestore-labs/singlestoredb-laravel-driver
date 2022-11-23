@@ -1,12 +1,10 @@
 <?php
-/**
- * @author Aaron Francis <aarondfrancis@gmail.com|https://twitter.com/aarondfrancis>
- */
 
 namespace SingleStore\Laravel\Schema\Blueprint;
 
 use Illuminate\Database\Schema\Grammars\Grammar;
 use Illuminate\Support\Arr;
+use SingleStore\Laravel\Schema\Blueprint as SingleStoreBlueprint;
 
 trait InlinesIndexes
 {
@@ -59,7 +57,7 @@ trait InlinesIndexes
         // we pull them out of the statement list so that they don't run as ALTERs.
         Arr::forget($statements, $this->indexCommandKeys);
 
-        $search = static::INDEX_PLACEHOLDER;
+        $search = SingleStoreBlueprint::INDEX_PLACEHOLDER;
 
         if (! $indexStatements) {
             // If there are no index statements at all, we need to replace the preceding comma as well.

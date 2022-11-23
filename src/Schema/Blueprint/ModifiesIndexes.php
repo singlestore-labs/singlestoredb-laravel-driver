@@ -1,7 +1,4 @@
 <?php
-/**
- * @author Aaron Francis <aarondfrancis@gmail.com|https://twitter.com/aarondfrancis>
- */
 
 namespace SingleStore\Laravel\Schema\Blueprint;
 
@@ -23,7 +20,7 @@ trait ModifiesIndexes
      * @param $direction
      * @return \Illuminate\Support\Fluent
      */
-    public function sortKey($columns, $direction = 'asc')
+    public function sortKey($columns = null, $direction = 'asc')
     {
         $command = $this->indexCommand('sortKey', $columns, 'sortKeyDummyName');
         $command->direction = $direction;

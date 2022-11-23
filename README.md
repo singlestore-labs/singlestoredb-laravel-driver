@@ -9,8 +9,10 @@ This package is currently in a pre-release beta, please use with caution and ope
 - [Install](#install)
 - [Usage](#usage)
 - [Issues connecting to SingleStore Managed Service](#issues-connecting-to-singlestore-managed-service)
+- [Persistent Connections (performance optimization)](#persistent-connections-performance-optimization)
 - [PHP Versions before 8.1](#php-versions-before-81)
 - [Migrations](#migrations)
+  - [Universal Storage Tables (Columnstore)](#universal-storage-tables-columnstore)
   - [Rowstore Tables](#rowstore-tables)
   - [Reference Tables](#reference-tables)
   - [Global Temporary Tables](#global-temporary-tables)
@@ -19,8 +21,10 @@ This package is currently in a pre-release beta, please use with caution and ope
   - [Shard Keys](#shard-keys)
   - [Sort Keys](#sort-keys)
   - [Unique Keys](#unique-keys)
+  - [Hash Keys](#hash-keys)
   - [Series Timestamps](#series-timestamps)
   - [Computed Columns](#computed-columns)
+  - [Increment Columns without Primary Key](#increment-columns-without-primary-key)
   - [Full-text search](#full-text-search-using-fulltext-indexes)
 - [Testing](#testing)
 - [License](#license)
@@ -86,13 +90,31 @@ In case you want to store failed jobs in SingleStore, then make sure you also se
 
 If you are encountering issues connecting to the SingleStore Managed Service, it may be due to your environment not being able to verify the SSL certificate used to secure connections. You can fix this by downloading and manually specifying the SingleStore certificate file.
 
-* [Download the file here](https://portal.singlestore.com/static/ca/singlestore_bundle.pem)
+* [Download the file here][singlestore-pem]
 * In the Laravel SingleStore connection configuration, point the variable `PDO::MYSQL_ATTR_SSL_CA` at `singlestore_bundle.pem`:
 
 ```php
 'options' => extension_loaded('pdo_mysql') ? array_filter([
     PDO::MYSQL_ATTR_SSL_CA => 'path/to/singlestore_bundle.pem',
     PDO::ATTR_EMULATE_PREPARES => true,
+]) : [],
+```
+
+## Persistent Connections (performance optimization)
+
+In general, we recommend enabling `PDO::ATTR_PERSISTENT` when connecting to SingleStoreDB. This is because opening new connections to SingleStoreDB is very expensive compared to running many transactional queries. By using `PDO::ATTR_PERSISTENT`, you can greatly improve the performance of transactional workloads.
+
+The only downside to using persistent connections is that you need to ensure that transactions are correctly cleaned up as well as being careful when changing session variables or the context database. [You can read more about this feature in the official documentation on php.net][attr_persistent].
+
+Also, note that SingleStoreDB in it's default configuration can handle very large numbers of idle connections with no performance impact. The default is roughly 100,000 idle connections per aggregator, but that can be set much higher if your server can handle it.
+
+To enable this feature, simply update your options to include `PDO::ATTR_PERSISTENT => true`:
+
+```php
+'options' => extension_loaded('pdo_mysql') ? array_filter([
+    PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+    PDO::ATTR_EMULATE_PREPARES => true,
+    PDO::ATTR_PERSISTENT => true,
 ]) : [],
 ```
 
@@ -106,18 +128,30 @@ get a string like `"5423"` in PHP.
 
 This is a historic and known bug:
 
-- [https://stackoverflow.com/a/58830039/3275796](https://stackoverflow.com/a/58830039/3275796)
-- [https://github.com/php/php-src/blob/7b34db0659dda933b1146a0ff249f25acca1d669/UPGRADING#L130-L134](https://github.com/php/php-src/blob/7b34db0659dda933b1146a0ff249f25acca1d669/UPGRADING#L130-L134)
+- https://stackoverflow.com/a/58830039/3275796
+- https://github.com/php/php-src/blob/7b34db0659dda933b1146a0ff249f25acca1d669/UPGRADING#L130-L134
 
-The best method to solve this is to upgrade to PHP 8.1 or higher. If that's not possible, [Eloquent's attribute casting](https://laravel.com/docs/9.x/eloquent-mutators#attribute-casting) is the next best solution. 
+The best method to solve this is to upgrade to PHP 8.1 or higher. If that's not possible, [Eloquent's attribute casting] is the next best solution. 
 
 ## Migrations
 
-This driver provides many SingleStore specific methods for creating or modifying tables. They are listed below. For more information see the [Create Table](https://docs.singlestore.com/managed-service/en/reference/sql-reference/data-definition-language-ddl/create-table.html) docs on SingleStore.
+This driver provides many SingleStore specific methods for creating or modifying tables. They are listed below. For more information see the [create table] docs on SingleStore.
+
+### Universal Storage Tables (Columnstore)
+
+By default, tables created by this driver will use [SingleStoreDB Universal Storage][columnstore]. Universal Storage leverages both column and row oriented data structures to automatically optimize storage for transactional and analytical workloads. In general, you should use this table type for all tables unless you profile your workload and determine that another table type is better.
+
+To create a table, you can simply use `Schema::create`:
+
+```php
+Schema::create('table', function (Blueprint $table) {
+    // ... column definitions, indexes, table options
+});
+```
 
 ### Rowstore Tables
 
-To create a rowstore table, use the `rowstore` method.
+To create a [rowstore] table, use the `rowstore` method. Rowstore tables are optimized for low-latency transactional workloads with high concurrency at the expense of memory. In general, we recommend using Universal Storage (see above) and benchmarking your workload before using a rowstore table.
 
 ```php
 Schema::create('table', function (Blueprint $table) {
@@ -129,7 +163,7 @@ Schema::create('table', function (Blueprint $table) {
 
 ### Reference Tables
 
-To create a reference table, you may use the `reference` method.
+To create a [reference table], you may use the `reference` method. Reference tables are fully replicated to every node in the cluster. This means that if you store 1000 rows in a reference table, those 1000 rows will be copied many times. Because of this you should only store small amounts of data in reference tables, and only when you need to reference that data via joins against non-collocated data in other tables. Inserts and updates to reference tables will also run slower due to the high replication overhead.
 
 ```php
 Schema::create('table', function (Blueprint $table) {
@@ -141,7 +175,7 @@ Schema::create('table', function (Blueprint $table) {
 
 ### Global Temporary Tables
 
-To create a [global temporary table](https://docs.singlestore.com/managed-service/en/reference/sql-reference/data-definition-language-ddl/create-table.html), you may use the `global` method on the table.
+To create a [global temporary table], you may use the `global` method on the table.
 
 ```php
 Schema::create('table', function (Blueprint $table) {
@@ -165,7 +199,7 @@ $table->temporary($global = true);
 
 ### Sparse Columns
 
-You can mark particular columns as [sparse](https://docs.singlestore.com/managed-service/en/reference/sql-reference/data-definition-language-ddl/create-table.html) fluently by appending `sparse` to the column's definition.
+You can mark particular columns as [sparse] fluently by appending `sparse` to the column's definition. This only applies to Rowstore tables.
 
 ```php
 Schema::create('table', function (Blueprint $table) {
@@ -177,7 +211,7 @@ Schema::create('table', function (Blueprint $table) {
 
 ### Sparse Tables
 
-You can mark particular entire tables as [sparse](https://docs.singlestore.com/managed-service/en/reference/sql-reference/data-definition-language-ddl/create-table.html) fluently by appending `sparse` to the column's definition.
+You can mark particular entire tables as [sparse] fluently by appending `sparse` to the column's definition. This only applies to Rowstore tables.
 
 ```php
 Schema::create('table', function (Blueprint $table) {
@@ -191,7 +225,7 @@ Schema::create('table', function (Blueprint $table) {
 
 ### Shard Keys
 
-You can add a [shard key](https://docs.singlestore.com/managed-service/en/developer-resources/porting-tables-to-singlestoredb-cloud/shard-keys.html) to your tables using the standalone `shardKey` method, or fluently by appending `shardKey` to the column definition.
+You can add a [shard key] to your tables using the standalone `shardKey` method, or fluently by appending `shardKey` to the column definition.
 
 ```php
 Schema::create('table', function (Blueprint $table) {
@@ -214,7 +248,7 @@ Schema::create('table', function (Blueprint $table) {
 
 ### Sort Keys
 
-You can add a [sort key](https://docs.singlestore.com/managed-service/en/create-a-database/physical-database-schema-design/procedures-for-physical-database-schema-design/creating-a-columnstore-table.html) to your tables using the standalone `sortKey` method, or fluently by appending `sortKey` to the column definition.
+You can add a [sort key] to your tables using the standalone `sortKey` method, or fluently by appending `sortKey` to the column definition.
 
 ```php
 Schema::create('table', function (Blueprint $table) {
@@ -235,7 +269,7 @@ Schema::create('table', function (Blueprint $table) {
 });
 ```
 
-Sort keys by default works only for `asc` sort queries. If you would like to create a sort key with `desc` order, you can set the key direction.
+Sort keys sort in ascending order by default. If you would like to create a sort key which sorts descending you can set the key direction to `desc`.
 
 ```php
 Schema::create('table', function (Blueprint $table) {
@@ -257,6 +291,30 @@ Schema::create('table', function (Blueprint $table) {
     $table->string('l_name');
 
     $table->sortKey([['f_name', 'asc'], ['l_name', 'desc']]);
+});
+```
+
+Sometimes you may want to tune [columnstore][columnstore-tuning] per table. You can do it by appending `with` fluently to the `sortKey` definition.
+
+```php
+Schema::create('table', function (Blueprint $table) {
+    $table->string('name');
+
+    $table->sortKey('name')->with(['columnstore_segment_rows' => 100000]);
+});
+
+Schema::create('table', function (Blueprint $table) {
+    $table->string('name')->sortKey()->with(['columnstore_segment_rows' => 100000]);
+});
+```
+
+However, you may want to tune it without setting a column as sort key. You can do that by creating an empty `sortKey` definition:
+
+```php
+Schema::create('table', function (Blueprint $table) {
+    $table->string('name');
+
+    $table->sortKey()->with(['columnstore_segment_rows' => 100000]);
 });
 ```
 
@@ -282,19 +340,17 @@ Schema::create('table', function (Blueprint $table) {
 });
 ```
 
-### Sort Keys - Columnstore variables
+### Hash Keys
 
-Sometimes you may want to customize your [columstore variables](https://docs.singlestore.com/managed-service/en/create-a-database/physical-database-schema-design/procedures-for-physical-database-schema-design/configuring-the-columnstore-to-work-effectively.html) individually per table. You can do it by appending `with` fluently to the `sortKey` definition.
+You can add a `hash key` to your tables using the third argument to the `index`
+function. Note that by default, indexes on Universal Storage Tables
+(Columnstore) are always hash indexes, so a simple `.index(foo)` is usually
+sufficient. On Rowstore tables this syntax is needed to create a hash index.
 
 ```php
 Schema::create('table', function (Blueprint $table) {
     $table->string('name');
-
-    $table->sortKey('name')->with(['columnstore_segment_rows' => 100000]);
-});
-
-Schema::create('table', function (Blueprint $table) {
-    $table->string('name')->sortKey()->with(['columnstore_segment_rows' => 100000]);
+    $table->index('name', 'name_idx', 'hash');
 });
 ```
 
@@ -312,7 +368,7 @@ Schema::create('table', function (Blueprint $table) {
 
 ### Computed Columns
 
-SingleStore does not support virtual computed columns. You must use Laravel's [`storedAs`](https://laravel.com/docs/9.x/migrations#column-modifiers) method to create a [persisted computed column](https://docs.singlestore.com/managed-service/en/create-a-database/physical-database-schema-design/procedures-for-physical-database-schema-design/using-persistent-computed-columns.html).
+SingleStore does not support virtual computed columns. You must use Laravel's [`storedAs`] method to create a [persisted computed column].
 
 ```php
 Schema::create('test', function (Blueprint $table) {
@@ -324,15 +380,14 @@ Schema::create('test', function (Blueprint $table) {
 
 ### Increment Columns without Primary Key
 
-Sometimes you may want to set a custom primary key. However if your table has an int `increment` column,
-Laravel, by default, always sets this column as the primary key. Even if you manually set another one. This behavior can be disabled using the `withoutPrimaryKey` method.
+Sometimes you may want to set a custom primary key. However if your table has an int `increment` column, Laravel, by default, always sets this column as the primary key. Even if you manually set another one. This behavior can be disabled using the `withoutPrimaryKey` method.
 
 ```php
 Schema::create('test', function (Blueprint $table) {
     $table->id()->withoutPrimaryKey();
     $table->uuid('uuid');
     
-    $table->primaryKey(['id',  'uuid']);
+    $table->primary(['id',  'uuid']);
 });
 ```
 
@@ -397,3 +452,18 @@ RESPECT TO THIS BETA SOFTWARE CONNECTOR (INCLUDING TOOLS AND UTILITIES).
 APPLICABLE OPEN SOURCE LICENSE: Apache 2.0
 
 IF YOU OR YOUR COMPANY DO NOT AGREE TO THESE TERMS AND CONDITIONS, DO NOT CHECK THE ACCEPTANCE BOX, AND DO NOT DOWNLOAD, ACCESS, COPY, INSTALL OR USE THE SOFTWARE OR THE SERVICES.
+
+[reference table]: https://docs.singlestore.com/managed-service/en/create-a-database/physical-database-schema-design/concepts-of-physical-database-schema-design/other-schema-concepts.html#reference-tables-654455
+[global temporary table]: https://docs.singlestore.com/managed-service/en/create-a-database/physical-database-schema-design/concepts-of-physical-database-schema-design/other-schema-concepts.html#global-temporary-tables
+[columnstore]: https://docs.singlestore.com/managed-service/en/create-a-database/physical-database-schema-design/concepts-of-physical-database-schema-design/columnstore.html
+[rowstore]: https://docs.singlestore.com/managed-service/en/create-a-database/physical-database-schema-design/concepts-of-physical-database-schema-design/rowstore.html
+[sparse]: https://docs.singlestore.com/managed-service/en/reference/sql-reference/data-definition-language-ddl/create-table.html#compression---sparse-and-sparse-behavior
+[shard key]: https://docs.singlestore.com/managed-service/en/developer-resources/porting-tables-to-singlestoredb-cloud/shard-keys.html
+[sort key]: https://docs.singlestore.com/managed-service/en/create-a-database/physical-database-schema-design/procedures-for-physical-database-schema-design/creating-a-columnstore-table.html
+[columnstore-tuning]: https://docs.singlestore.com/managed-service/en/create-a-database/physical-database-schema-design/procedures-for-physical-database-schema-design/configuring-the-columnstore-to-work-effectively.html
+[`storedAs`]: https://laravel.com/docs/9.x/migrations#column-modifiers
+[persisted computed column]: https://docs.singlestore.com/managed-service/en/create-a-database/physical-database-schema-design/procedures-for-physical-database-schema-design/using-persistent-computed-columns.html
+[singlestore-pem]: https://portal.singlestore.com/static/ca/singlestore_bundle.pem
+[Eloquent's attribute casting]: https://laravel.com/docs/9.x/eloquent-mutators#attribute-casting
+[create table]: https://docs.singlestore.com/managed-service/en/reference/sql-reference/data-definition-language-ddl/create-table.html
+[attr_persistent]: https://www.php.net/manual/en/features.persistent-connections.php

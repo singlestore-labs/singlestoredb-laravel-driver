@@ -1,7 +1,4 @@
 <?php
-/**
- * @author https://github.com/srdante
- */
 
 namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 

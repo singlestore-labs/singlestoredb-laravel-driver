@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @author Aaron Francis <aarondfrancis@gmail.com|https://twitter.com/aarondfrancis>
- */
-
 namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
 use SingleStore\Laravel\Schema\Blueprint;
