@@ -2,6 +2,7 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid\Json;
 
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
@@ -14,6 +15,13 @@ class FulltextTest extends BaseTest
     /** @test */
     public function fulltext()
     {
+        if (version_compare(Application::VERSION, '8.79.0', '<=')) {
+            // fulltext not added until later on in laravel 8 releases
+            $this->markTestSkipped('requires higher laravel version');
+
+            return;
+        }
+
         $query = DB::table('test')->whereFullText('title', 'performance');
 
         $this->assertEquals(
@@ -58,6 +66,13 @@ class FulltextTest extends BaseTest
     /** @test */
     public function fulltext_multicolumn()
     {
+        if (version_compare(Application::VERSION, '8.79.0', '<=')) {
+            // fulltext not added until later on in laravel 8 releases
+            $this->markTestSkipped('requires higher laravel version');
+
+            return;
+        }
+
         $query = DB::table('test')->whereFullText(['name', 'race'], 'Laika');
 
         $this->assertEquals(

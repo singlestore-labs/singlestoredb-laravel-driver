@@ -14,7 +14,7 @@ class MiscCreateTest extends BaseTest
     /** @test */
     public function all_keys_are_added_in_create_columnstore()
     {
-        if (version_compare(Application::VERSION, '8.12.0', '<=')) {
+        if (version_compare(Application::VERSION, '8.79.0', '<=')) {
             // fulltext not added until later on in laravel 8 releases
             $this->markTestSkipped('requires higher laravel version');
 
@@ -54,7 +54,7 @@ class MiscCreateTest extends BaseTest
     /** @test */
     public function fulltext_index()
     {
-        if (version_compare(Application::VERSION, '8.12.0', '<=')) {
+        if (version_compare(Application::VERSION, '8.79.0', '<=')) {
             // fulltext not added until later on in laravel 8 releases
             $this->markTestSkipped('requires higher laravel version');
 
