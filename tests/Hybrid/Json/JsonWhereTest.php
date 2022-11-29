@@ -117,7 +117,7 @@ class JsonWhereTest extends BaseTest
             return;
         }
 
-        [, $id2, $id3,] = $this->insertJsonData([
+        [, $id2, $id3] = $this->insertJsonData([
             ['value1' => ['value2' => 'string']],
             ['value1' => null],
             [null],
