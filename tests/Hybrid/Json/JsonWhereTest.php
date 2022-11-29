@@ -109,20 +109,48 @@ class JsonWhereTest extends BaseTest
 
         $this->assertEquals(
             // @TODO check docs
-            "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') is null OR json_type(JSON_EXTRACT_JSON(data, 'value1')) = 'NULL')",
+            "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') IS NULL OR JSON_GET_TYPE(JSON_EXTRACT_JSON(data, 'value1')) = 'NULL')",
             $query->toSql()
         );
+
+        if (! $this->runHybridIntegrations()) {
+            return;
+        }
+
+        [, $id2, $id3,] = $this->insertJsonData([
+            ['value1' => ['value2' => 'string']],
+            ['value1' => null],
+            [null],
+            ['value1' => ['value2' => 1]],
+        ]);
+
+        $this->assertEquals($id2, $query->get()[0]->id);
+        $this->assertEquals($id3, $query->get()[1]->id);
     }
 
     /** @test */
     public function where_not_null()
     {
-        $query = DB::table('test')->whereNotNull('data->value1');
+        $query = DB::table('test')->whereNotNull('data->value1')->orderBy('id');
 
         $this->assertEquals(
             // @TODO check docs
-            "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') is not null AND json_type(JSON_EXTRACT_JSON(data, 'value1')) != 'NULL')",
+            "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') IS NOT NULL AND JSON_GET_TYPE(JSON_EXTRACT_JSON(data, 'value1')) != 'NULL') order by `id` asc",
             $query->toSql()
         );
+
+        if (! $this->runHybridIntegrations()) {
+            return;
+        }
+
+        [$id1, , , $id4] = $this->insertJsonData([
+            ['value1' => ['value2' => 'string']],
+            ['value1' => null],
+            [null],
+            ['value1' => ['value2' => 1]],
+        ]);
+
+        $this->assertEquals($id1, $query->get()[0]->id);
+        $this->assertEquals($id4, $query->get()[1]->id);
     }
 }
