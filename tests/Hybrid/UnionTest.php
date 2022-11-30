@@ -12,6 +12,10 @@ class UnionTest extends BaseTest
 
     /** @test */
     function union() {
+        if (! $this->runHybridIntegrations()) {
+            return;
+        }
+
         $this->createTable(function (Blueprint $table) {
             $table->id();
         });
@@ -38,6 +42,10 @@ class UnionTest extends BaseTest
 
     /** @test */
     function unionWithOrderByLimitAndOffset() {
+        if (! $this->runHybridIntegrations()) {
+            return;
+        }
+
         $this->createTable(function (Blueprint $table) {
             $table->id();
         });
