@@ -166,11 +166,53 @@ class Grammar extends MySqlGrammar
             }
 
             if (isset($query->unionOffset)) {
-                $sql .= ' '.$this->compileOffset($query, $query->unionOffset);
+                $sql .= ' '.$this->compileUnionOffset($query, $query->unionOffset);
             }
         }
 
         return ltrim($sql);
     }
 
+    /**
+     * Compile the "offset" portions of the query.
+     *
+     * @param  Builder  $query
+     * @param  $offset
+     * @return string
+     */
+    protected function compileOffset(Builder $query, $offset): string
+    {
+        return $this->compileOffsetWithLimit($offset, $query->limit);
+    }
+
+    /**
+     * Compile the "offset" portions of the final union query.
+     *
+     * @param  Builder  $query
+     * @param $offset
+     * @return string
+     */
+    protected function compileUnionOffset(Builder $query, $offset): string
+    {
+        return $this->compileOffsetWithLimit($offset, $query->unionLimit);
+    }
+
+    /**
+     * Compile the "offset" portions of the query taking into account "limit" portion.
+     *
+     * @param $offset
+     * @param $limit
+     * @return string
+     */
+    private function compileOffsetWithLimit($offset, $limit): string
+    {
+        // OFFSET is not valid without LIMIT
+        // Add a huge LIMIT clause
+        if (! isset($limit)) {
+            // 9223372036854775807 - max 64-bit integer
+            return ' LIMIT 9223372036854775807 OFFSET '.(int) $offset;
+        }
+
+        return ' OFFSET '.(int) $offset;
+    }
 }
