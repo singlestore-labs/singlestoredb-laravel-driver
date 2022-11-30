@@ -115,4 +115,62 @@ class Grammar extends MySqlGrammar
 
         return [$field, $path];
     }
+
+    /**
+     * Wrap a union subquery in parentheses.
+     *
+     * @param  string  $sql
+     * @return string
+     */
+    protected function wrapUnion($sql): string
+    {
+        return 'SELECT * FROM ('.$sql.')';
+    }
+
+    /**
+     * Compile the "union" queries attached to the main query.
+     *
+     * @param Builder $query
+     * @return string
+     */
+    protected function compileUnions(Builder $query): string
+    {
+        $sql = '';
+
+        foreach ($query->unions as $union) {
+            $sql .= $this->compileUnion($union);
+        }
+
+        return ltrim($sql);
+    }
+
+    /**
+     * Compile a select query into SQL.
+     *
+     * @param Builder $query
+     * @return string
+     */
+    public function compileSelect(Builder $query): string
+    {
+        $sql = parent::compileSelect($query);
+
+        if (! empty($query->unionOrders) || isset($query->unionLimit) || isset($query->unionOffset)) {
+            $sql = "SELECT * FROM (".$sql.") ";
+
+            if (! empty($query->unionOrders)) {
+                $sql .= ' '.$this->compileOrders($query, $query->unionOrders);
+            }
+
+            if (isset($query->unionLimit)) {
+                $sql .= ' '.$this->compileLimit($query, $query->unionLimit);
+            }
+
+            if (isset($query->unionOffset)) {
+                $sql .= ' '.$this->compileOffset($query, $query->unionOffset);
+            }
+        }
+
+        return ltrim($sql);
+    }
+
 }
