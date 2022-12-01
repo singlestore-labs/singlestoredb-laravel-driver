@@ -122,4 +122,104 @@ class Grammar extends MySqlGrammar
 
         return [$field, $path];
     }
+
+    /**
+     * Wrap a union subquery in parentheses.
+     *
+     * @param  string  $sql
+     * @return string
+     */
+    protected function wrapUnion($sql): string
+    {
+        return 'SELECT * FROM ('.$sql.')';
+    }
+
+    /**
+     * Compile the "union" queries attached to the main query.
+     *
+     * @param Builder $query
+     * @return string
+     */
+    protected function compileUnions(Builder $query): string
+    {
+        $sql = '';
+
+        foreach ($query->unions as $union) {
+            $sql .= $this->compileUnion($union);
+        }
+
+        return ltrim($sql);
+    }
+
+    /**
+     * Compile a select query into SQL.
+     *
+     * @param Builder $query
+     * @return string
+     */
+    public function compileSelect(Builder $query): string
+    {
+        $sql = parent::compileSelect($query);
+
+        if (! empty($query->unionOrders) || isset($query->unionLimit) || isset($query->unionOffset)) {
+            $sql = "SELECT * FROM (".$sql.") ";
+
+            if (! empty($query->unionOrders)) {
+                $sql .= ' '.$this->compileOrders($query, $query->unionOrders);
+            }
+
+            if (isset($query->unionLimit)) {
+                $sql .= ' '.$this->compileLimit($query, $query->unionLimit);
+            }
+
+            if (isset($query->unionOffset)) {
+                $sql .= ' '.$this->compileUnionOffset($query, $query->unionOffset);
+            }
+        }
+
+        return ltrim($sql);
+    }
+
+    /**
+     * Compile the "offset" portions of the query.
+     *
+     * @param  Builder  $query
+     * @param  $offset
+     * @return string
+     */
+    protected function compileOffset(Builder $query, $offset): string
+    {
+        return $this->compileOffsetWithLimit($offset, $query->limit);
+    }
+
+    /**
+     * Compile the "offset" portions of the final union query.
+     *
+     * @param  Builder  $query
+     * @param $offset
+     * @return string
+     */
+    protected function compileUnionOffset(Builder $query, $offset): string
+    {
+        return $this->compileOffsetWithLimit($offset, $query->unionLimit);
+    }
+
+    /**
+     * Compile the "offset" portions of the query taking into account "limit" portion.
+     *
+     * @param $offset
+     * @param $limit
+     * @return string
+     */
+    private function compileOffsetWithLimit($offset, $limit): string
+    {
+        // OFFSET is not valid without LIMIT
+        // Add a huge LIMIT clause
+        if (! isset($limit)) {
+            // 9223372036854775807 - max 64-bit integer
+            return ' LIMIT 9223372036854775807 OFFSET '.(int) $offset;
+        }
+
+        return ' OFFSET '.(int) $offset;
+    }
 }
