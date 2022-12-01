@@ -6,6 +6,8 @@ This repository contains the official SingleStoreDB Driver for Laravel. This dri
 
 - Extensions to Eloquent allowing specific SingleStoreDB features to be specified through the Eloquent api. See [Migrations](#migrations) for supported features.
 - Integration tested against SingleStoreDB across a matrix of PHP and Laravel versions.
+- JSON column support
+- Other compatibility fixes in query generation
 
 ## TOC <!-- omit in toc -->
 
