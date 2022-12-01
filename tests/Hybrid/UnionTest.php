@@ -30,7 +30,8 @@ class UnionTest extends BaseTest
     }
 
     /** @test */
-    function union() {
+    public function union()
+    {
         if (! $this->runHybridIntegrations()) {
             return;
         }
@@ -48,7 +49,8 @@ class UnionTest extends BaseTest
     }
 
     /** @test */
-    function unionAll() {
+    public function unionAll()
+    {
         if (! $this->runHybridIntegrations()) {
             return;
         }
@@ -66,7 +68,8 @@ class UnionTest extends BaseTest
     }
 
     /** @test */
-    function unionWithOrderByLimitAndOffset() {
+    public function unionWithOrderByLimitAndOffset()
+    {
         if (! $this->runHybridIntegrations()) {
             return;
         }
@@ -83,7 +86,8 @@ class UnionTest extends BaseTest
     }
 
     /** @test */
-    function unionWithOrderBy() {
+    public function unionWithOrderBy()
+    {
         if (! $this->runHybridIntegrations()) {
             return;
         }
@@ -100,7 +104,8 @@ class UnionTest extends BaseTest
     }
 
     /** @test */
-    function unionWithLimit() {
+    public function unionWithLimit()
+    {
         if (! $this->runHybridIntegrations()) {
             return;
         }
@@ -113,7 +118,8 @@ class UnionTest extends BaseTest
     }
 
     /** @test */
-    function unionWithOffset() {
+    public function unionWithOffset()
+    {
         if (! $this->runHybridIntegrations()) {
             return;
         }
@@ -126,7 +132,8 @@ class UnionTest extends BaseTest
     }
 
     /** @test */
-    function unionWithInnerOffset() {
+    public function unionWithInnerOffset()
+    {
         if (! $this->runHybridIntegrations()) {
             return;
         }

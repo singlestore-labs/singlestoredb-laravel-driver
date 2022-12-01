@@ -137,7 +137,7 @@ class Grammar extends MySqlGrammar
     /**
      * Compile the "union" queries attached to the main query.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return string
      */
     protected function compileUnions(Builder $query): string
@@ -154,7 +154,7 @@ class Grammar extends MySqlGrammar
     /**
      * Compile a select query into SQL.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return string
      */
     public function compileSelect(Builder $query): string
@@ -162,7 +162,7 @@ class Grammar extends MySqlGrammar
         $sql = parent::compileSelect($query);
 
         if (! empty($query->unionOrders) || isset($query->unionLimit) || isset($query->unionOffset)) {
-            $sql = "SELECT * FROM (".$sql.") ";
+            $sql = 'SELECT * FROM ('.$sql.') ';
 
             if (! empty($query->unionOrders)) {
                 $sql .= ' '.$this->compileOrders($query, $query->unionOrders);
@@ -184,7 +184,7 @@ class Grammar extends MySqlGrammar
      * Compile the "offset" portions of the query.
      *
      * @param  Builder  $query
-     * @param  $offset
+     * @param    $offset
      * @return string
      */
     protected function compileOffset(Builder $query, $offset): string
