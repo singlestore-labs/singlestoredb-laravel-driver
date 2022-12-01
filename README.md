@@ -2,9 +2,12 @@
 
 [![Latest Stable Version](http://poser.pugx.org/singlestoredb/singlestoredb-laravel/v)](https://packagist.org/packages/singlestoredb/singlestoredb-laravel) [![Total Downloads](http://poser.pugx.org/singlestoredb/singlestoredb-laravel/downloads)](https://packagist.org/packages/singlestoredb/singlestoredb-laravel) [![License](http://poser.pugx.org/singlestoredb/singlestoredb-laravel/license)](https://packagist.org/packages/singlestoredb/singlestoredb-laravel) [![PHP Version Require](http://poser.pugx.org/singlestoredb/singlestoredb-laravel/require/php)](https://packagist.org/packages/singlestoredb/singlestoredb-laravel) [![Github Actions status image](https://github.com/singlestore-labs/singlestoredb-laravel-driver/actions/workflows/tests.yml/badge.svg)](https://github.com/singlestore-labs/singlestoredb-laravel-driver/actions)
 
-This repository contains a SingleStore Driver for Laravel.
+This repository contains the official SingleStoreDB Driver for Laravel. This driver wraps the official MySQL support in Laravel in order to make it work nicer with SingleStoreDB. Specifically, this driver provides the following advantages over vanilla Laravel MySQL support:
 
-This package is currently in a pre-release beta, please use with caution and open any issues that you run into.
+- Extensions to Eloquent allowing specific SingleStoreDB features to be specified through the Eloquent api. See [Migrations](#migrations) for supported features.
+- Integration tested against SingleStoreDB across a matrix of PHP and Laravel versions.
+
+## TOC <!-- omit in toc -->
 
 - [Install](#install)
 - [Usage](#usage)
