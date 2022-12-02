@@ -133,7 +133,7 @@ class FulltextTest extends BaseTest
                 'FULLTEXT is not supported when using the utf8mb4 collation.',
                 $exception->getMessage()
             );
-            
+
             return;
         }
 
