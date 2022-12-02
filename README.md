@@ -30,6 +30,7 @@ This repository contains the official SingleStoreDB Driver for Laravel. This dri
   - [Series Timestamps](#series-timestamps)
   - [Computed Columns](#computed-columns)
   - [Increment Columns without Primary Key](#increment-columns-without-primary-key)
+  - [Full-text search](#full-text-search-using-fulltext-indexes)
 - [Testing](#testing)
 - [License](#license)
 - [Resources](#resources)
@@ -395,6 +396,21 @@ Schema::create('test', function (Blueprint $table) {
 });
 ```
 
+### Full-text search using FULLTEXT indexes
+
+SingleStoreDB supports full-text search across text columns in a columnstore table using the `FULLTEXT` index type.
+
+Keep in mind that `FULLTEXT` is only supported when using the `utf8_unicode_ci` collation. An exception will be thrown if you try to add the index to a column with an unsupported collation.
+
+```php
+Schema::create('test', function (Blueprint $table) {
+    $table->id();
+    $table->text('first_name')->collation('utf8_unicode_ci');
+
+    $table->fullText(['first_name']);
+});
+```
+
 ## Testing
 
 Execute the tests using PHPUnit
@@ -425,6 +441,7 @@ This library is licensed under the Apache 2.0 License.
 
 * [SingleStore](https://singlestore.com)
 * [Laravel](https://laravel.com)
+* [Full-text search documentation](https://docs.singlestore.com/managed-service/en/reference/sql-reference/data-definition-language-ddl/create-table.html#fulltext-behavior)
 
 ## User agreement
 

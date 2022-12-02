@@ -2,7 +2,9 @@
 
 namespace SingleStore\Laravel\Schema;
 
+use Exception;
 use Illuminate\Database\Connection;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint as BaseBlueprint;
 use Illuminate\Database\Schema\Grammars\Grammar;
 use SingleStore\Laravel\Schema\Blueprint\AddsTableFlags;
@@ -30,5 +32,25 @@ class Blueprint extends BaseBlueprint
         $statements = parent::toSql($connection, $grammar);
 
         return $this->creating() ? $this->inlineCreateIndexStatements($statements) : $statements;
+    }
+
+    /**
+     * Execute the blueprint against the database.
+     *
+     * @param  \Illuminate\Database\Connection  $connection
+     * @param  \Illuminate\Database\Schema\Grammars\Grammar  $grammar
+     * @return void
+     */
+    public function build(Connection $connection, Grammar $grammar)
+    {
+        try {
+            parent::build($connection, $grammar);
+        } catch (QueryException $exception) {
+            if (str_contains($exception->getMessage(), 'FULLTEXT KEY with unsupported type')) {
+                throw new Exception('FULLTEXT is not supported when using the utf8mb4 collation.');
+            } else {
+                throw $exception;
+            }
+        }
     }
 }
