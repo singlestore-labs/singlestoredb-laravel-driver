@@ -394,16 +394,15 @@ Schema::create('test', function (Blueprint $table) {
 ### Full-text search using FULLTEXT indexes
 
 SingleStoreDB supports full-text search across text columns in a columnstore table using the `FULLTEXT` index type.
-Keep in mind that `FULLTEXT` is not supported when using the `utf8mb4` collation, the table needs to be set to the collation `utf8_unicode_ci`. If you try to add a `FULLTEXT` index to a table with the `utf8mb4` collation an exception will be thrown.
+
+Keep in mind that `FULLTEXT` is only supported when using the `utf8_unicode_ci` collation. An exception will be thrown if you try to add the index to a column with an unsupported collation.
 
 ```php
 Schema::create('test', function (Blueprint $table) {
     $table->id();
-    $table->text('first_name');
+    $table->text('first_name')->collation('utf8_unicode_ci');
 
     $table->fullText(['first_name']);
-    $table->charset = 'utf8';
-    $table->collation = 'utf8_unicode_ci';
 });
 ```
 

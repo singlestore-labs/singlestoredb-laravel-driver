@@ -37,10 +37,8 @@ class FulltextTest extends BaseTest
 
         $this->createTable(function (Blueprint $table) {
             $table->id();
-            $table->text('title');
+            $table->text('title')->collation('utf8_unicode_ci');
 
-            $table->charset = 'utf8';
-            $table->collation = 'utf8_unicode_ci';
             $table->fullText(['title']);
         });
 
@@ -88,11 +86,9 @@ class FulltextTest extends BaseTest
 
         $this->createTable(function (Blueprint $table) {
             $table->id();
-            $table->text('name');
-            $table->text('race');
+            $table->text('name')->collation('utf8_unicode_ci');
+            $table->text('race')->collation('utf8_unicode_ci');
 
-            $table->charset = 'utf8';
-            $table->collation = 'utf8_unicode_ci';
             $table->fullText(['name', 'race']);
         });
 
