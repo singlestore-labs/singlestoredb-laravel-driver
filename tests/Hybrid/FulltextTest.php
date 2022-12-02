@@ -105,4 +105,38 @@ class FulltextTest extends BaseTest
 
         $this->assertSame('Laika', $query->get()[0]->name);
     }
+
+    /** @test */
+    public function throws_exception_when_using_an_unsupported_collation()
+    {
+        if (version_compare(Application::VERSION, '8.79.0', '<=')) {
+            // fulltext not added until later on in laravel 8 releases
+            $this->markTestSkipped('requires higher laravel version');
+
+            return;
+        }
+
+        if (! $this->runHybridIntegrations()) {
+            return;
+        }
+
+        try {
+            // The default collation is utf8mb4_general_ci, which is unsupported for FULLTEXT
+            $this->createTable(function (Blueprint $table) {
+                $table->id();
+                $table->text('name');
+
+                $table->fullText(['name']);
+            });
+        } catch (\Exception $exception) {
+            $this->assertEquals(
+                'FULLTEXT is not supported when using the utf8mb4 collation.',
+                $exception->getMessage()
+            );
+            
+            return;
+        }
+
+        $this->fail('Did not throw exception when using an unsupported collation');
+    }
 }
