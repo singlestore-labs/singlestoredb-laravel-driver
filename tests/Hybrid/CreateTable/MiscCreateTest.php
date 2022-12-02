@@ -14,24 +14,16 @@ class MiscCreateTest extends BaseTest
     /** @test */
     public function all_keys_are_added_in_create_columnstore()
     {
-        if (version_compare(Application::VERSION, '8.79.0', '<=')) {
-            // fulltext not added until later on in laravel 8 releases
-            $this->markTestSkipped('requires higher laravel version');
-
-            return;
-        }
-
         $blueprint = $this->createTable(function (Blueprint $table) {
             $table->string('primary')->primary('name1');
             $table->string('index')->index('name2');
             $table->string('foo');
             $table->index('foo', 'name3', 'hash');
-            $table->string('fulltext')->fulltext('name5')->charset('utf8');
         });
 
         $this->assertCreateStatement(
             $blueprint,
-            'create table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `foo` varchar(255) not null, `fulltext` varchar(255) character set utf8 not null, index `name3` using hash(`foo`), primary key `name1`(`primary`), index `name2`(`index`), fulltext `name5`(`fulltext`))'
+            'create table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `foo` varchar(255) not null, index `name3` using hash(`foo`), primary key `name1`(`primary`), index `name2`(`index`))'
         );
     }
 
@@ -48,27 +40,6 @@ class MiscCreateTest extends BaseTest
         $this->assertCreateStatement(
             $blueprint,
             'create rowstore table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `georegion` geography not null, primary key `name1`(`primary`), index `name2`(`index`), index `name3`(`georegion`))'
-        );
-    }
-
-    /** @test */
-    public function fulltext_index()
-    {
-        if (version_compare(Application::VERSION, '8.79.0', '<=')) {
-            // fulltext not added until later on in laravel 8 releases
-            $this->markTestSkipped('requires higher laravel version');
-
-            return;
-        }
-
-        $blueprint = $this->createTable(function (Blueprint $table) {
-            $table->string('name')->charset('utf8');
-            $table->fullText('name', 'idx');
-        });
-
-        $this->assertCreateStatement(
-            $blueprint,
-            'create table `test` (`name` varchar(255) character set utf8 not null, fulltext `idx`(`name`))'
         );
     }
 
