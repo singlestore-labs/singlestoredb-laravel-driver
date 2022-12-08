@@ -223,4 +223,18 @@ class Grammar extends MySqlGrammar
                 : ' auto_increment primary key';
         }
     }
+
+    /**
+     * Compile a rename table command.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @return string
+     */
+    public function compileRename(Blueprint $blueprint, Fluent $command)
+    {
+        $from = $this->wrapTable($blueprint);
+
+        return "alter table {$from} rename to ".$this->wrapTable($command->to);
+    }
 }
