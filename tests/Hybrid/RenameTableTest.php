@@ -2,7 +2,6 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
@@ -54,6 +53,5 @@ class RenameTableTest extends BaseTest
 
         $this->assertCount(1, $statements);
         $this->assertEquals('alter table `test` rename to `test_renamed`', $statements[0]);
-
     }
 }
