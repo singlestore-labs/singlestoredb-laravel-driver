@@ -145,7 +145,7 @@ class Grammar extends MySqlGrammar
      * @param  string  $sql
      * @return string
      */
-    protected function wrapUnion($sql): string
+    protected function wrapUnion($sql)
     {
         return 'SELECT * FROM ('.$sql.')';
     }
@@ -156,7 +156,7 @@ class Grammar extends MySqlGrammar
      * @param  Builder  $query
      * @return string
      */
-    protected function compileUnions(Builder $query): string
+    protected function compileUnions(Builder $query)
     {
         $sql = '';
 
@@ -173,7 +173,7 @@ class Grammar extends MySqlGrammar
      * @param  Builder  $query
      * @return string
      */
-    public function compileSelect(Builder $query): string
+    public function compileSelect(Builder $query)
     {
         $sql = parent::compileSelect($query);
 
@@ -203,7 +203,7 @@ class Grammar extends MySqlGrammar
      * @param    $offset
      * @return string
      */
-    protected function compileOffset(Builder $query, $offset): string
+    protected function compileOffset(Builder $query, $offset)
     {
         return $this->compileOffsetWithLimit($offset, $query->limit);
     }
