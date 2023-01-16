@@ -26,6 +26,20 @@ class Grammar extends MySqlGrammar
     }
 
     /**
+     * Compile a primary key command.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @return string
+     */
+    public function compilePrimary(Blueprint $blueprint, Fluent $command)
+    {
+        $command->name(null);
+
+        return $this->compileKey($blueprint, $command, 'primary key');
+    }
+
+    /**
      * Create the column definition for a spatial Geography type.
      *
      * @param  \Illuminate\Support\Fluent  $column
