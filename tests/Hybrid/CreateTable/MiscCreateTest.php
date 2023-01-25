@@ -54,4 +54,23 @@ class MiscCreateTest extends BaseTest
             'create table `test` (`id` mediumint unsigned not null auto_increment primary key)'
         );
     }
+
+    /** @test */
+    public function discussion_53()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->bigIncrements('id')->withoutPrimaryKey()->index();
+            $table->unsignedBigInteger('user_id')->shardKey();
+            $table->string('template_id');
+            $table->longText('data');
+            $table->string('response_status_code');
+            $table->longText('response_message');
+            $table->timestamps();
+        });
+
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`id` bigint unsigned not null auto_increment, `user_id` bigint unsigned not null, `template_id` varchar(255) not null, `data` longtext not null, `response_status_code` varchar(255) not null, `response_message` longtext not null, `created_at` timestamp null, `updated_at` timestamp null, index `test_id_index`(`id`), shard key(`user_id`))'
+        );
+    }
 }
