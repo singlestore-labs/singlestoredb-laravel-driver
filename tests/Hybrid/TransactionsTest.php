@@ -24,7 +24,7 @@ class TransactionsTest extends BaseTest
     /** @test */
     public function multipleBegin()
     {
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 

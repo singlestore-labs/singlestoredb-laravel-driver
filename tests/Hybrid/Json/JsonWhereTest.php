@@ -31,7 +31,7 @@ class JsonWhereTest extends BaseTest
         $query3 = DB::table('test')->where('data->value1->value2', 1.5);
         $query4 = DB::table('test')->where('data->value1->value2', json_encode(['a' => 'b']));
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
@@ -71,7 +71,7 @@ class JsonWhereTest extends BaseTest
             $query2->toSql()
         );
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
@@ -113,7 +113,7 @@ class JsonWhereTest extends BaseTest
             $query->toSql()
         );
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
@@ -139,7 +139,7 @@ class JsonWhereTest extends BaseTest
             $query->toSql()
         );
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
