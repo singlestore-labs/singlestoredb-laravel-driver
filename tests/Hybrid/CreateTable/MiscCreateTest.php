@@ -73,4 +73,18 @@ class MiscCreateTest extends BaseTest
             'create table `test` (`id` bigint unsigned not null auto_increment, `user_id` bigint unsigned not null, `template_id` varchar(255) not null, `data` longtext not null, `response_status_code` varchar(255) not null, `response_message` longtext not null, `created_at` timestamp null, `updated_at` timestamp null, index `test_id_index`(`id`), shard key(`user_id`))'
         );
     }
+
+    /** @test */
+    public function json_column()
+    {
+        $blueprint = $this->createTable(function (Blueprint $table) {
+            $table->id();
+            $table->json('data');
+        });
+
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`id` bigint unsigned not null auto_increment primary key, `data` json not null)'
+        );
+    }
 }

@@ -31,7 +31,7 @@ class JsonWhereTest extends BaseTest
         $query3 = DB::table('test')->where('data->value1->value2', 1.5);
         $query4 = DB::table('test')->where('data->value1->value2', json_encode(['a' => 'b']));
 
-        if (! $this->runHybridIntegrations()) {
+        if (!$this->runHybridIntegrations()) {
             return;
         }
 
@@ -71,7 +71,7 @@ class JsonWhereTest extends BaseTest
             $query2->toSql()
         );
 
-        if (! $this->runHybridIntegrations()) {
+        if (!$this->runHybridIntegrations()) {
             return;
         }
 
@@ -105,15 +105,15 @@ class JsonWhereTest extends BaseTest
     /** @test */
     public function where_null()
     {
-        $query = DB::table('test')->whereNull('data->value1');
+        $query = DB::table('test')->whereNull('data->value1')->orderBy('id');
 
         $this->assertEquals(
             // @TODO check docs
-            "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') IS NULL OR JSON_GET_TYPE(JSON_EXTRACT_JSON(data, 'value1')) = 'NULL')",
+            "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') IS NULL OR JSON_GET_TYPE(JSON_EXTRACT_JSON(data, 'value1')) = 'NULL') order by `id` asc",
             $query->toSql()
         );
 
-        if (! $this->runHybridIntegrations()) {
+        if (!$this->runHybridIntegrations()) {
             return;
         }
 
@@ -139,11 +139,11 @@ class JsonWhereTest extends BaseTest
             $query->toSql()
         );
 
-        if (! $this->runHybridIntegrations()) {
+        if (!$this->runHybridIntegrations()) {
             return;
         }
 
-        [$id1, , , $id4] = $this->insertJsonData([
+        [$id1,,, $id4] = $this->insertJsonData([
             ['value1' => ['value2' => 'string']],
             ['value1' => null],
             [null],
