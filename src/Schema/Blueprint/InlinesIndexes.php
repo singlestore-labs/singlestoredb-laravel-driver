@@ -54,7 +54,7 @@ trait InlinesIndexes
 
         $search = SingleStoreBlueprint::INDEX_PLACEHOLDER;
 
-        if (!$indexStatements) {
+        if (! $indexStatements) {
             // If there are no index statements at all, we need to replace the preceding comma as well.
             $search = ", $search";
         }
@@ -122,11 +122,11 @@ trait InlinesIndexes
         $indexStatementKeys = [];
 
         foreach ($this->commands as $command) {
-            $method = 'compile' . ucfirst($command->name);
+            $method = 'compile'.ucfirst($command->name);
             $isIndex = $this->isIndexCommand($command);
 
             if (method_exists($grammar, $method) || $grammar::hasMacro($method)) {
-                if (!is_null($sql = $grammar->$method($this, $command, $connection))) {
+                if (! is_null($sql = $grammar->$method($this, $command, $connection))) {
                     $statements = array_merge($statements, (array) $sql);
                     if ($isIndex) {
                         array_push($indexStatementKeys, count($statements) - 1);

@@ -28,8 +28,6 @@ class Grammar extends MySqlGrammar
     /**
      * Compile a primary key command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
      * @return string
      */
     public function compilePrimary(Blueprint $blueprint, Fluent $command)
@@ -42,7 +40,6 @@ class Grammar extends MySqlGrammar
     /**
      * Create the column definition for a spatial Geography type.
      *
-     * @param  \Illuminate\Support\Fluent  $column
      * @return string
      */
     public function typeGeography(Fluent $column)
@@ -53,7 +50,6 @@ class Grammar extends MySqlGrammar
     /**
      * Create the column definition for a spatial Point type.
      *
-     * @param  \Illuminate\Support\Fluent  $column
      * @return string
      */
     public function typePoint(Fluent $column)
@@ -83,7 +79,6 @@ class Grammar extends MySqlGrammar
     }
 
     /**
-     * @param  Fluent  $column
      * @return string
      */
     protected function getType(Fluent $column)
@@ -105,8 +100,6 @@ class Grammar extends MySqlGrammar
      * Append the engine specifications to a command.
      *
      * @param  string  $sql
-     * @param  \Illuminate\Database\Connection  $connection
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
      * @return string
      */
     protected function compileCreateEngine($sql, Connection $connection, Blueprint $blueprint)
@@ -123,8 +116,6 @@ class Grammar extends MySqlGrammar
     }
 
     /**
-     * @param $blueprint
-     * @param $compiled
      * @return string
      *
      * @throws Exception
@@ -149,7 +140,6 @@ class Grammar extends MySqlGrammar
     }
 
     /**
-     * @param  Blueprint  $blueprint
      * @return array
      *
      * @throws Exception
@@ -169,9 +159,6 @@ class Grammar extends MySqlGrammar
     }
 
     /**
-     * @param  Blueprint  $blueprint
-     * @param  Fluent  $command
-     * @param $type
      * @return array|string|string[]
      */
     protected function compileKey(Blueprint $blueprint, Fluent $command, $type)
@@ -192,7 +179,6 @@ class Grammar extends MySqlGrammar
     /**
      * Convert an array of column names into a delimited string (with direction parameter).
      *
-     * @param  array  $columns
      * @return string
      */
     protected function columnizeWithDirection(array $columns, string $direction)
@@ -225,8 +211,6 @@ class Grammar extends MySqlGrammar
     /**
      * Get the SQL for an auto-increment column modifier.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyIncrement(Blueprint $blueprint, Fluent $column)
@@ -241,8 +225,6 @@ class Grammar extends MySqlGrammar
     /**
      * Compile a rename table command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
      * @return string
      */
     public function compileRename(Blueprint $blueprint, Fluent $command)
