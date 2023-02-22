@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         php: [7.3, 7.4, 8.0, 8.1]
-        laravel: [8.*, 9.*]
+        laravel: [8.*, 9.*, 10.*]
         dependency-version: [prefer-lowest, prefer-stable]
         include:
           - laravel: 8.*
@@ -27,6 +27,9 @@ jobs:
 
           - laravel: 9.*
             testbench: 7.*
+
+          - laravel: 10.*
+            testbench: 8.*
 
         exclude:
           # Laravel 8.0 has type incompatibilities with PHP 8.1.
@@ -40,6 +43,16 @@ jobs:
 
           - laravel: 9.*
             php: 7.4
+
+          # Laravel 10 requires PHP 8.1
+          - laravel: 10.*
+            php: 7.3
+
+          - laravel: 10.*
+            php: 7.4
+
+          - laravel: 10.*
+            php: 8.0
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 

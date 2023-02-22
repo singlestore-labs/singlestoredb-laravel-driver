@@ -27,13 +27,6 @@ class Blueprint extends BaseBlueprint
         return $this->point($column);
     }
 
-    public function toSql(Connection $connection, Grammar $grammar)
-    {
-        $statements = parent::toSql($connection, $grammar);
-
-        return $this->creating() ? $this->inlineCreateIndexStatements($statements) : $statements;
-    }
-
     /**
      * Execute the blueprint against the database.
      *
