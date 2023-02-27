@@ -10,7 +10,6 @@ class Grammar extends MySqlGrammar
     /**
      * Compile a "where fulltext" clause.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $where
      * @return string
      */
@@ -24,8 +23,6 @@ class Grammar extends MySqlGrammar
     }
 
     /**
-     * @param $column
-     * @param $value
      * @return string
      */
     protected function compileJsonContains($column, $value)
@@ -153,7 +150,6 @@ class Grammar extends MySqlGrammar
     /**
      * Compile the "union" queries attached to the main query.
      *
-     * @param  Builder  $query
      * @return string
      */
     protected function compileUnions(Builder $query)
@@ -170,7 +166,6 @@ class Grammar extends MySqlGrammar
     /**
      * Compile a select query into SQL.
      *
-     * @param  Builder  $query
      * @return string
      */
     public function compileSelect(Builder $query)
@@ -199,8 +194,6 @@ class Grammar extends MySqlGrammar
     /**
      * Compile the "offset" portions of the query.
      *
-     * @param  Builder  $query
-     * @param    $offset
      * @return string
      */
     protected function compileOffset(Builder $query, $offset)
@@ -210,10 +203,6 @@ class Grammar extends MySqlGrammar
 
     /**
      * Compile the "offset" portions of the final union query.
-     *
-     * @param  Builder  $query
-     * @param $offset
-     * @return string
      */
     protected function compileUnionOffset(Builder $query, $offset): string
     {
@@ -222,10 +211,6 @@ class Grammar extends MySqlGrammar
 
     /**
      * Compile the "offset" portions of the query taking into account "limit" portion.
-     *
-     * @param $offset
-     * @param $limit
-     * @return string
      */
     private function compileOffsetWithLimit($offset, $limit): string
     {

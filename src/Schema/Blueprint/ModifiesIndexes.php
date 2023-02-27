@@ -7,7 +7,6 @@ use SingleStore\Laravel\Fluency\SpatialIndexCommand;
 trait ModifiesIndexes
 {
     /**
-     * @param $columns
      * @return \Illuminate\Support\Fluent
      */
     public function shardKey($columns)
@@ -16,8 +15,6 @@ trait ModifiesIndexes
     }
 
     /**
-     * @param $columns
-     * @param $direction
      * @return \Illuminate\Support\Fluent
      */
     public function sortKey($columns = null, $direction = 'asc')
@@ -29,8 +26,6 @@ trait ModifiesIndexes
     }
 
     /**
-     * @param $columns
-     * @param $name
      * @return SpatialIndexCommand
      */
     public function spatialIndex($columns, $name = null)

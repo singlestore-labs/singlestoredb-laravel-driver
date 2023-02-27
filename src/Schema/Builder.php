@@ -9,7 +9,6 @@ class Builder extends MySqlBuilder
 {
     /**
      * @param  string  $table
-     * @param  Closure|null  $callback
      * @return \Illuminate\Database\Schema\Blueprint
      */
     protected function createBlueprint($table, Closure $callback = null)

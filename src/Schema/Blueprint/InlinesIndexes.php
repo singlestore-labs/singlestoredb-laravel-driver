@@ -2,7 +2,9 @@
 
 namespace SingleStore\Laravel\Schema\Blueprint;
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Grammars\Grammar;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Arr;
 use SingleStore\Laravel\Schema\Blueprint as SingleStoreBlueprint;
 
@@ -33,29 +35,22 @@ trait InlinesIndexes
     ];
 
     /**
-     * The keys of the commands that are indexes
-     *
-     * @var int[]
-     */
-    protected $indexCommandKeys = [];
-
-    /**
      * Given a set of statements from the `toSQL` method, inline all
      * of the indexes into the CREATE TABLE statement.
      *
      * @param  array  $statements
      * @return array
      */
-    protected function inlineCreateIndexStatements($statements)
+    protected function inlineCreateIndexStatements($statements, $indexStatementKeys)
     {
         // In the `addImpliedCommands` method we gathered up the keys of all the commands
         // that are index commands. Now that we're ready to compile the SQL we'll pull
         // all those statements out to sneak them into the CREATE TABLE statement.
-        $indexStatements = Arr::only($statements, $this->indexCommandKeys);
+        $indexStatements = Arr::only($statements, $indexStatementKeys);
 
         // Since we're putting the index statements inside the CREATE TABLE statement,
         // we pull them out of the statement list so that they don't run as ALTERs.
-        Arr::forget($statements, $this->indexCommandKeys);
+        Arr::forget($statements, $indexStatementKeys);
 
         $search = SingleStoreBlueprint::INDEX_PLACEHOLDER;
 
@@ -72,35 +67,16 @@ trait InlinesIndexes
     }
 
     /**
-     * Get all of the index commands out of the blueprint's command queue.
+     * Check if the command is index.
      *
      * @return \Illuminate\Support\Collection
      */
-    protected function indexCommands()
+    protected function isIndexCommand($command)
     {
-        return $this->commandsNamed(array_merge(
+        return in_array($command->name, array_merge(
             $this->singleStoreIndexes,
             $this->mysqlIndexes
         ));
-    }
-
-    /**
-     * @param  Grammar  $grammar
-     * @return void
-     */
-    protected function addImpliedCommands(Grammar $grammar)
-    {
-        parent::addImpliedCommands($grammar);
-
-        $this->addFluentSingleStoreIndexes();
-
-        if ($this->creating()) {
-            // We have to pull the keys for the indexes during this method because once
-            // compiled, the primary key's `name` attribute is set to null, meaning
-            // that we can no longer tell what type of key it is. By hooking into
-            // the `addImpliedCommands` method, we access it before compilation.
-            $this->indexCommandKeys = $this->indexCommands()->keys()->toArray();
-        }
     }
 
     /**
@@ -131,5 +107,34 @@ trait InlinesIndexes
                 }
             }
         }
+    }
+
+    public function toSql(Connection $connection, Grammar $grammar)
+    {
+        if (version_compare(Application::VERSION, '10.0.0', '>=')) {
+            $this->addImpliedCommands($connection, $grammar);
+        } else {
+            $this->addImpliedCommands($grammar);
+        }
+        $this->addFluentSingleStoreIndexes();
+
+        $statements = [];
+        $indexStatementKeys = [];
+
+        foreach ($this->commands as $command) {
+            $method = 'compile'.ucfirst($command->name);
+            $isIndex = $this->isIndexCommand($command);
+
+            if (method_exists($grammar, $method) || $grammar::hasMacro($method)) {
+                if (! is_null($sql = $grammar->$method($this, $command, $connection))) {
+                    $statements = array_merge($statements, (array) $sql);
+                    if ($isIndex) {
+                        array_push($indexStatementKeys, count($statements) - 1);
+                    }
+                }
+            }
+        }
+
+        return $this->creating() ? $this->inlineCreateIndexStatements($statements, $indexStatementKeys) : $statements;
     }
 }
