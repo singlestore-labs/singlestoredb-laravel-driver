@@ -433,6 +433,41 @@ Now when executing your tests, enable the integration tests by running
 HYBRID_INTEGRATION=1 ./vendor/bin/phpunit
 ```
 
+## Compatibility matrix 
+<table>
+    <thead>
+        <tr>
+            <th>Driver version</th>
+            <th>Laravel version</th>
+            <th>PHP version</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan=2>0.0 - 1.4</td>
+            <td>8</td>
+            <td>7.3 - 8.0</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>8.0 - 8.1</td>
+        </tr>
+        <tr>
+            <td rowspan=3>1.5</td>
+            <td>8</td>
+            <td>7.3 - 8.0</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>8.0 - 8.1</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>8.1</td>
+        </tr>
+    </tbody>
+</table>
+
 ## License
 
 This library is licensed under the Apache 2.0 License.
