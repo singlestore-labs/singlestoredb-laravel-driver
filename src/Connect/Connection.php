@@ -36,6 +36,7 @@ class Connection extends MySqlConnection
         if (method_exists($grammar, 'setConnection')) {
             $grammar->setConnection($this);
         }
+
         return $this->withTablePrefix($grammar);
     }
 
@@ -50,6 +51,7 @@ class Connection extends MySqlConnection
         if (method_exists($grammar, 'setConnection')) {
             $grammar->setConnection($this);
         }
+
         return $this->withTablePrefix($grammar);
     }
 
