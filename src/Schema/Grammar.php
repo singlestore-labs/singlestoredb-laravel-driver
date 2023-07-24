@@ -233,4 +233,20 @@ class Grammar extends MySqlGrammar
 
         return "alter table {$from} rename to ".$this->wrapTable($command->to);
     }
+
+    /**
+     * Compile a rename column command.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Illuminate\Database\Connection  $connection
+     * @return array|string
+     */
+    public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
+    {
+        return sprintf('alter table %s change %s %s',
+                $this->wrapTable($blueprint),
+                $this->wrap($command->from),
+                $this->wrap($command->to));
+    }
 }

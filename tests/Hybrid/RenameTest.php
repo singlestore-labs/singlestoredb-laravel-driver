@@ -54,4 +54,36 @@ class RenameTableTest extends BaseTest
         $this->assertCount(1, $statements);
         $this->assertEquals('alter table `test` rename to `test_renamed`', $statements[0]);
     }
+
+    /** @test */
+    public function rename_column() 
+    {
+        if ($this->runHybridIntegrations()) {
+            $cached = $this->mockDatabaseConnection;
+
+            $this->mockDatabaseConnection = false;
+
+            $this->createTable(function (Blueprint $table) {
+                $table->id();
+                $table->string('data');
+            });
+
+            Schema::table('test', function (Blueprint $table) {
+                $table->renameColumn('data', 'data1');
+            });
+
+            $columnNames = Schema::getColumnListing('test');
+            $this->assertEquals(['id', 'data1'], $columnNames);
+
+            $this->mockDatabaseConnection = $cached;
+        }
+
+        $blueprint = new Blueprint('test');
+        $blueprint->renameColumn('data', 'data1');
+
+        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+
+        $this->assertCount(1, $statements);
+        $this->assertEquals('alter table `test` change `data` `data1`', $statements[0]);
+    }
 }
