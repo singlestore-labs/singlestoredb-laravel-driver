@@ -56,7 +56,7 @@ class RenameTableTest extends BaseTest
     }
 
     /** @test */
-    public function rename_column() 
+    public function rename_column()
     {
         if ($this->runHybridIntegrations()) {
             $cached = $this->mockDatabaseConnection;
