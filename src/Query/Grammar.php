@@ -7,6 +7,19 @@ use Illuminate\Database\Query\Grammars\MySqlGrammar;
 
 class Grammar extends MySqlGrammar
 {
+    public function compileOptions(array $options): string
+    {
+        $optionString = '';
+        foreach ($options as $key => $value) {
+            if (! empty($optionString)) {
+                $optionString .= ',';
+            }
+            $optionString .= $key.'='.$value;
+        }
+
+        return "OPTION ({$optionString})";
+    }
+
     /**
      * Compile a "where fulltext" clause.
      *
