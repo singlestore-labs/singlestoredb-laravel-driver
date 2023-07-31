@@ -8,8 +8,10 @@ class Builder extends BaseBuilder
 {
     public $options;
 
-    public function options(array $options) {
+    public function options(array $options)
+    {
         $this->options = $options;
+
         return $this;
     }
 
@@ -17,7 +19,7 @@ class Builder extends BaseBuilder
     {
         $sql = parent::toSql();
 
-        if (!empty($this->options)) {
+        if (! empty($this->options)) {
             $sql .= ' '.$this->grammar->compileOptions($this->options);
         }
 

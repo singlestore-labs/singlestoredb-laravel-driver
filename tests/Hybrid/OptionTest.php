@@ -6,8 +6,6 @@ use Illuminate\Support\Facades\DB;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 
-use function PHPUnit\Framework\assertEquals;
-
 class OptionTest extends BaseTest
 {
     use HybridTestHelpers;
@@ -26,9 +24,9 @@ class OptionTest extends BaseTest
     /** @test */
     public function singleOption()
     {
-        $query = DB::table('test')->options(["interpreter_mode" => "compile"]);
+        $query = DB::table('test')->options(['interpreter_mode' => 'compile']);
         echo get_class($query);
-        $this->assertEquals("select * from `test` OPTION (interpreter_mode=compile)", $query->toSql());
+        $this->assertEquals('select * from `test` OPTION (interpreter_mode=compile)', $query->toSql());
 
         if ($this->runHybridIntegrations()) {
             $query->get();
@@ -40,7 +38,7 @@ class OptionTest extends BaseTest
     {
         $query = DB::table('test')->options([]);
         echo get_class($query);
-        $this->assertEquals("select * from `test`", $query->toSql());
+        $this->assertEquals('select * from `test`', $query->toSql());
 
         if ($this->runHybridIntegrations()) {
             $query->get();
@@ -50,9 +48,9 @@ class OptionTest extends BaseTest
     /** @test */
     public function multiOption()
     {
-        $query = DB::table('test')->options(["interpreter_mode" => "compile", "resource_pool" => "default_pool"]);
+        $query = DB::table('test')->options(['interpreter_mode' => 'compile', 'resource_pool' => 'default_pool']);
         echo get_class($query);
-        $this->assertEquals("select * from `test` OPTION (interpreter_mode=compile,resource_pool=default_pool)", $query->toSql());
+        $this->assertEquals('select * from `test` OPTION (interpreter_mode=compile,resource_pool=default_pool)', $query->toSql());
 
         if ($this->runHybridIntegrations()) {
             $query->get();
