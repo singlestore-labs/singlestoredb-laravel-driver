@@ -179,7 +179,6 @@ class Grammar extends MySqlGrammar
     /**
      * Compile a single union statement.
      *
-     * @param  array  $union
      * @return string
      */
     protected function compileUnion(array $union)
