@@ -177,6 +177,18 @@ class Grammar extends MySqlGrammar
     }
 
     /**
+     * Compile a single union statement.
+     *
+     * @return string
+     */
+    protected function compileUnion(array $union)
+    {
+        $conjunction = $union['all'] ? ' union all ' : ' union ';
+
+        return $conjunction.'('.$union['query']->toSql().')';
+    }
+
+    /**
      * Compile a select query into SQL.
      *
      * @return string
