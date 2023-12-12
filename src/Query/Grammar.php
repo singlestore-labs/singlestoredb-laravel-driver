@@ -195,7 +195,13 @@ class Grammar extends MySqlGrammar
      */
     public function compileSelect(Builder $query)
     {
+        $isAggregateWithUnionOrHaving = (($query->unions || $query->havings) && $query->aggregate);
+
         $sql = parent::compileSelect($query);
+
+        if($isAggregateWithUnionOrHaving) {
+            return ltrim($sql);
+        }
 
         if (! empty($query->unionOrders) || isset($query->unionLimit) || isset($query->unionOffset)) {
             $sql = 'SELECT * FROM ('.$sql.') ';
