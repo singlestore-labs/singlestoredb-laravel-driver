@@ -18,7 +18,7 @@ class Connection extends MySqlConnection
      */
     public function getSchemaBuilder()
     {
-        if (null === $this->schemaGrammar) {
+        if ($this->schemaGrammar === null) {
             $this->useDefaultSchemaGrammar();
         }
 
