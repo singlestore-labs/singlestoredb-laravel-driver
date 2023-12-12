@@ -199,7 +199,7 @@ class Grammar extends MySqlGrammar
 
         $sql = parent::compileSelect($query);
 
-        if($isAggregateWithUnionOrHaving) {
+        if ($isAggregateWithUnionOrHaving) {
             return ltrim($sql);
         }
 

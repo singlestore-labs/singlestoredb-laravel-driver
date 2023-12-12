@@ -11,7 +11,7 @@ class Builder extends MySqlBuilder
      * @param  string  $table
      * @return \Illuminate\Database\Schema\Blueprint
      */
-    protected function createBlueprint($table, Closure $callback = null)
+    protected function createBlueprint($table, ?Closure $callback = null)
     {
         // Set the resolver and then call the parent method so that we don't have
         // to duplicate the prefix generation logic. We don't bind our Blueprint

@@ -13,7 +13,7 @@ use SingleStore\Laravel\Schema\Blueprint\ModifiesIndexes;
 
 class Blueprint extends BaseBlueprint
 {
-    use AddsTableFlags, ModifiesIndexes, InlinesIndexes;
+    use AddsTableFlags, InlinesIndexes, ModifiesIndexes;
 
     public const INDEX_PLACEHOLDER = '__singlestore_indexes__';
 
