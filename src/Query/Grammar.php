@@ -254,4 +254,23 @@ class Grammar extends MySqlGrammar
 
         return ' OFFSET '.(int) $offset;
     }
+
+    /**
+     * Compile a delete statement with joins into SQL.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  string  $table
+     * @param  string  $where
+     * @return string
+     */
+    protected function compileDeleteWithJoins(Builder $query, $table, $where): string
+    {
+        $joins = $this->compileJoins($query, $query->joins);
+
+        // SingleStore does not support "database.table" in a delete statement when the delete statement contains a join
+        // strip the database name from the table, if it exists
+        $deleteTable = last(explode('.', $table));
+
+        return "delete {$deleteTable} from {$table} {$joins} {$where}";
+    }
 }
