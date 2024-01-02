@@ -258,10 +258,8 @@ class Grammar extends MySqlGrammar
     /**
      * Compile a delete statement with joins into SQL.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  string  $table
      * @param  string  $where
-     * @return string
      */
     protected function compileDeleteWithJoins(Builder $query, $table, $where): string
     {
