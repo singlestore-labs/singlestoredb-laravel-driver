@@ -2,6 +2,7 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
+use Illuminate\Foundation\Application;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
@@ -20,10 +21,17 @@ class IncrementWithoutPrimaryKeyTest extends BaseTest
             $table->primary(['id', 'uuid']);
         });
 
-        $this->assertCreateStatement(
-            $blueprint,
-            'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key `test_id_uuid_primary`(`id`, `uuid`))'
-        );
+        if (version_compare(Application::VERSION, '10.38.0', '>=')) {
+            $this->assertCreateStatement(
+                $blueprint,
+                'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key (`id`, `uuid`))'
+            );
+        } else {
+            $this->assertCreateStatement(
+                $blueprint,
+                'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key `test_id_uuid_primary`(`id`, `uuid`))'
+            );
+        }
     }
 
     /** @test */
@@ -36,9 +44,16 @@ class IncrementWithoutPrimaryKeyTest extends BaseTest
             $table->primary(['id', 'uuid']);
         });
 
-        $this->assertCreateStatement(
-            $blueprint,
-            'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key `test_id_uuid_primary`(`id`, `uuid`))'
-        );
+        if (version_compare(Application::VERSION, '10.38.0', '>=')) {
+            $this->assertCreateStatement(
+                $blueprint,
+                'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key (`id`, `uuid`))'
+            );
+        } else {
+            $this->assertCreateStatement(
+                $blueprint,
+                'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key `test_id_uuid_primary`(`id`, `uuid`))'
+            );
+        }
     }
 }

@@ -122,6 +122,10 @@ trait InlinesIndexes
         $indexStatementKeys = [];
 
         foreach ($this->commands as $command) {
+            if ($command->shouldBeSkipped) {
+                continue;
+            }
+
             $method = 'compile'.ucfirst($command->name);
             $isIndex = $this->isIndexCommand($command);
 
