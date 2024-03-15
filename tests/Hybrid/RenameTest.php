@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 
-class RenameTableTest extends BaseTest
+class RenameTest extends BaseTest
 {
     use HybridTestHelpers;
 

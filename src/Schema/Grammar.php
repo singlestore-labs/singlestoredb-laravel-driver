@@ -85,7 +85,7 @@ class Grammar extends MySqlGrammar
     {
         $type = parent::getType($column);
 
-        if (! is_null($column->storedAs)) {
+        if (!is_null($column->storedAs)) {
             // MySQL's syntax for stored columns is `<name> <datatype> as (<expression>) stored`,
             // but for SingleStore it's `<name> as (<expression>) persisted <datatype>`. Here
             // we sneak the expression in as a part of the type definition, so that it will
@@ -166,7 +166,7 @@ class Grammar extends MySqlGrammar
         $compiled = parent::compileKey($blueprint, $command, $type);
 
         // We don't mess with ALTER statements at all.
-        if (! $blueprint->creating()) {
+        if (!$blueprint->creating()) {
             return $compiled;
         }
 
@@ -204,7 +204,7 @@ class Grammar extends MySqlGrammar
         $wrapped = array_map([$this, 'wrap'], $columns);
 
         return implode(', ', array_map(function ($column) use ($direction) {
-            return $column.' '.$direction;
+            return $column . ' ' . $direction;
         }, $wrapped));
     }
 
@@ -231,7 +231,7 @@ class Grammar extends MySqlGrammar
     {
         $from = $this->wrapTable($blueprint);
 
-        return "alter table {$from} rename to ".$this->wrapTable($command->to);
+        return "alter table {$from} rename to " . $this->wrapTable($command->to);
     }
 
     /**
@@ -241,9 +241,32 @@ class Grammar extends MySqlGrammar
      */
     public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
     {
-        return sprintf('alter table %s change %s %s',
+        return sprintf(
+            'alter table %s change %s %s',
             $this->wrapTable($blueprint),
             $this->wrap($command->from),
-            $this->wrap($command->to));
+            $this->wrap($command->to)
+        );
+    }
+
+    /**
+     * Compile the query to determine the columns.
+     *
+     * @param  string  $database
+     * @param  string  $table
+     * @return string
+     */
+    public function compileColumns($database, $table)
+    {
+        return sprintf(
+            'select column_name as `name`, data_type as `type_name`, column_type as `type`, '
+                . 'collation_name as `collation`, is_nullable as `nullable`, '
+                . 'column_default as `default`, column_comment as `comment`, '
+                . '"" as `expression`, extra as `extra` '
+                . 'from information_schema.columns where table_schema = %s and table_name = %s '
+                . 'order by ordinal_position asc',
+            $this->quoteString($database),
+            $this->quoteString($table)
+        );
     }
 }
