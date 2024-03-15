@@ -31,7 +31,7 @@ class FulltextTest extends BaseTest
 
         $this->assertSame('performance', $query->getBindings()[0]);
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
@@ -80,7 +80,7 @@ class FulltextTest extends BaseTest
 
         $this->assertSame('Laika', $query->getBindings()[0]);
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
@@ -116,7 +116,7 @@ class FulltextTest extends BaseTest
             return;
         }
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 
