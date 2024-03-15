@@ -2,6 +2,7 @@
 
 namespace SingleStore\Laravel\Tests;
 
+use Illuminate\Support\Facades\DB;
 use Orchestra\Testbench\TestCase;
 use PDO;
 use SingleStore\Laravel\SingleStoreProvider;
@@ -34,5 +35,10 @@ abstract class BaseTest extends TestCase
         $app['config']->set('database.default', 'mysql');
         $app['config']->set('database.connections.mysql.driver', 'singlestore');
         $app['config']->set('database.connections.mysql.options.'.PDO::ATTR_EMULATE_PREPARES, true);
+    }
+
+    public function singlestoreVersion()
+    {
+        return DB::select('SELECT @@memsql_version AS version')[0]->version;
     }
 }

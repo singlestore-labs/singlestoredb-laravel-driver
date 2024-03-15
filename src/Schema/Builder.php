@@ -24,6 +24,13 @@ class Builder extends MySqlBuilder
         return parent::createBlueprint($table, $callback);
     }
 
+    public function getAllTables()
+    {
+        return $this->connection->select(
+            'SHOW FULL TABLES WHERE table_type = \'BASE TABLE\''
+        );
+    }
+
     /**
      * Drop all tables from the database.
      *
