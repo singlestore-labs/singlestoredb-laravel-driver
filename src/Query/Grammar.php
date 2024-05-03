@@ -4,6 +4,7 @@ namespace SingleStore\Laravel\Query;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
+use Illuminate\Support\Facades\Log;
 
 class Grammar extends MySqlGrammar
 {
@@ -62,7 +63,17 @@ class Grammar extends MySqlGrammar
         // Break apart the column name from the JSON keypath.
         [$field, $path] = $this->wrapJsonFieldAndPath($key);
 
-        return "$field = JSON_SET_JSON($field$path, $value)";
+
+    public function compileDelete(Builder $query)
+    {
+        if (isset($query->orders)) {
+            if (env('APP_ENV') !== 'production') {
+                Log::warning('SingleStore does not support "order by" in a delete statement. The "order by" clause will be ignored.');
+            }
+            $query->orders = [];
+        }
+
+        return parent::compileDelete($query);
     }
 
     public function prepareBindingsForUpdate(array $bindings, array $values)
