@@ -4,20 +4,65 @@ namespace SingleStore\Laravel\Query;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class Grammar extends MySqlGrammar
 {
+    private $ignoreOrderByInDeletes;
+    private $ignoreOrderByInUpdates;
+
+    public function __construct($ignoreOrderByInDeletes, $ignoreOrderByInUpdates)
+    {
+        $this->ignoreOrderByInDeletes = $ignoreOrderByInDeletes;
+        $this->ignoreOrderByInUpdates = $ignoreOrderByInUpdates;
+    }
+
     public function compileOptions(array $options): string
     {
         $optionString = '';
         foreach ($options as $key => $value) {
-            if (! empty($optionString)) {
+            if (!empty($optionString)) {
                 $optionString .= ',';
             }
-            $optionString .= $key.'='.$value;
+            $optionString .= $key . '=' . $value;
         }
 
         return "OPTION ({$optionString})";
+    }
+
+    public function compileDelete(Builder $query)
+    {
+        // TODO: allow order by in the case when table has unique column
+        if (isset($query->orders)) {
+            if ($this->ignoreOrderByInDeletes) {
+                if (env('APP_ENV') !== 'production') {
+                    Log::warning('SingleStore does not support "order by" in a delete statement. The "order by" clause will be ignored.');
+                }
+                $query->orders = [];
+            } else {
+                throw new Exception('SingleStore does not support "order by" in a delete statement. Use "ignore_order_by_in_deletes" configuration to ignore orderBy in delete operations.');
+            }
+        }
+
+        return parent::compileDelete($query);
+    }
+
+    public function compileUpdate(Builder $query, array $values)
+    {
+        // TODO: allow order by in the case when table has unique column
+        if (isset($query->orders)) {
+            if ($this->ignoreOrderByInUpdates) {
+                if (env('APP_ENV') !== 'production') {
+                    Log::warning('SingleStore does not support "order by" in an update statement. The "order by" clause will be ignored.');
+                }
+                $query->orders = [];
+            } else {
+                throw new Exception('SingleStore does not support "order by" in an update statement. Use "ignore_order_by_in_updates" configuration to ignore orderBy in update operations.');
+            }
+        }
+
+        return parent::compileUpdate($query, $values);
     }
 
     /**
@@ -81,7 +126,7 @@ class Grammar extends MySqlGrammar
         if ($this->isJsonSelector($where['column'])) {
             [$field, $path] = $this->wrapJsonFieldAndPath($where['column']);
 
-            return '(JSON_EXTRACT_JSON('.$field.$path.') IS NULL OR JSON_GET_TYPE(JSON_EXTRACT_JSON('.$field.$path.')) = \'NULL\')';
+            return '(JSON_EXTRACT_JSON(' . $field . $path . ') IS NULL OR JSON_GET_TYPE(JSON_EXTRACT_JSON(' . $field . $path . ')) = \'NULL\')';
         }
 
         return parent::whereNull($query, $where);
@@ -92,7 +137,7 @@ class Grammar extends MySqlGrammar
         if ($this->isJsonSelector($where['column'])) {
             [$field, $path] = $this->wrapJsonFieldAndPath($where['column']);
 
-            return '(JSON_EXTRACT_JSON('.$field.$path.') IS NOT NULL AND JSON_GET_TYPE(JSON_EXTRACT_JSON('.$field.$path.')) != \'NULL\')';
+            return '(JSON_EXTRACT_JSON(' . $field . $path . ') IS NOT NULL AND JSON_GET_TYPE(JSON_EXTRACT_JSON(' . $field . $path . ')) != \'NULL\')';
         }
 
         return parent::whereNotNull($query, $where);
@@ -103,7 +148,7 @@ class Grammar extends MySqlGrammar
         // Break apart the column name from the JSON keypath.
         [$field, $path] = $this->wrapJsonFieldAndPath($value);
 
-        if (! $path) {
+        if (!$path) {
             return $field;
         }
 
@@ -144,7 +189,7 @@ class Grammar extends MySqlGrammar
             return "'$part'";
         }, $parts);
 
-        $path = count($parts) ? ', '.implode(', ', $parts) : '';
+        $path = count($parts) ? ', ' . implode(', ', $parts) : '';
 
         return [$field, $path];
     }
@@ -157,7 +202,7 @@ class Grammar extends MySqlGrammar
      */
     protected function wrapUnion($sql)
     {
-        return 'SELECT * FROM ('.$sql.')';
+        return 'SELECT * FROM (' . $sql . ')';
     }
 
     /**
@@ -185,7 +230,7 @@ class Grammar extends MySqlGrammar
     {
         $conjunction = $union['all'] ? ' union all ' : ' union ';
 
-        return $conjunction.'('.$union['query']->toSql().')';
+        return $conjunction . '(' . $union['query']->toSql() . ')';
     }
 
     /**
@@ -203,19 +248,19 @@ class Grammar extends MySqlGrammar
             return ltrim($sql);
         }
 
-        if (! empty($query->unionOrders) || isset($query->unionLimit) || isset($query->unionOffset)) {
-            $sql = 'SELECT * FROM ('.$sql.') ';
+        if (!empty($query->unionOrders) || isset($query->unionLimit) || isset($query->unionOffset)) {
+            $sql = 'SELECT * FROM (' . $sql . ') ';
 
-            if (! empty($query->unionOrders)) {
-                $sql .= ' '.$this->compileOrders($query, $query->unionOrders);
+            if (!empty($query->unionOrders)) {
+                $sql .= ' ' . $this->compileOrders($query, $query->unionOrders);
             }
 
             if (isset($query->unionLimit)) {
-                $sql .= ' '.$this->compileLimit($query, $query->unionLimit);
+                $sql .= ' ' . $this->compileLimit($query, $query->unionLimit);
             }
 
             if (isset($query->unionOffset)) {
-                $sql .= ' '.$this->compileUnionOffset($query, $query->unionOffset);
+                $sql .= ' ' . $this->compileUnionOffset($query, $query->unionOffset);
             }
         }
 
@@ -247,12 +292,12 @@ class Grammar extends MySqlGrammar
     {
         // OFFSET is not valid without LIMIT
         // Add a huge LIMIT clause
-        if (! isset($limit)) {
+        if (!isset($limit)) {
             // 9223372036854775807 - max 64-bit integer
-            return ' LIMIT 9223372036854775807 OFFSET '.(int) $offset;
+            return ' LIMIT 9223372036854775807 OFFSET ' . (int) $offset;
         }
 
-        return ' OFFSET '.(int) $offset;
+        return ' OFFSET ' . (int) $offset;
     }
 
     /**

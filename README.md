@@ -15,6 +15,7 @@ This repository contains the official SingleStoreDB Driver for Laravel. This dri
 - [Usage](#usage)
 - [Issues connecting to SingleStore Managed Service](#issues-connecting-to-singlestore-managed-service)
 - [Persistent Connections (performance optimization)](#persistent-connections-performance-optimization)
+- [Order by in delete and update](#order-by-in-delete-and-update)
 - [PHP Versions before 8.1](#php-versions-before-81)
 - [Migrations](#migrations)
   - [Universal Storage Tables (Columnstore)](#universal-storage-tables-columnstore)
@@ -122,6 +123,36 @@ To enable this feature, simply update your options to include `PDO::ATTR_PERSIST
     PDO::ATTR_PERSISTENT => true,
 ]) : [],
 ```
+
+## Order by in delete and update
+
+SingleStore doesn't support the ORDER BY clause in DELETE and UPDATE queries.
+Issuing queries like the following will result in an error. 
+
+```php
+DB::table('test')->orderBy('id', 'asc')->update(['id' => 1, 'a' => 'b']);
+DB::table('test')->orderBy('id', 'asc')->delete();
+```
+
+You can configure the driver to ignore `orderBy` in such requests using `ignore_order_by_in_deletes` and
+`ignore_order_by_in_updates` configurations. For example:
+
+```php
+[
+    'default' => env('DB_CONNECTION', 'singlestore'),
+
+    'connections' => [
+        'singlestore' => [
+            'driver' => 'singlestore',
+            'ignore_order_by_in_deletes' => true,
+            'ignore_order_by_in_updates' => true,
+            ...
+        ],
+    ]
+]
+```
+
+Note that when `orderBy` is ignored it may result in deletion/update of different rows.
 
 ## PHP Versions before 8.1
 

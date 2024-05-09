@@ -32,7 +32,7 @@ class Connection extends MySqlConnection
      */
     protected function getDefaultQueryGrammar()
     {
-        $grammar = new Query\Grammar;
+        $grammar = new Query\Grammar($this->getConfig('ignore_order_by_in_deletes'), $this->getConfig('ignore_order_by_in_updates'));
         if (method_exists($grammar, 'setConnection')) {
             $grammar->setConnection($this);
         }
