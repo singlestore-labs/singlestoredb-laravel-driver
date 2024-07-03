@@ -271,4 +271,9 @@ class Grammar extends MySqlGrammar
 
         return "delete {$deleteTable} from {$table} {$joins} {$where}";
     }
+
+    public function useLegacyGroupLimit(Builder $query)
+    {
+        return false;
+    }
 }
