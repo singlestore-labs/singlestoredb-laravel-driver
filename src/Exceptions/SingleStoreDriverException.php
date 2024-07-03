@@ -2,6 +2,4 @@
 
 namespace SingleStore\Laravel\Exceptions;
 
-class SingleStoreDriverException extends \Exception
-{
-}
+class SingleStoreDriverException extends \Exception {}

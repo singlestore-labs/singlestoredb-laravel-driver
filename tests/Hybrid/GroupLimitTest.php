@@ -3,10 +3,9 @@
 namespace SingleStore\Laravel\Tests\Hybrid;
 
 use Illuminate\Foundation\Application;
-use SingleStore\Laravel\Tests\BaseTest;
 use Illuminate\Support\Facades\DB;
 use SingleStore\Laravel\Schema\Blueprint;
-use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
+use SingleStore\Laravel\Tests\BaseTest;
 
 class GroupLimitTest extends BaseTest
 {
@@ -28,7 +27,7 @@ class GroupLimitTest extends BaseTest
             $query->toSql()
         );
 
-        if (!$this->runHybridIntegrations()) {
+        if (! $this->runHybridIntegrations()) {
             return;
         }
 

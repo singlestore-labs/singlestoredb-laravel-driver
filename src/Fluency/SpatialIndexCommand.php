@@ -7,6 +7,4 @@ use Illuminate\Support\Fluent;
 /**
  * @method $this resolution(int $resolution) The spatial index resolution
  */
-class SpatialIndexCommand extends Fluent
-{
-}
+class SpatialIndexCommand extends Fluent {}

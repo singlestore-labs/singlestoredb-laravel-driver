@@ -2,6 +2,4 @@
 
 namespace SingleStore\Laravel\Exceptions;
 
-class UnsupportedFunctionException extends SingleStoreDriverException
-{
-}
+class UnsupportedFunctionException extends SingleStoreDriverException {}
