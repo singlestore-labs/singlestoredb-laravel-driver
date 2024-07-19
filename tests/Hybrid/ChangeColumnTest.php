@@ -75,6 +75,29 @@ class ChangeColumnTest extends BaseTest
     }
 
     /** @test */
+    public function change_column_on_rowstore_table_with_doctrine()
+    {
+        if (! $this->runHybridIntegrations()) {
+            return;
+        }
+
+        $this->mockDatabaseConnection = false;
+
+        $this->createTable(function (Blueprint $table) {
+            $table->rowstore();
+            $table->id();
+            $table->string('data');
+        });
+
+        Schema::table('test', function (Blueprint $table) {
+            $table->text('data')->nullable()->change();
+        });
+
+        $this->assertEquals(['id', 'data'], Schema::getColumnListing('test'));
+        $this->assertEquals('text', Schema::getColumnType('test', 'data'));
+    }
+
+    /** @test */
     public function change_column_of_columnstore_table()
     {
         if (version_compare(Application::VERSION, '11.15', '<')) {
