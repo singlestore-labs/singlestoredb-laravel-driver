@@ -39,6 +39,10 @@ class Grammar extends MySqlGrammar
      */
     public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection)
     {
+        if (version_compare(Application::VERSION, '10.0', '<')) {
+            throw new LogicException('This database driver does not support modifying columns on Laravel < 10.0.');
+        }
+
         $isColumnstoreTable = $connection->scalar(sprintf(
             "select exists (select 1 from information_schema.tables where table_schema = %s and table_name = %s and storage_type = 'COLUMNSTORE') as is_columnstore",
             $this->quoteString($connection->getDatabaseName()),
