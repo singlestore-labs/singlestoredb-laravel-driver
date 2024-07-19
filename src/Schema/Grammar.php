@@ -43,10 +43,12 @@ class Grammar extends MySqlGrammar
             throw new LogicException('This database driver does not support modifying columns on Laravel < 10.0.');
         }
 
+        $prefix = method_exists($blueprint, 'getPrefix') ? $blueprint->getPrefix() : $blueprint->prefix;
+
         $isColumnstoreTable = $connection->scalar(sprintf(
             "select exists (select 1 from information_schema.tables where table_schema = %s and table_name = %s and storage_type = 'COLUMNSTORE') as is_columnstore",
             $this->quoteString($connection->getDatabaseName()),
-            $this->quoteString($blueprint->getPrefix().$blueprint->getTable())
+            $this->quoteString($prefix.$blueprint->getTable())
         ));
 
         if (! $isColumnstoreTable) {
