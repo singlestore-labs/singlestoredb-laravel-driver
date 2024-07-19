@@ -9,7 +9,7 @@ use SingleStore\Laravel\Tests\BaseTest;
 
 class ChangeColumnTest extends BaseTest
 {
-    use \SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
+    use HybridTestHelpers;
 
     protected function setUp(): void
     {
@@ -67,7 +67,7 @@ class ChangeColumnTest extends BaseTest
         $connection->shouldReceive('scalar')
             ->with("select exists (select 1 from information_schema.tables where table_schema = 'database' and table_name = 'test' and storage_type = 'COLUMNSTORE') as is_columnstore")
             ->andReturn(0);
-
+        $connection->shouldReceive('usingNativeSchemaOperations')->andReturn(true);
         $statements = $blueprint->toSql($connection, $this->getGrammar());
 
         $this->assertCount(1, $statements);
