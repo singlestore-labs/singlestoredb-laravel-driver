@@ -12,26 +12,6 @@ class ChangeColumnTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        if ($this->runHybridIntegrations()) {
-            $this->createTable(function (Blueprint $table) {
-                $table->id();
-            });
-        }
-    }
-
-    protected function tearDown(): void
-    {
-        if ($this->runHybridIntegrations()) {
-            Schema::dropIfExists('test_renamed');
-        }
-
-        parent::tearDown();
-    }
-
     /** @test */
     public function change_column_on_rowstore_table()
     {
