@@ -38,8 +38,9 @@ class ChangeColumnTest extends BaseTest
                 $table->text('data')->nullable()->change();
             });
 
+            $this->assertEquals(['id', 'data'], Schema::getColumnListing('test'));
+
             if (version_compare(Application::VERSION, '10.30', '>=')) {
-                $this->assertEquals(['id', 'data'], Schema::getColumnListing('test'));
                 $this->assertEquals('text', Schema::getColumnType('test', 'data'));
             }
 
