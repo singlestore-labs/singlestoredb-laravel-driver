@@ -14,6 +14,10 @@ class orderByTest extends BaseTest
     /** @test */
     public function ignoresOrderByInDelete()
     {
+        if (!$this->runHybridIntegrations()) {
+            return;
+        }
+
         $this->createTable(function (Blueprint $table) {
             $table->id();
         });
@@ -28,6 +32,10 @@ class orderByTest extends BaseTest
     /** @test */
     public function ignoresOrderByInUpdate()
     {
+        if (!$this->runHybridIntegrations()) {
+            return;
+        }
+
         $this->createTable(function (Blueprint $table) {
             $table->id();
             $table->string('a');
