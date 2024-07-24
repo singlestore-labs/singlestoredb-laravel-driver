@@ -6,9 +6,11 @@ use Exception;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\Grammars\MySqlGrammar;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use LogicException;
 use SingleStore\Laravel\Schema\Blueprint as SingleStoreBlueprint;
 use SingleStore\Laravel\Schema\Grammar\CompilesKeys;
 use SingleStore\Laravel\Schema\Grammar\ModifiesColumns;
@@ -23,6 +25,67 @@ class Grammar extends MySqlGrammar
         // Before anything kicks off, we need to add the SingleStore modifiers
         // so that they'll get used while the columns are all compiling.
         $this->addSingleStoreModifiers();
+    }
+
+    /**
+     * Compile a change column command into a series of SQL statements.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Illuminate\Database\Connection  $connection
+     * @return array|string
+     *
+     * @throws \RuntimeException
+     */
+    public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection)
+    {
+        if (version_compare(Application::VERSION, '10.0', '<')) {
+            throw new LogicException('This database driver does not support modifying columns on Laravel < 10.0.');
+        }
+
+        $prefix = method_exists($blueprint, 'getPrefix')
+            ? $blueprint->getPrefix()
+            : (function () {
+                return $this->prefix;
+            })->call($blueprint);
+
+        $isColumnstoreTable = $connection->scalar(sprintf(
+            "select exists (select 1 from information_schema.tables where table_schema = %s and table_name = %s and storage_type = 'COLUMNSTORE') as is_columnstore",
+            $this->quoteString($connection->getDatabaseName()),
+            $this->quoteString($prefix.$blueprint->getTable())
+        ));
+
+        if (! $isColumnstoreTable) {
+            return parent::compileChange($blueprint, $command, $connection);
+        }
+
+        if (version_compare(Application::VERSION, '11.15', '<')) {
+            throw new LogicException('This database driver does not support modifying columns of a columnstore table on Laravel < 11.15.');
+        }
+
+        $tempCommand = clone $command;
+        $tempCommand->column = clone $command->column;
+        $tempCommand->column->change = false;
+        $tempCommand->column->name = '__temp__'.$command->column->name;
+        $tempCommand->column->after = is_null($command->column->after) && is_null($command->column->first)
+            ? $command->column->name
+            : $command->column->after;
+
+        return [
+            $this->compileAdd($blueprint, $tempCommand),
+            sprintf('update %s set %s = %s',
+                $this->wrapTable($blueprint),
+                $this->wrap($tempCommand->column),
+                $this->wrap($command->column)
+            ),
+            $this->compileDropColumn($blueprint, new Fluent([
+                'columns' => [$command->column->name],
+            ])),
+            $this->compileRenameColumn($blueprint, new Fluent([
+                'from' => $tempCommand->column->name,
+                'to' => $command->column->name,
+            ]), $connection),
+        ];
     }
 
     /**
