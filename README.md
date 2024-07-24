@@ -124,18 +124,18 @@ To enable this feature, simply update your options to include `PDO::ATTR_PERSIST
 ]) : [],
 ```
 
-## Order by in delete and update
+## `ORDER BY` Clause in `DELETE` and `UPDATE` Queries
 
-SingleStore doesn't support the ORDER BY clause in DELETE and UPDATE queries.
-Issuing queries like the following will result in an error. 
+SingleStore does not support the `ORDER BY` clause in the `DELETE` and `UPDATE` queries.
+Issuing queries similar to the following will return an error. 
 
 ```php
 DB::table('test')->orderBy('id', 'asc')->update(['id' => 1, 'a' => 'b']);
 DB::table('test')->orderBy('id', 'asc')->delete();
 ```
 
-You can configure the driver to ignore `orderBy` in such requests using `ignore_order_by_in_deletes` and
-`ignore_order_by_in_updates` configurations. For example:
+You can configure the driver to ignore `orderBy` in `delete()` and `update()` requests by enabling `ignore_order_by_in_deletes` and
+`ignore_order_by_in_updates` in the connection configuration, respectively. For example:
 
 ```php
 [
@@ -152,7 +152,7 @@ You can configure the driver to ignore `orderBy` in such requests using `ignore_
 ]
 ```
 
-Note that when `orderBy` is ignored it may result in deletion/update of different rows.
+Note that when `orderBy` is ignored, it may result in deletion/update of different rows.
 
 ## PHP Versions before 8.1
 

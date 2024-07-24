@@ -38,11 +38,11 @@ class Grammar extends MySqlGrammar
         if (isset($query->orders)) {
             if ($this->ignoreOrderByInDeletes) {
                 if (env('APP_ENV') !== 'production') {
-                    Log::warning('SingleStore does not support "order by" in a delete statement. The "order by" clause will be ignored.');
+                    Log::warning('SingleStore does not support the "ORDER BY" clause in a "DELETE" statement. The "ORDER BY" clause will be ignored.');
                 }
                 $query->orders = [];
             } else {
-                throw new Exception('SingleStore does not support "order by" in a delete statement. Use "ignore_order_by_in_deletes" configuration to ignore orderBy in delete operations.');
+                throw new Exception('SingleStore does not support the "ORDER BY" clause in a "DELETE" statement. Enable the "ignore_order_by_in_deletes" configuration to ignore "orderBy" in "delete" operations.');
             }
         }
 
@@ -55,11 +55,11 @@ class Grammar extends MySqlGrammar
         if (isset($query->orders)) {
             if ($this->ignoreOrderByInUpdates) {
                 if (env('APP_ENV') !== 'production') {
-                    Log::warning('SingleStore does not support "order by" in an update statement. The "order by" clause will be ignored.');
+                    Log::warning('SingleStore does not support the "ORDER BY" clause in an "UPDATE" statement. The "ORDER BY" clause will be ignored.');
                 }
                 $query->orders = [];
             } else {
-                throw new Exception('SingleStore does not support "order by" in an update statement. Use "ignore_order_by_in_updates" configuration to ignore orderBy in update operations.');
+                throw new Exception('SingleStore does not support the "ORDER BY" clause in an update statement. Enable the "ignore_order_by_in_updates" configuration to ignore "orderBy" in "update" operations.');
             }
         }
 
