@@ -2,11 +2,23 @@
 
 namespace SingleStore\Laravel\Query;
 
+use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
+use Illuminate\Support\Facades\Log;
 
 class Grammar extends MySqlGrammar
 {
+    private $ignoreOrderByInDeletes;
+
+    private $ignoreOrderByInUpdates;
+
+    public function __construct($ignoreOrderByInDeletes, $ignoreOrderByInUpdates)
+    {
+        $this->ignoreOrderByInDeletes = $ignoreOrderByInDeletes;
+        $this->ignoreOrderByInUpdates = $ignoreOrderByInUpdates;
+    }
+
     public function compileOptions(array $options): string
     {
         $optionString = '';
@@ -18,6 +30,40 @@ class Grammar extends MySqlGrammar
         }
 
         return "OPTION ({$optionString})";
+    }
+
+    public function compileDelete(Builder $query)
+    {
+        // TODO: allow order by in the case when table has unique column
+        if (isset($query->orders)) {
+            if ($this->ignoreOrderByInDeletes) {
+                if (env('APP_ENV') !== 'production') {
+                    Log::warning('SingleStore does not support the "ORDER BY" clause in a "DELETE" statement. The "ORDER BY" clause will be ignored.');
+                }
+                $query->orders = [];
+            } else {
+                throw new Exception('SingleStore does not support the "ORDER BY" clause in a "DELETE" statement. Enable the "ignore_order_by_in_deletes" configuration to ignore "orderBy" in "delete" operations.');
+            }
+        }
+
+        return parent::compileDelete($query);
+    }
+
+    public function compileUpdate(Builder $query, array $values)
+    {
+        // TODO: allow order by in the case when table has unique column
+        if (isset($query->orders)) {
+            if ($this->ignoreOrderByInUpdates) {
+                if (env('APP_ENV') !== 'production') {
+                    Log::warning('SingleStore does not support the "ORDER BY" clause in an "UPDATE" statement. The "ORDER BY" clause will be ignored.');
+                }
+                $query->orders = [];
+            } else {
+                throw new Exception('SingleStore does not support the "ORDER BY" clause in an update statement. Enable the "ignore_order_by_in_updates" configuration to ignore "orderBy" in "update" operations.');
+            }
+        }
+
+        return parent::compileUpdate($query, $values);
     }
 
     /**
