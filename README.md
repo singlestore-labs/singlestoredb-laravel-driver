@@ -152,7 +152,13 @@ You can configure the driver to ignore `orderBy` in `delete()` and `update()` re
 ]
 ```
 
-Note that when `orderBy` is ignored, it may result in deletion/update of different rows.
+Note that when `orderBy` is ignored, it may result in deletion/update of different rows if query contains LIMIT or OFFSET. 
+
+Example:
+```php
+DB::table('user')->orderBy('score', 'asc')->limit(5)->delete();
+```
+In the following query when ORDER BY is ignored - 5 random users will be deleted instead of 5 users with the lowest score.
 
 ## PHP Versions before 8.1
 
