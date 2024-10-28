@@ -129,6 +129,33 @@ class JsonWhereTest extends BaseTest
     }
 
     /** @test */
+    public function where_null_raw()
+    {
+        $query = DB::table('test')->whereNull(DB::raw('(SELECT NULL)'))->orderBy('id');
+
+        $this->assertEquals(
+            'select * from `test` where (SELECT NULL) is null order by `id` asc',
+            $query->toSql()
+        );
+
+        if (! $this->runHybridIntegrations()) {
+            return;
+        }
+
+        [$id1, $id2, $id3, $id4] = $this->insertJsonData([
+            ['value1' => ['value2' => 'string']],
+            ['value1' => null],
+            [null],
+            ['value1' => ['value2' => 1]],
+        ]);
+
+        $this->assertEquals($id1, $query->get()[0]->id);
+        $this->assertEquals($id2, $query->get()[1]->id);
+        $this->assertEquals($id3, $query->get()[2]->id);
+        $this->assertEquals($id4, $query->get()[3]->id);
+    }
+
+    /** @test */
     public function where_not_null()
     {
         $query = DB::table('test')->whereNotNull('data->value1')->orderBy('id');
@@ -152,5 +179,32 @@ class JsonWhereTest extends BaseTest
 
         $this->assertEquals($id1, $query->get()[0]->id);
         $this->assertEquals($id4, $query->get()[1]->id);
+    }
+
+    /** @test */
+    public function where_not_null_raw()
+    {
+        $query = DB::table('test')->whereNotNull(DB::raw('(SELECT 1)'))->orderBy('id');
+
+        $this->assertEquals(
+            'select * from `test` where (SELECT 1) is not null order by `id` asc',
+            $query->toSql()
+        );
+
+        if (! $this->runHybridIntegrations()) {
+            return;
+        }
+
+        [$id1, $id2, $id3, $id4] = $this->insertJsonData([
+            ['value1' => ['value2' => 'string']],
+            ['value1' => null],
+            [null],
+            ['value1' => ['value2' => 1]],
+        ]);
+
+        $this->assertEquals($id1, $query->get()[0]->id);
+        $this->assertEquals($id2, $query->get()[1]->id);
+        $this->assertEquals($id3, $query->get()[2]->id);
+        $this->assertEquals($id4, $query->get()[3]->id);
     }
 }

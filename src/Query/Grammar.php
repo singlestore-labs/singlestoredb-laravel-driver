@@ -122,26 +122,43 @@ class Grammar extends MySqlGrammar
         return parent::prepareBindingsForUpdate($bindings, $values);
     }
 
+    /**
+     * Transforms expressions to their scalar types.
+     *
+     * @param  \Illuminate\Contracts\Database\Query\Expression|string|int|float  $expression
+     * @return string|int|float
+     */
+    public function getValue($expression)
+    {
+        if ($this->isExpression($expression)) {
+            return $this->getValue($expression->getValue($this));
+        }
+
+        return $expression;
+    }
+
     protected function whereNull(Builder $query, $where)
     {
-        if ($this->isJsonSelector($where['column'])) {
+        $columnValue = (string) $this->getValue($where['column']);
+        if ($this->isJsonSelector($columnValue)) {
             [$field, $path] = $this->wrapJsonFieldAndPath($where['column']);
 
             return '(JSON_EXTRACT_JSON('.$field.$path.') IS NULL OR JSON_GET_TYPE(JSON_EXTRACT_JSON('.$field.$path.')) = \'NULL\')';
         }
 
-        return parent::whereNull($query, $where);
+        return $this->wrap($where['column']).' is null';
     }
 
     protected function whereNotNull(Builder $query, $where)
     {
-        if ($this->isJsonSelector($where['column'])) {
+        $columnValue = (string) $this->getValue($where['column']);
+        if ($this->isJsonSelector($columnValue)) {
             [$field, $path] = $this->wrapJsonFieldAndPath($where['column']);
 
             return '(JSON_EXTRACT_JSON('.$field.$path.') IS NOT NULL AND JSON_GET_TYPE(JSON_EXTRACT_JSON('.$field.$path.')) != \'NULL\')';
         }
 
-        return parent::whereNotNull($query, $where);
+        return $this->wrap($where['column']).' is not null';
     }
 
     protected function wrapJsonSelector($value)
