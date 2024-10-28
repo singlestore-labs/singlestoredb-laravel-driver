@@ -134,6 +134,21 @@ class Grammar extends MySqlGrammar
         return parent::whereNull($query, $where);
     }
 
+    /**
+     * Transforms expressions to their scalar types.
+     *
+     * @param  \Illuminate\Contracts\Database\Query\Expression|string|int|float  $expression
+     * @return string|int|float
+     */
+    public function getValue($expression)
+    {
+        if ($this->isExpression($expression)) {
+            return $this->getValue($expression->getValue($this));
+        }
+
+        return $expression;
+    }
+
     protected function whereNotNull(Builder $query, $where)
     {
         $columnValue = (string) $this->getValue($where['column']);
