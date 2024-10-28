@@ -134,7 +134,7 @@ class JsonWhereTest extends BaseTest
         $query = DB::table('test')->whereNull(DB::raw('(SELECT NULL)'))->orderBy('id');
 
         $this->assertEquals(
-            "select * from `test` where (SELECT NULL) is null order by `id` asc",
+            'select * from `test` where (SELECT NULL) is null order by `id` asc',
             $query->toSql()
         );
 
@@ -187,7 +187,7 @@ class JsonWhereTest extends BaseTest
         $query = DB::table('test')->whereNotNull(DB::raw('(SELECT 1)'))->orderBy('id');
 
         $this->assertEquals(
-            "select * from `test` where (SELECT 1) is not null order by `id` asc",
+            'select * from `test` where (SELECT 1) is not null order by `id` asc',
             $query->toSql()
         );
 
