@@ -26,7 +26,7 @@ class Grammar extends MySqlGrammar
             if (! empty($optionString)) {
                 $optionString .= ',';
             }
-            $optionString .= $key . '=' . $value;
+            $optionString .= $key.'='.$value;
         }
 
         return "OPTION ({$optionString})";
@@ -128,7 +128,7 @@ class Grammar extends MySqlGrammar
         if ($this->isJsonSelector($columnValue)) {
             [$field, $path] = $this->wrapJsonFieldAndPath($where['column']);
 
-            return '(JSON_EXTRACT_JSON(' . $field . $path . ') IS NULL OR JSON_GET_TYPE(JSON_EXTRACT_JSON(' . $field . $path . ')) = \'NULL\')';
+            return '(JSON_EXTRACT_JSON('.$field.$path.') IS NULL OR JSON_GET_TYPE(JSON_EXTRACT_JSON('.$field.$path.')) = \'NULL\')';
         }
 
         return parent::whereNull($query, $where);
@@ -140,7 +140,7 @@ class Grammar extends MySqlGrammar
         if ($this->isJsonSelector($columnValue)) {
             [$field, $path] = $this->wrapJsonFieldAndPath($where['column']);
 
-            return '(JSON_EXTRACT_JSON(' . $field . $path . ') IS NOT NULL AND JSON_GET_TYPE(JSON_EXTRACT_JSON(' . $field . $path . ')) != \'NULL\')';
+            return '(JSON_EXTRACT_JSON('.$field.$path.') IS NOT NULL AND JSON_GET_TYPE(JSON_EXTRACT_JSON('.$field.$path.')) != \'NULL\')';
         }
 
         return parent::whereNotNull($query, $where);
@@ -192,7 +192,7 @@ class Grammar extends MySqlGrammar
             return "'$part'";
         }, $parts);
 
-        $path = count($parts) ? ', ' . implode(', ', $parts) : '';
+        $path = count($parts) ? ', '.implode(', ', $parts) : '';
 
         return [$field, $path];
     }
@@ -205,7 +205,7 @@ class Grammar extends MySqlGrammar
      */
     protected function wrapUnion($sql)
     {
-        return 'SELECT * FROM (' . $sql . ')';
+        return 'SELECT * FROM ('.$sql.')';
     }
 
     /**
@@ -233,7 +233,7 @@ class Grammar extends MySqlGrammar
     {
         $conjunction = $union['all'] ? ' union all ' : ' union ';
 
-        return $conjunction . '(' . $union['query']->toSql() . ')';
+        return $conjunction.'('.$union['query']->toSql().')';
     }
 
     /**
@@ -252,18 +252,18 @@ class Grammar extends MySqlGrammar
         }
 
         if (! empty($query->unionOrders) || isset($query->unionLimit) || isset($query->unionOffset)) {
-            $sql = 'SELECT * FROM (' . $sql . ') ';
+            $sql = 'SELECT * FROM ('.$sql.') ';
 
             if (! empty($query->unionOrders)) {
-                $sql .= ' ' . $this->compileOrders($query, $query->unionOrders);
+                $sql .= ' '.$this->compileOrders($query, $query->unionOrders);
             }
 
             if (isset($query->unionLimit)) {
-                $sql .= ' ' . $this->compileLimit($query, $query->unionLimit);
+                $sql .= ' '.$this->compileLimit($query, $query->unionLimit);
             }
 
             if (isset($query->unionOffset)) {
-                $sql .= ' ' . $this->compileUnionOffset($query, $query->unionOffset);
+                $sql .= ' '.$this->compileUnionOffset($query, $query->unionOffset);
             }
         }
 
@@ -297,10 +297,10 @@ class Grammar extends MySqlGrammar
         // Add a huge LIMIT clause
         if (! isset($limit)) {
             // 9223372036854775807 - max 64-bit integer
-            return ' LIMIT 9223372036854775807 OFFSET ' . (int) $offset;
+            return ' LIMIT 9223372036854775807 OFFSET '.(int) $offset;
         }
 
-        return ' OFFSET ' . (int) $offset;
+        return ' OFFSET '.(int) $offset;
     }
 
     /**
