@@ -500,7 +500,11 @@ HYBRID_INTEGRATION=1 ./vendor/bin/phpunit
         </tr>
         <tr>
             <td>10</td>
-            <td>8.1</td>
+            <td>8.1 - 8.3</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>8.2 - 8.3</td>
         </tr>
     </tbody>
 </table>
