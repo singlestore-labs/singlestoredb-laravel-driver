@@ -22,7 +22,7 @@ class TransactionsTest extends BaseTest
     }
 
     /** @test */
-    public function multipleBegin()
+    public function multiple_begin()
     {
         if (! $this->runHybridIntegrations()) {
             return;

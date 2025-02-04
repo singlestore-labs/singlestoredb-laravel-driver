@@ -11,7 +11,7 @@ class orderByTest extends BaseTest
     use HybridTestHelpers;
 
     /** @test */
-    public function ignoresOrderByInDelete()
+    public function ignores_order_by_in_delete()
     {
         if (! $this->runHybridIntegrations()) {
             return;
@@ -29,7 +29,7 @@ class orderByTest extends BaseTest
     }
 
     /** @test */
-    public function ignoresOrderByInUpdate()
+    public function ignores_order_by_in_update()
     {
         if (! $this->runHybridIntegrations()) {
             return;

@@ -12,7 +12,7 @@ class GroupLimitTest extends BaseTest
     use HybridTestHelpers;
 
     /** @test */
-    public function groupLimit()
+    public function group_limit()
     {
         if (version_compare(Application::VERSION, '11.0.0', '<')) {
             // fulltext not added until later on in laravel 8 releases

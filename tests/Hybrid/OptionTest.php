@@ -22,7 +22,7 @@ class OptionTest extends BaseTest
     }
 
     /** @test */
-    public function singleOption()
+    public function single_option()
     {
         $query = DB::table('test')->options(['interpreter_mode' => 'compile']);
         echo get_class($query);
@@ -34,7 +34,7 @@ class OptionTest extends BaseTest
     }
 
     /** @test */
-    public function emptyOption()
+    public function empty_option()
     {
         $query = DB::table('test')->options([]);
         echo get_class($query);
@@ -46,7 +46,7 @@ class OptionTest extends BaseTest
     }
 
     /** @test */
-    public function multiOption()
+    public function multi_option()
     {
         $query = DB::table('test')->options(['interpreter_mode' => 'compile', 'resource_pool' => 'default_pool']);
         echo get_class($query);
