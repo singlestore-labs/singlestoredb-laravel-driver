@@ -490,17 +490,21 @@ HYBRID_INTEGRATION=1 ./vendor/bin/phpunit
             <td>8.0 - 8.1</td>
         </tr>
         <tr>
-            <td rowspan=3>1.5</td>
+            <td rowspan=4>1.5</td>
             <td>8</td>
             <td>7.3 - 8.0</td>
         </tr>
         <tr>
             <td>9</td>
-            <td>8.0 - 8.1</td>
+            <td>8.0 - 8.4</td>
         </tr>
         <tr>
             <td>10</td>
-            <td>8.1</td>
+            <td>8.1 - 8.4</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>8.2 - 8.4</td>
         </tr>
     </tbody>
 </table>
