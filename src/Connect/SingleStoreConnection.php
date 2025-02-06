@@ -4,17 +4,14 @@ namespace SingleStore\Laravel\Connect;
 
 use Illuminate\Database\MySqlConnection;
 use SingleStore\Laravel\Query;
-use SingleStore\Laravel\QueryGrammar;
 use SingleStore\Laravel\Schema;
-use SingleStore\Laravel\SchemaBuilder;
-use SingleStore\Laravel\SchemaGrammar;
 
-class Connection extends MySqlConnection
+class SingleStoreConnection extends MySqlConnection
 {
     /**
      * Get a schema builder instance for the connection.
      *
-     * @return SchemaBuilder
+     * @return Schema\SingleStoreBuilder
      */
     public function getSchemaBuilder()
     {
@@ -22,17 +19,17 @@ class Connection extends MySqlConnection
             $this->useDefaultSchemaGrammar();
         }
 
-        return new Schema\Builder($this);
+        return new Schema\SingleStoreBuilder($this);
     }
 
     /**
      * Get the default query grammar instance.
      *
-     * @return QueryGrammar
+     * @return Query\SingleStoreGrammar
      */
     protected function getDefaultQueryGrammar()
     {
-        $grammar = new Query\Grammar($this->getConfig('ignore_order_by_in_deletes'), $this->getConfig('ignore_order_by_in_updates'));
+        $grammar = new Query\SingleStoreGrammar($this->getConfig('ignore_order_by_in_deletes'), $this->getConfig('ignore_order_by_in_updates'));
         if (method_exists($grammar, 'setConnection')) {
             $grammar->setConnection($this);
         }
@@ -43,11 +40,11 @@ class Connection extends MySqlConnection
     /**
      * Get the default schema grammar instance.
      *
-     * @return SchemaGrammar
+     * @return Schema\SingleStoreGrammar
      */
     protected function getDefaultSchemaGrammar()
     {
-        $grammar = new Schema\Grammar;
+        $grammar = new Schema\SingleStoreGrammar;
         if (method_exists($grammar, 'setConnection')) {
             $grammar->setConnection($this);
         }

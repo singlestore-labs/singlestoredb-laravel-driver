@@ -7,9 +7,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Mockery;
-use SingleStore\Laravel\Connect\Connection;
+use SingleStore\Laravel\Connect\SingleStoreConnection;
 use SingleStore\Laravel\Schema\Blueprint;
-use SingleStore\Laravel\Schema\Grammar;
+use SingleStore\Laravel\Schema\SingleStoreGrammar;
 
 trait HybridTestHelpers
 {
@@ -21,7 +21,7 @@ trait HybridTestHelpers
 
     protected function getGrammar()
     {
-        return new Grammar;
+        return new SingleStoreGrammar;
     }
 
     protected function runHybridIntegrations()
@@ -38,7 +38,7 @@ trait HybridTestHelpers
 
     protected function mockedConnection()
     {
-        $connection = Mockery::mock(Connection::class);
+        $connection = Mockery::mock(SingleStoreConnection::class);
 
         $connection->shouldReceive('getConfig')->atMost()->once()->with('charset')->andReturn(null);
         $connection->shouldReceive('getConfig')->atMost()->once()->with('collation')->andReturn(null);

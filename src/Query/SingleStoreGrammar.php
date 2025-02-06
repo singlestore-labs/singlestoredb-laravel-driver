@@ -7,7 +7,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Support\Facades\Log;
 
-class Grammar extends MySqlGrammar
+class SingleStoreGrammar extends MySqlGrammar
 {
     private $ignoreOrderByInDeletes;
 

@@ -15,7 +15,7 @@ use SingleStore\Laravel\Schema\Blueprint as SingleStoreBlueprint;
 use SingleStore\Laravel\Schema\Grammar\CompilesKeys;
 use SingleStore\Laravel\Schema\Grammar\ModifiesColumns;
 
-class Grammar extends MySqlGrammar
+class SingleStoreGrammar extends MySqlGrammar
 {
     use CompilesKeys;
     use ModifiesColumns;

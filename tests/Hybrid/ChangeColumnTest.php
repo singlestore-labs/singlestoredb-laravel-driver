@@ -5,7 +5,7 @@ namespace SingleStore\Laravel\Tests\Hybrid;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Schema;
 use SingleStore\Laravel\Schema\Blueprint;
-use SingleStore\Laravel\Schema\Builder;
+use SingleStore\Laravel\Schema\SingleStoreBuilder;
 use SingleStore\Laravel\Tests\BaseTest;
 
 class ChangeColumnTest extends BaseTest
@@ -24,7 +24,7 @@ class ChangeColumnTest extends BaseTest
 
             $this->mockDatabaseConnection = false;
 
-            if (method_exists(Builder::class, 'useNativeSchemaOperationsIfPossible')) {
+            if (method_exists(SingleStoreBuilder::class, 'useNativeSchemaOperationsIfPossible')) {
                 Schema::useNativeSchemaOperationsIfPossible();
             }
 
