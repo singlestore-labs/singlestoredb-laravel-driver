@@ -3,8 +3,8 @@
 namespace SingleStore\Laravel;
 
 use Illuminate\Support\ServiceProvider;
-use SingleStore\Laravel\Connect\SingleStoreConnection;
 use SingleStore\Laravel\Connect\Connector;
+use SingleStore\Laravel\Connect\SingleStoreConnection;
 
 class SingleStoreProvider extends ServiceProvider
 {

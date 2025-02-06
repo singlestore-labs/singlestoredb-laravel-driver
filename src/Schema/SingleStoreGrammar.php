@@ -29,12 +29,6 @@ class SingleStoreGrammar extends MySqlGrammar
 
     /**
      * Compile a change column command into a series of SQL statements.
-     *
-     * @param Blueprint $blueprint
-     * @param Fluent $command
-     * @param Connection $connection
-     * @return array|string
-     *
      */
     public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection): array|string
     {
@@ -89,10 +83,6 @@ class SingleStoreGrammar extends MySqlGrammar
 
     /**
      * Compile a primary key command.
-     *
-     * @param Blueprint $blueprint
-     * @param Fluent $command
-     * @return array|string
      */
     public function compilePrimary(Blueprint $blueprint, Fluent $command): array|string
     {
@@ -103,9 +93,6 @@ class SingleStoreGrammar extends MySqlGrammar
 
     /**
      * Create the column definition for a spatial Geography type.
-     *
-     * @param Fluent $column
-     * @return string
      */
     public function typeGeography(Fluent $column): string
     {
@@ -114,9 +101,6 @@ class SingleStoreGrammar extends MySqlGrammar
 
     /**
      * Create the column definition for a spatial Point type.
-     *
-     * @param Fluent $column
-     * @return string
      */
     public function typePoint(Fluent $column): string
     {
@@ -130,7 +114,6 @@ class SingleStoreGrammar extends MySqlGrammar
      * @param  Blueprint  $blueprint
      * @param  \Illuminate\Support\Fluent  $command
      * @param  \Illuminate\Database\Connection  $connection
-     * @return array|string
      *
      * @throws Exception
      */
@@ -144,10 +127,6 @@ class SingleStoreGrammar extends MySqlGrammar
         );
     }
 
-    /**
-     * @param Fluent $column
-     * @return string
-     */
     protected function getType(Fluent $column): string
     {
         $type = parent::getType($column);
@@ -166,10 +145,7 @@ class SingleStoreGrammar extends MySqlGrammar
     /**
      * Append the engine specifications to a command.
      *
-     * @param string $sql
-     * @param Connection $connection
-     * @param Blueprint $blueprint
-     * @return string
+     * @param  string  $sql
      */
     protected function compileCreateEngine($sql, Connection $connection, Blueprint $blueprint): string
     {
@@ -184,12 +160,6 @@ class SingleStoreGrammar extends MySqlGrammar
         return $sql;
     }
 
-    /**
-     * @param $blueprint
-     * @param $compiled
-     * @return string
-     *
-     */
     protected function insertCreateTableModifiers($blueprint, $compiled): string
     {
         $replacement = 'create';
@@ -209,11 +179,6 @@ class SingleStoreGrammar extends MySqlGrammar
         return Str::replaceFirst('create ', "$replacement ", $compiled);
     }
 
-    /**
-     * @param Blueprint $blueprint
-     * @return array
-     *
-     */
     protected function getColumns(Blueprint $blueprint): array
     {
         $columns = parent::getColumns($blueprint);
@@ -248,10 +213,6 @@ class SingleStoreGrammar extends MySqlGrammar
 
     /**
      * Convert an array of column names into a delimited string (with direction parameter).
-     *
-     * @param array $columns
-     * @param string $direction
-     * @return string
      */
     protected function columnizeWithDirection(array $columns, string $direction): string
     {
@@ -282,10 +243,6 @@ class SingleStoreGrammar extends MySqlGrammar
 
     /**
      * Get the SQL for an auto-increment column modifier.
-     *
-     * @param Blueprint $blueprint
-     * @param Fluent $column
-     * @return string|null
      */
     protected function modifyIncrement(Blueprint $blueprint, Fluent $column): ?string
     {
@@ -300,10 +257,6 @@ class SingleStoreGrammar extends MySqlGrammar
 
     /**
      * Compile a rename table command.
-     *
-     * @param Blueprint $blueprint
-     * @param Fluent $command
-     * @return string
      */
     public function compileRename(Blueprint $blueprint, Fluent $command): string
     {
@@ -314,11 +267,6 @@ class SingleStoreGrammar extends MySqlGrammar
 
     /**
      * Compile a rename column command.
-     *
-     * @param Blueprint $blueprint
-     * @param Fluent $command
-     * @param Connection $connection
-     * @return array|string
      */
     public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection): array|string
     {
@@ -335,7 +283,6 @@ class SingleStoreGrammar extends MySqlGrammar
      *
      * @param  string  $database
      * @param  string  $table
-     * @return string
      */
     public function compileColumns($database, $table): string
     {

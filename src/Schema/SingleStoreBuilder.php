@@ -9,9 +9,7 @@ use Illuminate\Database\Schema\MySqlBuilder;
 class SingleStoreBuilder extends MySqlBuilder
 {
     /**
-     * @param string $table
-     * @param Closure|null $callback
-     * @return Blueprint
+     * @param  string  $table
      */
     protected function createBlueprint($table, ?Closure $callback = null): Blueprint
     {
@@ -35,8 +33,6 @@ class SingleStoreBuilder extends MySqlBuilder
 
     /**
      * Drop all tables from the database.
-     *
-     * @return void
      */
     public function dropAllTables(): void
     {

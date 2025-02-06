@@ -7,19 +7,14 @@ use SingleStore\Laravel\Fluency\SpatialIndexCommand;
 
 trait ModifiesIndexes
 {
-    /**
-     * @param $columns
-     * @return Fluent
-     */
     public function shardKey($columns): \Illuminate\Support\Fluent
     {
         return $this->indexCommand('shardKey', $columns, 'shardKeyDummyName');
     }
 
     /**
-     * @param null $columns
-     * @param string $direction
-     * @return Fluent
+     * @param  null  $columns
+     * @param  string  $direction
      */
     public function sortKey($columns = null, $direction = 'asc'): Fluent
     {
@@ -30,9 +25,7 @@ trait ModifiesIndexes
     }
 
     /**
-     * @param $columns
-     * @param null $name
-     * @return SpatialIndexCommand
+     * @param  null  $name
      */
     public function spatialIndex($columns, $name = null): SpatialIndexCommand
     {

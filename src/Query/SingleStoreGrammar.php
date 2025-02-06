@@ -69,9 +69,7 @@ class SingleStoreGrammar extends MySqlGrammar
     /**
      * Compile a "where fulltext" clause.
      *
-     * @param Builder $query
-     * @param array $where
-     * @return string
+     * @param  array  $where
      */
     public function whereFullText(Builder $query, $where): string
     {
@@ -82,9 +80,6 @@ class SingleStoreGrammar extends MySqlGrammar
         return "MATCH ({$columns}) AGAINST ({$value})";
     }
 
-    /**
-     * @return string
-     */
     protected function compileJsonContains($column, $value): string
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($column);
@@ -127,7 +122,6 @@ class SingleStoreGrammar extends MySqlGrammar
      * Transforms expressions to their scalar types.
      *
      * @param  \Illuminate\Contracts\Database\Query\Expression|string|int|float  $expression
-     * @return string|int|float
      */
     public function getValue($expression): string|int|float
     {
@@ -217,7 +211,6 @@ class SingleStoreGrammar extends MySqlGrammar
      * Wrap a union subquery in parentheses.
      *
      * @param  string  $sql
-     * @return string
      */
     protected function wrapUnion($sql): string
     {
@@ -226,8 +219,6 @@ class SingleStoreGrammar extends MySqlGrammar
 
     /**
      * Compile the "union" queries attached to the main query.
-     *
-     * @return string
      */
     protected function compileUnions(Builder $query): string
     {
@@ -242,8 +233,6 @@ class SingleStoreGrammar extends MySqlGrammar
 
     /**
      * Compile a single union statement.
-     *
-     * @return string
      */
     protected function compileUnion(array $union): string
     {
@@ -254,8 +243,6 @@ class SingleStoreGrammar extends MySqlGrammar
 
     /**
      * Compile a select query into SQL.
-     *
-     * @return string
      */
     public function compileSelect(Builder $query): string
     {
@@ -288,8 +275,6 @@ class SingleStoreGrammar extends MySqlGrammar
 
     /**
      * Compile the "offset" portions of the query.
-     *
-     * @return string
      */
     protected function compileOffset(Builder $query, $offset): string
     {
