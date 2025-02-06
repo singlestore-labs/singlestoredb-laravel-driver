@@ -2,22 +2,26 @@
 
 namespace SingleStore\Laravel\Schema\Blueprint;
 
+use Illuminate\Support\Fluent;
 use SingleStore\Laravel\Fluency\SpatialIndexCommand;
 
 trait ModifiesIndexes
 {
     /**
-     * @return \Illuminate\Support\Fluent
+     * @param $columns
+     * @return Fluent
      */
-    public function shardKey($columns)
+    public function shardKey($columns): \Illuminate\Support\Fluent
     {
         return $this->indexCommand('shardKey', $columns, 'shardKeyDummyName');
     }
 
     /**
-     * @return \Illuminate\Support\Fluent
+     * @param null $columns
+     * @param string $direction
+     * @return Fluent
      */
-    public function sortKey($columns = null, $direction = 'asc')
+    public function sortKey($columns = null, $direction = 'asc'): Fluent
     {
         $command = $this->indexCommand('sortKey', $columns, 'sortKeyDummyName');
         $command->direction = $direction;
@@ -26,9 +30,11 @@ trait ModifiesIndexes
     }
 
     /**
+     * @param $columns
+     * @param null $name
      * @return SpatialIndexCommand
      */
-    public function spatialIndex($columns, $name = null)
+    public function spatialIndex($columns, $name = null): SpatialIndexCommand
     {
         parent::spatialIndex($columns, $name);
 

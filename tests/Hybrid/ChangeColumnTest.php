@@ -15,10 +15,6 @@ class ChangeColumnTest extends BaseTest
     /** @test */
     public function change_column_on_rowstore_table()
     {
-        if (version_compare(Application::VERSION, '10.0', '<')) {
-            $this->markTestSkipped('requires higher laravel version');
-        }
-
         if ($this->runHybridIntegrations()) {
             $cached = $this->mockDatabaseConnection;
 

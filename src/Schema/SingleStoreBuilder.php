@@ -3,15 +3,17 @@
 namespace SingleStore\Laravel\Schema;
 
 use Closure;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\MySqlBuilder;
 
 class SingleStoreBuilder extends MySqlBuilder
 {
     /**
-     * @param  string  $table
-     * @return \Illuminate\Database\Schema\Blueprint
+     * @param string $table
+     * @param Closure|null $callback
+     * @return Blueprint
      */
-    protected function createBlueprint($table, ?Closure $callback = null)
+    protected function createBlueprint($table, ?Closure $callback = null): Blueprint
     {
         // Set the resolver and then call the parent method so that we don't have
         // to duplicate the prefix generation logic. We don't bind our Blueprint
@@ -24,7 +26,7 @@ class SingleStoreBuilder extends MySqlBuilder
         return parent::createBlueprint($table, $callback);
     }
 
-    public function getAllTables()
+    public function getAllTables(): array
     {
         return $this->connection->select(
             'SHOW FULL TABLES WHERE table_type = \'BASE TABLE\''
@@ -36,7 +38,7 @@ class SingleStoreBuilder extends MySqlBuilder
      *
      * @return void
      */
-    public function dropAllTables()
+    public function dropAllTables(): void
     {
         $tables = [];
 

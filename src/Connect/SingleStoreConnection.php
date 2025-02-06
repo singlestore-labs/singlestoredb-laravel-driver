@@ -13,7 +13,7 @@ class SingleStoreConnection extends MySqlConnection
      *
      * @return Schema\SingleStoreBuilder
      */
-    public function getSchemaBuilder()
+    public function getSchemaBuilder(): Schema\SingleStoreBuilder
     {
         if ($this->schemaGrammar === null) {
             $this->useDefaultSchemaGrammar();
@@ -27,7 +27,7 @@ class SingleStoreConnection extends MySqlConnection
      *
      * @return Query\SingleStoreGrammar
      */
-    protected function getDefaultQueryGrammar()
+    protected function getDefaultQueryGrammar(): Query\SingleStoreGrammar
     {
         $grammar = new Query\SingleStoreGrammar($this->getConfig('ignore_order_by_in_deletes'), $this->getConfig('ignore_order_by_in_updates'));
         if (method_exists($grammar, 'setConnection')) {
@@ -42,7 +42,7 @@ class SingleStoreConnection extends MySqlConnection
      *
      * @return Schema\SingleStoreGrammar
      */
-    protected function getDefaultSchemaGrammar()
+    protected function getDefaultSchemaGrammar(): Schema\SingleStoreGrammar
     {
         $grammar = new Schema\SingleStoreGrammar;
         if (method_exists($grammar, 'setConnection')) {
@@ -54,8 +54,10 @@ class SingleStoreConnection extends MySqlConnection
 
     /**
      * Get a new query builder instance.
+     *
+     * @return Query\Builder
      */
-    public function query()
+    public function query(): Query\Builder
     {
         return new Query\Builder(
             $this,

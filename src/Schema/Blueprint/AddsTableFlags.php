@@ -4,41 +4,29 @@ namespace SingleStore\Laravel\Schema\Blueprint;
 
 trait AddsTableFlags
 {
-    /**
-     * @var bool
-     */
-    public $rowstore = false;
+    public bool $rowstore = false;
 
-    /**
-     * @var bool
-     */
-    public $reference = false;
+    public bool $reference = false;
 
-    /**
-     * @var bool
-     */
-    public $global = false;
+    public bool $global = false;
 
-    /**
-     * @var bool
-     */
-    public $sparse = false;
+    public bool $sparse = false;
 
-    public function rowstore()
+    public function rowstore(): static
     {
         $this->rowstore = true;
 
         return $this;
     }
 
-    public function reference()
+    public function reference(): static
     {
         $this->reference = true;
 
         return $this;
     }
 
-    public function temporary($global = false)
+    public function temporary($global = false): static
     {
         $this->global = $global;
         $this->temporary = true;
@@ -46,14 +34,14 @@ trait AddsTableFlags
         return $this;
     }
 
-    public function global()
+    public function global(): static
     {
         $this->global = true;
 
         return $this;
     }
 
-    public function sparse()
+    public function sparse(): static
     {
         $this->sparse = true;
 

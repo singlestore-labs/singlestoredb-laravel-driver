@@ -15,13 +15,6 @@ class FulltextTest extends BaseTest
     /** @test */
     public function fulltext()
     {
-        if (version_compare(Application::VERSION, '8.79.0', '<=')) {
-            // fulltext not added until later on in laravel 8 releases
-            $this->markTestSkipped('requires higher laravel version');
-
-            return;
-        }
-
         $query = DB::table('test')->whereFullText('title', 'performance');
 
         $this->assertEquals(
@@ -64,13 +57,6 @@ class FulltextTest extends BaseTest
     /** @test */
     public function fulltext_multicolumn()
     {
-        if (version_compare(Application::VERSION, '8.79.0', '<=')) {
-            // fulltext not added until later on in laravel 8 releases
-            $this->markTestSkipped('requires higher laravel version');
-
-            return;
-        }
-
         $query = DB::table('test')->whereFullText(['name', 'race'], 'Laika');
 
         $this->assertEquals(
@@ -109,13 +95,6 @@ class FulltextTest extends BaseTest
     /** @test */
     public function throws_exception_when_using_an_unsupported_collation()
     {
-        if (version_compare(Application::VERSION, '8.79.0', '<=')) {
-            // fulltext not added until later on in laravel 8 releases
-            $this->markTestSkipped('requires higher laravel version');
-
-            return;
-        }
-
         if (! $this->runHybridIntegrations()) {
             return;
         }

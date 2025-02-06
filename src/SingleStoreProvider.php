@@ -18,7 +18,7 @@ class SingleStoreProvider extends ServiceProvider
         });
     }
 
-    public function boot()
+    public function boot(): void
     {
         $this->app->bind('db.connector.singlestore', Connector::class);
     }
