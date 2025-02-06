@@ -4,7 +4,6 @@ namespace SingleStore\Laravel\Schema\Blueprint;
 
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Grammars\Grammar;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Arr;
 use SingleStore\Laravel\Schema\Blueprint as SingleStoreBlueprint;
 
@@ -37,10 +36,6 @@ trait InlinesIndexes
     /**
      * Given a set of statements from the `toSQL` method, inline all
      * the indexes into the CREATE TABLE statement.
-     *
-     * @param array $statements
-     * @param array $indexStatementKeys
-     * @return array
      */
     protected function inlineCreateIndexStatements(array $statements, array $indexStatementKeys): array
     {
@@ -69,9 +64,6 @@ trait InlinesIndexes
 
     /**
      * Check if the command is index.
-     *
-     * @param $command
-     * @return bool
      */
     protected function isIndexCommand($command): bool
     {
@@ -81,9 +73,6 @@ trait InlinesIndexes
         ));
     }
 
-    /**
-     * @return void
-     */
     protected function addFluentSingleStoreIndexes(): void
     {
         // This is modeled from the parent class, but with one major difference. In the

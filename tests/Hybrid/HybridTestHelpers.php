@@ -2,7 +2,6 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;

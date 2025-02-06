@@ -10,8 +10,6 @@ class SingleStoreConnection extends MySqlConnection
 {
     /**
      * Get a schema builder instance for the connection.
-     *
-     * @return Schema\SingleStoreBuilder
      */
     public function getSchemaBuilder(): Schema\SingleStoreBuilder
     {
@@ -24,8 +22,6 @@ class SingleStoreConnection extends MySqlConnection
 
     /**
      * Get the default query grammar instance.
-     *
-     * @return Query\SingleStoreGrammar
      */
     protected function getDefaultQueryGrammar(): Query\SingleStoreGrammar
     {
@@ -39,8 +35,6 @@ class SingleStoreConnection extends MySqlConnection
 
     /**
      * Get the default schema grammar instance.
-     *
-     * @return Schema\SingleStoreGrammar
      */
     protected function getDefaultSchemaGrammar(): Schema\SingleStoreGrammar
     {
@@ -54,8 +48,6 @@ class SingleStoreConnection extends MySqlConnection
 
     /**
      * Get a new query builder instance.
-     *
-     * @return Query\Builder
      */
     public function query(): Query\Builder
     {

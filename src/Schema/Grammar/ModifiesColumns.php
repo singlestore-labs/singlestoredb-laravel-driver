@@ -71,7 +71,7 @@ trait ModifiesColumns
      */
     protected function modifyStoredAs(Blueprint $blueprint, Fluent $column): void
     {
-        trigger_error('Method ' . __METHOD__ . ' is deprecated', E_USER_DEPRECATED);
+        trigger_error('Method '.__METHOD__.' is deprecated', E_USER_DEPRECATED);
 
         // This is handled in the `getType` method of the Grammar, since
         // SingleStore requires it come before the column type.
