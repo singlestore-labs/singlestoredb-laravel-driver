@@ -7,12 +7,12 @@ use Illuminate\Support\Fluent;
 
 trait CompilesKeys
 {
-    public function compileShardKey(Blueprint $blueprint, Fluent $command)
+    public function compileShardKey(Blueprint $blueprint, Fluent $command): string
     {
         return "shard key({$this->columnize($command->columns)})";
     }
 
-    public function compileSortKey(Blueprint $blueprint, Fluent $command)
+    public function compileSortKey(Blueprint $blueprint, Fluent $command): string
     {
         if (is_array($command->with)) {
             $compiled = collect($command->with)->map(function ($value, $variable) {
@@ -25,7 +25,7 @@ trait CompilesKeys
         return "sort key({$this->columnizeWithDirection($command->columns, $command->direction)})";
     }
 
-    public function compileSpatialIndex(Blueprint $blueprint, Fluent $command)
+    public function compileSpatialIndex(Blueprint $blueprint, Fluent $command): string
     {
         // SingleStore's spatial indexes just use the keyword `index`, not `spatial index`.
         $compiled = $this->compileKey($blueprint, $command, 'index');

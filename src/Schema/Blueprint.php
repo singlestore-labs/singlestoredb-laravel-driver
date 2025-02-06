@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Database\Connection;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint as BaseBlueprint;
+use Illuminate\Database\Schema\ColumnDefinition;
 use Illuminate\Database\Schema\Grammars\Grammar;
 use SingleStore\Laravel\Schema\Blueprint\AddsTableFlags;
 use SingleStore\Laravel\Schema\Blueprint\InlinesIndexes;
@@ -20,17 +21,17 @@ class Blueprint extends BaseBlueprint
     /**
      * Create a new geography column on the table.
      *
-     * @param  string  $column
-     * @param  string|null  $subtype
+     * @param string $column
+     * @param null $subtype
      * @param  int  $srid
-     * @return \Illuminate\Database\Schema\ColumnDefinition
+     * @return ColumnDefinition
      */
-    public function geography($column, $subtype = null, $srid = 4326)
+    public function geography($column, $subtype = null, $srid = 4326): ColumnDefinition
     {
         return $this->addColumn('geography', $column);
     }
 
-    public function geographyPoint($column)
+    public function geographyPoint($column): ColumnDefinition
     {
         return $this->point($column);
     }
@@ -38,11 +39,10 @@ class Blueprint extends BaseBlueprint
     /**
      * Create a new point column on the table.
      *
-     * @param  string  $column
-     * @param  int|null  $srid
-     * @return \Illuminate\Database\Schema\ColumnDefinition
+     * @param string $column
+     * @return ColumnDefinition
      */
-    public function point($column, $srid = null)
+    public function point(string $column): ColumnDefinition
     {
         return $this->addColumn('point', $column);
     }
@@ -50,9 +50,12 @@ class Blueprint extends BaseBlueprint
     /**
      * Execute the blueprint against the database.
      *
+     * @param Connection $connection
+     * @param Grammar $grammar
      * @return void
+     * @throws Exception
      */
-    public function build(Connection $connection, Grammar $grammar)
+    public function build(Connection $connection, Grammar $grammar): void
     {
         try {
             parent::build($connection, $grammar);

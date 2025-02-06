@@ -5,7 +5,7 @@ namespace SingleStore\Laravel\Tests\Hybrid;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Schema;
 use SingleStore\Laravel\Schema\Blueprint;
-use SingleStore\Laravel\Schema\Builder;
+use SingleStore\Laravel\Schema\SingleStoreBuilder;
 use SingleStore\Laravel\Tests\BaseTest;
 
 class ChangeColumnTest extends BaseTest
@@ -15,16 +15,12 @@ class ChangeColumnTest extends BaseTest
     /** @test */
     public function change_column_on_rowstore_table()
     {
-        if (version_compare(Application::VERSION, '10.0', '<')) {
-            $this->markTestSkipped('requires higher laravel version');
-        }
-
         if ($this->runHybridIntegrations()) {
             $cached = $this->mockDatabaseConnection;
 
             $this->mockDatabaseConnection = false;
 
-            if (method_exists(Builder::class, 'useNativeSchemaOperationsIfPossible')) {
+            if (method_exists(SingleStoreBuilder::class, 'useNativeSchemaOperationsIfPossible')) {
                 Schema::useNativeSchemaOperationsIfPossible();
             }
 

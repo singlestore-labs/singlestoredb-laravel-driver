@@ -6,16 +6,16 @@ use Illuminate\Database\Query\Builder as BaseBuilder;
 
 class Builder extends BaseBuilder
 {
-    public $options;
+    public array $options;
 
-    public function options(array $options)
+    public function options(array $options): static
     {
         $this->options = $options;
 
         return $this;
     }
 
-    public function toSql()
+    public function toSql(): string
     {
         $sql = parent::toSql();
 

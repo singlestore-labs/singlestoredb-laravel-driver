@@ -15,7 +15,7 @@ trait InlinesIndexes
      *
      * @var string[]
      */
-    protected $singleStoreIndexes = [
+    protected array $singleStoreIndexes = [
         'shardKey',
         'sortKey',
     ];
@@ -25,7 +25,7 @@ trait InlinesIndexes
      *
      * @var string[]
      */
-    protected $mysqlIndexes = [
+    protected array $mysqlIndexes = [
         'primary',
         'unique',
         'index',
@@ -36,12 +36,13 @@ trait InlinesIndexes
 
     /**
      * Given a set of statements from the `toSQL` method, inline all
-     * of the indexes into the CREATE TABLE statement.
+     * the indexes into the CREATE TABLE statement.
      *
-     * @param  array  $statements
+     * @param array $statements
+     * @param array $indexStatementKeys
      * @return array
      */
-    protected function inlineCreateIndexStatements($statements, $indexStatementKeys)
+    protected function inlineCreateIndexStatements(array $statements, array $indexStatementKeys): array
     {
         // In the `addImpliedCommands` method we gathered up the keys of all the commands
         // that are index commands. Now that we're ready to compile the SQL we'll pull
@@ -69,9 +70,10 @@ trait InlinesIndexes
     /**
      * Check if the command is index.
      *
-     * @return \Illuminate\Support\Collection
+     * @param $command
+     * @return bool
      */
-    protected function isIndexCommand($command)
+    protected function isIndexCommand($command): bool
     {
         return in_array($command->name, array_merge(
             $this->singleStoreIndexes,
@@ -82,7 +84,7 @@ trait InlinesIndexes
     /**
      * @return void
      */
-    protected function addFluentSingleStoreIndexes()
+    protected function addFluentSingleStoreIndexes(): void
     {
         // This is modeled from the parent class, but with one major difference. In the
         // parent class, after an index is found `continue 2` is called, eliminating
@@ -109,13 +111,9 @@ trait InlinesIndexes
         }
     }
 
-    public function toSql(Connection $connection, Grammar $grammar)
+    public function toSql(Connection $connection, Grammar $grammar): array
     {
-        if (version_compare(Application::VERSION, '10.0.0', '>=')) {
-            $this->addImpliedCommands($connection, $grammar);
-        } else {
-            $this->addImpliedCommands($grammar);
-        }
+        $this->addImpliedCommands($connection, $grammar);
         $this->addFluentSingleStoreIndexes();
 
         $statements = [];

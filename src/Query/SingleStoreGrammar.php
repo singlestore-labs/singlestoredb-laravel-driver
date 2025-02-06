@@ -7,13 +7,13 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Support\Facades\Log;
 
-class Grammar extends MySqlGrammar
+class SingleStoreGrammar extends MySqlGrammar
 {
-    private $ignoreOrderByInDeletes;
+    private bool $ignoreOrderByInDeletes;
 
-    private $ignoreOrderByInUpdates;
+    private bool $ignoreOrderByInUpdates;
 
-    public function __construct($ignoreOrderByInDeletes, $ignoreOrderByInUpdates)
+    public function __construct(bool $ignoreOrderByInDeletes, bool $ignoreOrderByInUpdates)
     {
         $this->ignoreOrderByInDeletes = $ignoreOrderByInDeletes;
         $this->ignoreOrderByInUpdates = $ignoreOrderByInUpdates;
@@ -32,7 +32,7 @@ class Grammar extends MySqlGrammar
         return "OPTION ({$optionString})";
     }
 
-    public function compileDelete(Builder $query)
+    public function compileDelete(Builder $query): string
     {
         // TODO: allow order by in the case when table has unique column
         if (isset($query->orders)) {
@@ -49,7 +49,7 @@ class Grammar extends MySqlGrammar
         return parent::compileDelete($query);
     }
 
-    public function compileUpdate(Builder $query, array $values)
+    public function compileUpdate(Builder $query, array $values): string
     {
         // TODO: allow order by in the case when table has unique column
         if (isset($query->orders)) {
@@ -69,10 +69,11 @@ class Grammar extends MySqlGrammar
     /**
      * Compile a "where fulltext" clause.
      *
-     * @param  array  $where
+     * @param Builder $query
+     * @param array $where
      * @return string
      */
-    public function whereFullText(Builder $query, $where)
+    public function whereFullText(Builder $query, $where): string
     {
         $columns = $this->columnize($where['columns']);
 
@@ -84,7 +85,7 @@ class Grammar extends MySqlGrammar
     /**
      * @return string
      */
-    protected function compileJsonContains($column, $value)
+    protected function compileJsonContains($column, $value): string
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($column);
 
@@ -97,7 +98,7 @@ class Grammar extends MySqlGrammar
         return "JSON_ARRAY_CONTAINS_JSON($field, $value)";
     }
 
-    protected function compileJsonUpdateColumn($key, $value)
+    protected function compileJsonUpdateColumn($key, $value): string
     {
         if (is_bool($value)) {
             $value = $value ? "'true'" : "'false'";
@@ -111,7 +112,7 @@ class Grammar extends MySqlGrammar
         return "$field = JSON_SET_JSON($field$path, $value)";
     }
 
-    public function prepareBindingsForUpdate(array $bindings, array $values)
+    public function prepareBindingsForUpdate(array $bindings, array $values): array
     {
         // We need to encode strings for JSON columns, but we'll
         // let the parent class handle everything else.
@@ -128,7 +129,7 @@ class Grammar extends MySqlGrammar
      * @param  \Illuminate\Contracts\Database\Query\Expression|string|int|float  $expression
      * @return string|int|float
      */
-    public function getValue($expression)
+    public function getValue($expression): string|int|float
     {
         if ($this->isExpression($expression)) {
             return $this->getValue($expression->getValue($this));
@@ -137,7 +138,7 @@ class Grammar extends MySqlGrammar
         return $expression;
     }
 
-    protected function whereNull(Builder $query, $where)
+    protected function whereNull(Builder $query, $where): string
     {
         $columnValue = (string) $this->getValue($where['column']);
         if ($this->isJsonSelector($columnValue)) {
@@ -149,7 +150,7 @@ class Grammar extends MySqlGrammar
         return $this->wrap($where['column']).' is null';
     }
 
-    protected function whereNotNull(Builder $query, $where)
+    protected function whereNotNull(Builder $query, $where): string
     {
         $columnValue = (string) $this->getValue($where['column']);
         if ($this->isJsonSelector($columnValue)) {
@@ -182,7 +183,7 @@ class Grammar extends MySqlGrammar
         );
     }
 
-    protected function wrapJsonFieldAndPath($column)
+    protected function wrapJsonFieldAndPath($column): array
     {
         // Matches numbers surrounded by brackets.
         $arrayAccessPattern = "/\\[(\d+)\\]/";
@@ -218,7 +219,7 @@ class Grammar extends MySqlGrammar
      * @param  string  $sql
      * @return string
      */
-    protected function wrapUnion($sql)
+    protected function wrapUnion($sql): string
     {
         return 'SELECT * FROM ('.$sql.')';
     }
@@ -228,7 +229,7 @@ class Grammar extends MySqlGrammar
      *
      * @return string
      */
-    protected function compileUnions(Builder $query)
+    protected function compileUnions(Builder $query): string
     {
         $sql = '';
 
@@ -244,7 +245,7 @@ class Grammar extends MySqlGrammar
      *
      * @return string
      */
-    protected function compileUnion(array $union)
+    protected function compileUnion(array $union): string
     {
         $conjunction = $union['all'] ? ' union all ' : ' union ';
 
@@ -256,7 +257,7 @@ class Grammar extends MySqlGrammar
      *
      * @return string
      */
-    public function compileSelect(Builder $query)
+    public function compileSelect(Builder $query): string
     {
         $isAggregateWithUnionOrHaving = (($query->unions || $query->havings) && $query->aggregate);
 
@@ -290,7 +291,7 @@ class Grammar extends MySqlGrammar
      *
      * @return string
      */
-    protected function compileOffset(Builder $query, $offset)
+    protected function compileOffset(Builder $query, $offset): string
     {
         return $this->compileOffsetWithLimit($offset, $query->limit);
     }
@@ -335,7 +336,7 @@ class Grammar extends MySqlGrammar
         return "delete {$deleteTable} from {$table} {$joins} {$where}";
     }
 
-    public function useLegacyGroupLimit(Builder $query)
+    public function useLegacyGroupLimit(Builder $query): false
     {
         return false;
     }

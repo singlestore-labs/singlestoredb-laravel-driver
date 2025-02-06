@@ -7,24 +7,24 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Mockery;
-use SingleStore\Laravel\Connect\Connection;
+use SingleStore\Laravel\Connect\SingleStoreConnection;
 use SingleStore\Laravel\Schema\Blueprint;
-use SingleStore\Laravel\Schema\Grammar;
+use SingleStore\Laravel\Schema\SingleStoreGrammar;
 
 trait HybridTestHelpers
 {
     use OverridesGetConnection;
 
-    public $mockDatabaseConnection = true;
+    public bool $mockDatabaseConnection = true;
 
-    protected static $counter = 1;
+    protected static int $counter = 1;
 
-    protected function getGrammar()
+    protected function getGrammar(): SingleStoreGrammar
     {
-        return new Grammar;
+        return new SingleStoreGrammar;
     }
 
-    protected function runHybridIntegrations()
+    protected function runHybridIntegrations(): bool
     {
         return env('HYBRID_INTEGRATION') == 1;
     }
@@ -38,7 +38,7 @@ trait HybridTestHelpers
 
     protected function mockedConnection()
     {
-        $connection = Mockery::mock(Connection::class);
+        $connection = Mockery::mock(SingleStoreConnection::class);
 
         $connection->shouldReceive('getConfig')->atMost()->once()->with('charset')->andReturn(null);
         $connection->shouldReceive('getConfig')->atMost()->once()->with('collation')->andReturn(null);
@@ -49,13 +49,7 @@ trait HybridTestHelpers
 
     protected function realConnection($connection, $table)
     {
-        if (version_compare(Application::VERSION, '9.0.0', '>=')) {
-            // Laravel 9
-            return parent::getConnection($connection, $table);
-        }
-
-        // Laravel 8
-        return parent::getConnection($connection);
+        return parent::getConnection($connection, $table);
     }
 
     protected function tearDown(): void
@@ -75,7 +69,7 @@ trait HybridTestHelpers
         return $statements;
     }
 
-    protected function createTable($fn)
+    protected function createTable($fn): Blueprint
     {
         if ($this->runHybridIntegrations()) {
             $cached = $this->mockDatabaseConnection;
@@ -102,7 +96,7 @@ trait HybridTestHelpers
         return $blueprint;
     }
 
-    protected function insertJsonData($records)
+    protected function insertJsonData($records): array
     {
         $this->createTable(function (Blueprint $table) {
             $table->id();

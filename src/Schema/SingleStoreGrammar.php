@@ -15,7 +15,7 @@ use SingleStore\Laravel\Schema\Blueprint as SingleStoreBlueprint;
 use SingleStore\Laravel\Schema\Grammar\CompilesKeys;
 use SingleStore\Laravel\Schema\Grammar\ModifiesColumns;
 
-class Grammar extends MySqlGrammar
+class SingleStoreGrammar extends MySqlGrammar
 {
     use CompilesKeys;
     use ModifiesColumns;
@@ -30,11 +30,13 @@ class Grammar extends MySqlGrammar
     /**
      * Compile a change column command into a series of SQL statements.
      *
+     * @param Blueprint $blueprint
+     * @param Fluent $command
+     * @param Connection $connection
      * @return array|string
      *
-     * @throws \RuntimeException
      */
-    public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection)
+    public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection): array|string
     {
         if (version_compare(Application::VERSION, '10.0', '<')) {
             throw new LogicException('This database driver does not support modifying columns on Laravel < 10.0.');
@@ -88,9 +90,11 @@ class Grammar extends MySqlGrammar
     /**
      * Compile a primary key command.
      *
-     * @return string
+     * @param Blueprint $blueprint
+     * @param Fluent $command
+     * @return array|string
      */
-    public function compilePrimary(Blueprint $blueprint, Fluent $command)
+    public function compilePrimary(Blueprint $blueprint, Fluent $command): array|string
     {
         $command->name(null);
 
@@ -100,9 +104,10 @@ class Grammar extends MySqlGrammar
     /**
      * Create the column definition for a spatial Geography type.
      *
+     * @param Fluent $column
      * @return string
      */
-    public function typeGeography(Fluent $column)
+    public function typeGeography(Fluent $column): string
     {
         return 'geography';
     }
@@ -110,9 +115,10 @@ class Grammar extends MySqlGrammar
     /**
      * Create the column definition for a spatial Point type.
      *
+     * @param Fluent $column
      * @return string
      */
-    public function typePoint(Fluent $column)
+    public function typePoint(Fluent $column): string
     {
         // For SingleStore, `point` is invalid. It uses `geographypoint` instead.
         return 'geographypoint';
@@ -124,11 +130,11 @@ class Grammar extends MySqlGrammar
      * @param  Blueprint  $blueprint
      * @param  \Illuminate\Support\Fluent  $command
      * @param  \Illuminate\Database\Connection  $connection
-     * @return array
+     * @return array|string
      *
      * @throws Exception
      */
-    protected function compileCreateTable($blueprint, $command, $connection)
+    protected function compileCreateTable($blueprint, $command, $connection): array|string
     {
         // We want to do as little as possible ourselves, so we rely on the parent
         // to compile everything and then potentially sneak some modifiers in.
@@ -139,9 +145,10 @@ class Grammar extends MySqlGrammar
     }
 
     /**
+     * @param Fluent $column
      * @return string
      */
-    protected function getType(Fluent $column)
+    protected function getType(Fluent $column): string
     {
         $type = parent::getType($column);
 
@@ -159,10 +166,12 @@ class Grammar extends MySqlGrammar
     /**
      * Append the engine specifications to a command.
      *
-     * @param  string  $sql
+     * @param string $sql
+     * @param Connection $connection
+     * @param Blueprint $blueprint
      * @return string
      */
-    protected function compileCreateEngine($sql, Connection $connection, Blueprint $blueprint)
+    protected function compileCreateEngine($sql, Connection $connection, Blueprint $blueprint): string
     {
         $sql = parent::compileCreateEngine($sql, $connection, $blueprint);
 
@@ -176,11 +185,12 @@ class Grammar extends MySqlGrammar
     }
 
     /**
+     * @param $blueprint
+     * @param $compiled
      * @return string
      *
-     * @throws Exception
      */
-    protected function insertCreateTableModifiers($blueprint, $compiled)
+    protected function insertCreateTableModifiers($blueprint, $compiled): string
     {
         $replacement = 'create';
 
@@ -200,11 +210,11 @@ class Grammar extends MySqlGrammar
     }
 
     /**
+     * @param Blueprint $blueprint
      * @return array
      *
-     * @throws Exception
      */
-    protected function getColumns(Blueprint $blueprint)
+    protected function getColumns(Blueprint $blueprint): array
     {
         $columns = parent::getColumns($blueprint);
 
@@ -221,7 +231,7 @@ class Grammar extends MySqlGrammar
     /**
      * @return array|string|string[]
      */
-    protected function compileKey(Blueprint $blueprint, Fluent $command, $type)
+    protected function compileKey(Blueprint $blueprint, Fluent $command, $type): array|string
     {
         $compiled = parent::compileKey($blueprint, $command, $type);
 
@@ -239,9 +249,11 @@ class Grammar extends MySqlGrammar
     /**
      * Convert an array of column names into a delimited string (with direction parameter).
      *
+     * @param array $columns
+     * @param string $direction
      * @return string
      */
-    protected function columnizeWithDirection(array $columns, string $direction)
+    protected function columnizeWithDirection(array $columns, string $direction): string
     {
         if ($columns === array_filter($columns, 'is_array')) {
             $columnNames = array_map(function ($column) {
@@ -271,23 +283,29 @@ class Grammar extends MySqlGrammar
     /**
      * Get the SQL for an auto-increment column modifier.
      *
+     * @param Blueprint $blueprint
+     * @param Fluent $column
      * @return string|null
      */
-    protected function modifyIncrement(Blueprint $blueprint, Fluent $column)
+    protected function modifyIncrement(Blueprint $blueprint, Fluent $column): ?string
     {
         if (in_array($column->type, $this->serials) && $column->autoIncrement) {
             return ($column->withoutPrimaryKey === true)
                 ? ' auto_increment'
                 : ' auto_increment primary key';
         }
+
+        return null;
     }
 
     /**
      * Compile a rename table command.
      *
+     * @param Blueprint $blueprint
+     * @param Fluent $command
      * @return string
      */
-    public function compileRename(Blueprint $blueprint, Fluent $command)
+    public function compileRename(Blueprint $blueprint, Fluent $command): string
     {
         $from = $this->wrapTable($blueprint);
 
@@ -297,9 +315,12 @@ class Grammar extends MySqlGrammar
     /**
      * Compile a rename column command.
      *
+     * @param Blueprint $blueprint
+     * @param Fluent $command
+     * @param Connection $connection
      * @return array|string
      */
-    public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
+    public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection): array|string
     {
         return sprintf(
             'alter table %s change %s %s',
@@ -316,7 +337,7 @@ class Grammar extends MySqlGrammar
      * @param  string  $table
      * @return string
      */
-    public function compileColumns($database, $table)
+    public function compileColumns($database, $table): string
     {
         return sprintf(
             'select column_name as `name`, data_type as `type_name`, column_type as `type`, '
