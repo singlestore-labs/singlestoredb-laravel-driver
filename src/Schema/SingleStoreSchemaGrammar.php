@@ -15,13 +15,15 @@ use SingleStore\Laravel\Schema\Blueprint as SingleStoreBlueprint;
 use SingleStore\Laravel\Schema\Grammar\CompilesKeys;
 use SingleStore\Laravel\Schema\Grammar\ModifiesColumns;
 
-class Grammar extends MySqlGrammar
+class SingleStoreSchemaGrammar extends MySqlGrammar
 {
     use CompilesKeys;
     use ModifiesColumns;
 
-    public function __construct()
+    public function __construct(Connection $connection)
     {
+        parent::__construct($connection);
+
         // Before anything kicks off, we need to add the SingleStore modifiers
         // so that they'll get used while the columns are all compiling.
         $this->addSingleStoreModifiers();
@@ -34,30 +36,22 @@ class Grammar extends MySqlGrammar
      *
      * @throws \RuntimeException
      */
-    public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection)
+    public function compileChange(Blueprint $blueprint, Fluent $command)
     {
-        if (version_compare(Application::VERSION, '10.0', '<')) {
-            throw new LogicException('This database driver does not support modifying columns on Laravel < 10.0.');
-        }
-
         $prefix = method_exists($blueprint, 'getPrefix')
             ? $blueprint->getPrefix()
             : (function () {
                 return $this->prefix;
             })->call($blueprint);
 
-        $isColumnstoreTable = $connection->scalar(sprintf(
+        $isColumnstoreTable = $this->connection->scalar(sprintf(
             "select exists (select 1 from information_schema.tables where table_schema = %s and table_name = %s and storage_type = 'COLUMNSTORE') as is_columnstore",
-            $this->quoteString($connection->getDatabaseName()),
+            $this->quoteString($this->connection->getDatabaseName()),
             $this->quoteString($prefix.$blueprint->getTable())
         ));
 
         if (! $isColumnstoreTable) {
-            return parent::compileChange($blueprint, $command, $connection);
-        }
-
-        if (version_compare(Application::VERSION, '11.15', '<')) {
-            throw new LogicException('This database driver does not support modifying columns of a columnstore table on Laravel < 11.15.');
+            return parent::compileChange($blueprint, $command);
         }
 
         $tempCommand = clone $command;
@@ -81,7 +75,7 @@ class Grammar extends MySqlGrammar
             $this->compileRenameColumn($blueprint, new Fluent([
                 'from' => $tempCommand->column->name,
                 'to' => $command->column->name,
-            ]), $connection),
+            ])),
         ];
     }
 
@@ -124,17 +118,17 @@ class Grammar extends MySqlGrammar
      * @param  Blueprint  $blueprint
      * @param  \Illuminate\Support\Fluent  $command
      * @param  \Illuminate\Database\Connection  $connection
-     * @return array
+     * @return string
      *
      * @throws Exception
      */
-    protected function compileCreateTable($blueprint, $command, $connection)
+    protected function compileCreateTable($blueprint, $command): string
     {
         // We want to do as little as possible ourselves, so we rely on the parent
         // to compile everything and then potentially sneak some modifiers in.
         return $this->insertCreateTableModifiers(
             $blueprint,
-            parent::compileCreateTable($blueprint, $command, $connection)
+            parent::compileCreateTable($blueprint, $command)
         );
     }
 
@@ -162,9 +156,9 @@ class Grammar extends MySqlGrammar
      * @param  string  $sql
      * @return string
      */
-    protected function compileCreateEngine($sql, Connection $connection, Blueprint $blueprint)
+    protected function compileCreateEngine($sql, Blueprint $blueprint)
     {
-        $sql = parent::compileCreateEngine($sql, $connection, $blueprint);
+        $sql = parent::compileCreateEngine($sql, $blueprint);
 
         // We're not actually messing with the engine part at all, this is just
         // a good place to add `compression = sparse` if it's called for.
@@ -299,7 +293,7 @@ class Grammar extends MySqlGrammar
      *
      * @return array|string
      */
-    public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
+    public function compileRenameColumn(Blueprint $blueprint, Fluent $command)
     {
         return sprintf(
             'alter table %s change %s %s',

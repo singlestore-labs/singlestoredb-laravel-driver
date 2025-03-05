@@ -2,26 +2,26 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Mockery;
 use SingleStore\Laravel\Connect\Connection;
 use SingleStore\Laravel\Schema\Blueprint;
-use SingleStore\Laravel\Schema\Grammar;
+use SingleStore\Laravel\Schema\SingleStoreSchemaGrammar;
+use SingleStore\Laravel\Schema\SingleStoreSchemaBuilder;
 
 trait HybridTestHelpers
 {
     use OverridesGetConnection;
 
-    public $mockDatabaseConnection = true;
+    public bool $mockDatabaseConnection = true;
 
-    protected static $counter = 1;
+    protected static int $counter = 1;
 
-    protected function getGrammar()
+    protected function getGrammar($connection = null, $table = null)
     {
-        return new Grammar;
+        return new SingleStoreSchemaGrammar($this->getConnection($connection, $table));
     }
 
     protected function runHybridIntegrations()
@@ -33,29 +33,23 @@ trait HybridTestHelpers
     {
         return $this->mockDatabaseConnection
             ? $this->mockedConnection()
-            : $this->realConnection($connection, $table);
+            : parent::getConnection($connection, $table);
     }
 
     protected function mockedConnection()
     {
         $connection = Mockery::mock(Connection::class);
+        $grammar = new SingleStoreSchemaGrammar($connection);
 
         $connection->shouldReceive('getConfig')->atMost()->once()->with('charset')->andReturn(null);
         $connection->shouldReceive('getConfig')->atMost()->once()->with('collation')->andReturn(null);
         $connection->shouldReceive('getConfig')->atMost()->once()->with('engine')->andReturn(null);
+        $connection->shouldReceive('getConfig')->atMost()->once()->with('prefix_indexes')->andReturn(null);
+        $connection->shouldReceive('getSchemaGrammar')->andReturn($grammar);
+        $connection->shouldReceive('getTablePrefix')->andReturn('');
+        $connection->shouldReceive('getSchemaBuilder')->andReturn(new SingleStoreSchemaBuilder($connection));
 
         return $connection;
-    }
-
-    protected function realConnection($connection, $table)
-    {
-        if (version_compare(Application::VERSION, '9.0.0', '>=')) {
-            // Laravel 9
-            return parent::getConnection($connection, $table);
-        }
-
-        // Laravel 8
-        return parent::getConnection($connection);
     }
 
     protected function tearDown(): void
@@ -94,7 +88,7 @@ trait HybridTestHelpers
             $this->mockDatabaseConnection = $cached;
         }
 
-        $blueprint = new Blueprint('test');
+        $blueprint = new Blueprint($this->getConnection(), 'test');
         $blueprint->create();
 
         call_user_func($fn, $blueprint);

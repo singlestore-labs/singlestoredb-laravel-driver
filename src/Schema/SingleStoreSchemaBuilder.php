@@ -5,7 +5,7 @@ namespace SingleStore\Laravel\Schema;
 use Closure;
 use Illuminate\Database\Schema\MySqlBuilder;
 
-class Builder extends MySqlBuilder
+class SingleStoreSchemaBuilder extends MySqlBuilder
 {
     /**
      * @param  string  $table

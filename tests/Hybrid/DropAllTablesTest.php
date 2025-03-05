@@ -5,12 +5,13 @@ namespace SingleStore\Laravel\Tests\Hybrid;
 use Illuminate\Support\Facades\Schema;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
+use PHPUnit\Framework\Attributes\Test;
 
 class DropAllTablesTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    /** @test */
+    #[Test]
     public function it_drops_all_tables_sequentially()
     {
         if (! $this->runHybridIntegrations()) {

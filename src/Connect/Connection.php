@@ -3,56 +3,42 @@
 namespace SingleStore\Laravel\Connect;
 
 use Illuminate\Database\MySqlConnection;
-use SingleStore\Laravel\Query;
-use SingleStore\Laravel\QueryGrammar;
-use SingleStore\Laravel\Schema;
-use SingleStore\Laravel\SchemaBuilder;
-use SingleStore\Laravel\SchemaGrammar;
+use SingleStore\Laravel\Query\SingleStoreQueryBuilder;
+use SingleStore\Laravel\Query\SingleStoreQueryGrammar;
+use SingleStore\Laravel\Schema\SingleStoreSchemaGrammar;
+use SingleStore\Laravel\Schema\SingleStoreSchemaBuilder;
 
 class Connection extends MySqlConnection
 {
-    /**
-     * Get a schema builder instance for the connection.
-     *
-     * @return SchemaBuilder
-     */
     public function getSchemaBuilder()
     {
         if ($this->schemaGrammar === null) {
             $this->useDefaultSchemaGrammar();
         }
 
-        return new Schema\Builder($this);
+        return new SingleStoreSchemaBuilder($this);
     }
 
     /**
      * Get the default query grammar instance.
      *
-     * @return QueryGrammar
+     * @return SingleStoreQueryGrammar
      */
     protected function getDefaultQueryGrammar()
     {
-        $grammar = new Query\Grammar($this->getConfig('ignore_order_by_in_deletes'), $this->getConfig('ignore_order_by_in_updates'));
-        if (method_exists($grammar, 'setConnection')) {
-            $grammar->setConnection($this);
-        }
-
-        return $this->withTablePrefix($grammar);
+        return new SingleStoreQueryGrammar(
+            connection: $this,
+            ignoreOrderByInDeletes: $this->getConfig('ignore_order_by_in_deletes'),
+            ignoreOrderByInUpdates: $this->getConfig('ignore_order_by_in_updates')
+        );
     }
 
     /**
      * Get the default schema grammar instance.
-     *
-     * @return SchemaGrammar
      */
     protected function getDefaultSchemaGrammar()
     {
-        $grammar = new Schema\Grammar;
-        if (method_exists($grammar, 'setConnection')) {
-            $grammar->setConnection($this);
-        }
-
-        return $this->withTablePrefix($grammar);
+        return new SingleStoreSchemaGrammar($this);
     }
 
     /**
@@ -60,7 +46,7 @@ class Connection extends MySqlConnection
      */
     public function query()
     {
-        return new Query\Builder(
+        return new SingleStoreQueryBuilder(
             $this,
             $this->getQueryGrammar(),
             $this->getPostProcessor()

@@ -5,6 +5,7 @@ namespace SingleStore\Laravel\Tests\Hybrid;
 use Illuminate\Support\Facades\DB;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
+use PHPUnit\Framework\Attributes\Test;
 
 class UnionTest extends BaseTest
 {
@@ -29,7 +30,7 @@ class UnionTest extends BaseTest
         }
     }
 
-    /** @test */
+    #[Test]
     public function union()
     {
         if (! $this->runHybridIntegrations()) {
@@ -48,7 +49,7 @@ class UnionTest extends BaseTest
         $this->assertEquals([1, 2, 100], $indexes);
     }
 
-    /** @test */
+    #[Test]
     public function union_all()
     {
         if (! $this->runHybridIntegrations()) {
@@ -67,7 +68,7 @@ class UnionTest extends BaseTest
         $this->assertEquals([1, 2, 3, 3, 4, 100], $indexes);
     }
 
-    /** @test */
+    #[Test]
     public function union_with_order_by_limit_and_offset()
     {
         if (! $this->runHybridIntegrations()) {
@@ -85,7 +86,7 @@ class UnionTest extends BaseTest
         $this->assertEquals([2], $indexes);
     }
 
-    /** @test */
+    #[Test]
     public function union_with_order_by()
     {
         if (! $this->runHybridIntegrations()) {
@@ -103,7 +104,7 @@ class UnionTest extends BaseTest
         $this->assertEquals([1, 2, 100], $indexes);
     }
 
-    /** @test */
+    #[Test]
     public function union_with_limit()
     {
         if (! $this->runHybridIntegrations()) {
@@ -117,7 +118,7 @@ class UnionTest extends BaseTest
         $this->assertCount(2, $res);
     }
 
-    /** @test */
+    #[Test]
     public function union_with_offset()
     {
         if (! $this->runHybridIntegrations()) {
@@ -131,7 +132,7 @@ class UnionTest extends BaseTest
         $this->assertCount(2, $res);
     }
 
-    /** @test */
+    #[Test]
     public function union_with_inner_offset()
     {
         if (! $this->runHybridIntegrations()) {

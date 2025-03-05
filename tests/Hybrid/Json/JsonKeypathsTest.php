@@ -3,6 +3,7 @@
 namespace SingleStore\Laravel\Tests\Hybrid\Json;
 
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
 
@@ -10,7 +11,7 @@ class JsonKeypathsTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    /** @test */
+    #[Test]
     public function it_compiles_column_only_without_path()
     {
         $query = DB::table('test')->where('data', '[]');
@@ -34,7 +35,7 @@ class JsonKeypathsTest extends BaseTest
         $this->assertEquals(1, $query->count());
     }
 
-    /** @test */
+    #[Test]
     public function it_compiles_nested_json_path()
     {
         $query = DB::table('test')->where('data->value1->value2->value3->value4', 2);
@@ -60,7 +61,7 @@ class JsonKeypathsTest extends BaseTest
         $this->assertEquals(1, $query->count());
     }
 
-    /** @test */
+    #[Test]
     public function it_compiles_nested_json_path_with_array_access()
     {
         $query = DB::table('test')->where('data->value1[0]->value2[2][0]', 1);

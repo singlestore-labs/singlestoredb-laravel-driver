@@ -5,6 +5,7 @@ namespace SingleStore\Laravel\Tests\Hybrid;
 use Illuminate\Support\Facades\DB;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
+use PHPUnit\Framework\Attributes\Test;
 
 class TransactionsTest extends BaseTest
 {
@@ -21,7 +22,7 @@ class TransactionsTest extends BaseTest
         }
     }
 
-    /** @test */
+    #[Test]
     public function multiple_begin()
     {
         if (! $this->runHybridIntegrations()) {

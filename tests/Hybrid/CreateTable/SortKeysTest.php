@@ -6,12 +6,13 @@ use InvalidArgumentException;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
+use PHPUnit\Framework\Attributes\Test;
 
 class SortKeysTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    /** @test */
+    #[Test]
     public function it_adds_a_sort_key_standalone()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -25,7 +26,7 @@ class SortKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_a_sort_key_with_desc_direction_standalone()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -39,7 +40,7 @@ class SortKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_a_sort_key_fluent()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -52,7 +53,7 @@ class SortKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_a_sort_key_with_desc_direction_fluent()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -65,7 +66,7 @@ class SortKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_a_dual_sort_key()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -80,7 +81,7 @@ class SortKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_a_dual_sort_key_with_desc_direction()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -95,7 +96,7 @@ class SortKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_a_dual_sort_key_with_different_directions()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -110,7 +111,7 @@ class SortKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_cannot_add_a_dual_sort_key_with_only_one_direction()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -124,7 +125,7 @@ class SortKeysTest extends BaseTest
         $blueprint->toSql($this->getConnection(), $this->getGrammar());
     }
 
-    /** @test */
+    #[Test]
     public function it_cannot_add_a_dual_sort_key_with_only_one_direction_desc()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -138,7 +139,7 @@ class SortKeysTest extends BaseTest
         $blueprint->toSql($this->getConnection(), $this->getGrammar());
     }
 
-    /** @test */
+    #[Test]
     public function shard_and_sort_keys()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -151,7 +152,7 @@ class SortKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_a_sort_key_with_with_statement()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -165,7 +166,7 @@ class SortKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_an_empty_sort_key_with_with_statement()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -179,7 +180,7 @@ class SortKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_a_sort_key_fluent_with_with_statement()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -192,7 +193,7 @@ class SortKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_a_sort_key_fluent_with_dual_with_statement()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {

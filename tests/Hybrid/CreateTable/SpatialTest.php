@@ -5,12 +5,13 @@ namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
+use PHPUnit\Framework\Attributes\Test;
 
 class SpatialTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    /** @test */
+    #[Test]
     public function geography_without_resolution_fluent()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -25,7 +26,7 @@ class SpatialTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function geography_with_resolution()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -42,7 +43,7 @@ class SpatialTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function geography_point()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {

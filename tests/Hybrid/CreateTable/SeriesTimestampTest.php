@@ -5,12 +5,13 @@ namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
+use PHPUnit\Framework\Attributes\Test;
 
 class SeriesTimestampTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    /** @test */
+    #[Test]
     public function series_timestamp()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -23,7 +24,7 @@ class SeriesTimestampTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function series_timestamp_sparse()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {

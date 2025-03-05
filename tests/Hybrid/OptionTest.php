@@ -5,6 +5,7 @@ namespace SingleStore\Laravel\Tests\Hybrid;
 use Illuminate\Support\Facades\DB;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
+use PHPUnit\Framework\Attributes\Test;
 
 class OptionTest extends BaseTest
 {
@@ -21,7 +22,7 @@ class OptionTest extends BaseTest
         }
     }
 
-    /** @test */
+    #[Test]
     public function single_option()
     {
         $query = DB::table('test')->options(['interpreter_mode' => 'compile']);
@@ -33,7 +34,7 @@ class OptionTest extends BaseTest
         }
     }
 
-    /** @test */
+    #[Test]
     public function empty_option()
     {
         $query = DB::table('test')->options([]);
@@ -45,7 +46,7 @@ class OptionTest extends BaseTest
         }
     }
 
-    /** @test */
+    #[Test]
     public function multi_option()
     {
         $query = DB::table('test')->options(['interpreter_mode' => 'compile', 'resource_pool' => 'default_pool']);

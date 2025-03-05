@@ -3,6 +3,7 @@
 namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
 use Illuminate\Foundation\Application;
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
@@ -11,7 +12,7 @@ class MiscCreateTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    /** @test */
+    #[Test]
     public function all_keys_are_added_in_create_columnstore()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -21,20 +22,13 @@ class MiscCreateTest extends BaseTest
             $table->index('foo', 'name3', 'hash');
         });
 
-        if (version_compare(Application::VERSION, '10.38.0', '>=')) {
-            $this->assertCreateStatement(
-                $blueprint,
-                'create table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `foo` varchar(255) not null, index `name3` using hash(`foo`), index `name2`(`index`), primary key (`primary`))'
-            );
-        } else {
-            $this->assertCreateStatement(
-                $blueprint,
-                'create table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `foo` varchar(255) not null, index `name3` using hash(`foo`), primary key `name1`(`primary`), index `name2`(`index`))'
-            );
-        }
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `foo` varchar(255) not null, index `name3` using hash(`foo`), index `name2`(`index`), primary key (`primary`))'
+        );
     }
 
-    /** @test */
+    #[Test]
     public function all_keys_are_added_in_create_rowstore()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -44,20 +38,13 @@ class MiscCreateTest extends BaseTest
             $table->geography('georegion')->spatialIndex('name3');
         });
 
-        if (version_compare(Application::VERSION, '10.38.0', '>=')) {
-            $this->assertCreateStatement(
-                $blueprint,
-                'create rowstore table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `georegion` geography not null, index `name2`(`index`), index `name3`(`georegion`), primary key (`primary`))'
-            );
-        } else {
-            $this->assertCreateStatement(
-                $blueprint,
-                'create rowstore table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `georegion` geography not null, primary key `name1`(`primary`), index `name2`(`index`), index `name3`(`georegion`))'
-            );
-        }
+        $this->assertCreateStatement(
+            $blueprint,
+            'create rowstore table `test` (`primary` varchar(255) not null, `index` varchar(255) not null, `georegion` geography not null, index `name2`(`index`), index `name3`(`georegion`), primary key (`primary`))'
+        );
     }
 
-    /** @test */
+    #[Test]
     public function medium_integer_id()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -70,7 +57,7 @@ class MiscCreateTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function discussion_53()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -83,20 +70,13 @@ class MiscCreateTest extends BaseTest
             $table->timestamps();
         });
 
-        if (version_compare(Application::VERSION, '10.38.0', '>=')) {
-            $this->assertCreateStatement(
-                $blueprint,
-                'create table `test` (`id` bigint unsigned not null auto_increment, `user_id` bigint unsigned not null, `template_id` varchar(255) not null, `data` longtext not null, `response_status_code` varchar(255) not null, `response_message` longtext not null, `created_at` timestamp null, `updated_at` timestamp null, index `test_id_index`(`id`), shard key(`user_id`))'
-            );
-        } else {
-            $this->assertCreateStatement(
-                $blueprint,
-                'create table `test` (`id` bigint unsigned not null auto_increment, `user_id` bigint unsigned not null, `template_id` varchar(255) not null, `data` longtext not null, `response_status_code` varchar(255) not null, `response_message` longtext not null, `created_at` timestamp null, `updated_at` timestamp null, index `test_id_index`(`id`), shard key(`user_id`))'
-            );
-        }
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`id` bigint unsigned not null auto_increment, `user_id` bigint unsigned not null, `template_id` varchar(255) not null, `data` longtext not null, `response_status_code` varchar(255) not null, `response_message` longtext not null, `created_at` timestamp null, `updated_at` timestamp null, index `test_id_index`(`id`), shard key(`user_id`))'
+        );
     }
 
-    /** @test */
+    #[Test]
     public function json_column()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {

@@ -5,12 +5,13 @@ namespace SingleStore\Laravel\Tests\Hybrid;
 use Illuminate\Support\Facades\DB;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
+use PHPUnit\Framework\Attributes\Test;
 
 class orderByTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    /** @test */
+    #[Test]
     public function ignores_order_by_in_delete()
     {
         if (! $this->runHybridIntegrations()) {
@@ -28,7 +29,7 @@ class orderByTest extends BaseTest
         DB::table('test')->orderBy('id', 'asc')->delete();
     }
 
-    /** @test */
+    #[Test]
     public function ignores_order_by_in_update()
     {
         if (! $this->runHybridIntegrations()) {
