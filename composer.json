@@ -33,8 +33,7 @@
   "require-dev": {
     "mockery/mockery": "^1.6.10",
     "orchestra/testbench": "^10.0.0",
-    "phpunit/phpunit": "^10.5.35|^11.5.3|^12.0.1",
-    "spatie/laravel-ray": "^1.39"
+    "phpunit/phpunit": "^10.5.35|^11.5.3|^12.0.1"
   },
   "config": {
     "sort-packages": true

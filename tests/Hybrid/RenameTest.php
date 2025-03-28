@@ -81,8 +81,7 @@ class RenameTest extends BaseTest
                 $table->renameColumn('data', 'data1');
             });
 
-            $database = $this->getConnection()->getDatabaseName();
-            $columnNames = Schema::getColumnListing("$database.test");
+            $columnNames = Schema::getColumnListing("test");
             $this->assertEquals(['id', 'data1'], $columnNames);
 
             $this->mockDatabaseConnection = $cached;

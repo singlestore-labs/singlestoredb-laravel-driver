@@ -37,9 +37,8 @@ class ChangeColumnTest extends BaseTest
                 $table->text('data')->nullable()->change();
             });
 
-            $database = $this->getConnection()->getDatabaseName();
-            $this->assertEquals(['id', 'data'], Schema::getColumnListing("$database.test"));
-            $this->assertEquals('text', Schema::getColumnType("$database.test", 'data'));
+            $this->assertEquals(['id', 'data'], Schema::getColumnListing("test"));
+            $this->assertEquals('text', Schema::getColumnType("test", 'data'));
 
             $this->mockDatabaseConnection = $cached;
         }
@@ -81,9 +80,8 @@ class ChangeColumnTest extends BaseTest
                 $table->text('data')->nullable()->change();
             });
 
-            $database = $this->getConnection()->getDatabaseName();
-            $this->assertEquals(['id', 'data'], Schema::getColumnListing("$database.test"));
-            $this->assertEquals('text', Schema::getColumnType("$database.test", 'data'));
+            $this->assertEquals(['id', 'data'], Schema::getColumnListing("test"));
+            $this->assertEquals('text', Schema::getColumnType("test", 'data'));
 
             $this->mockDatabaseConnection = $cached;
         }

@@ -47,7 +47,7 @@ class SingleStoreSchemaGrammar extends MySqlGrammar
         $isColumnstoreTable = $this->connection->scalar(sprintf(
             "select exists (select 1 from information_schema.tables where table_schema = %s and table_name = %s and storage_type = 'COLUMNSTORE') as is_columnstore",
             $this->quoteString($this->connection->getDatabaseName()),
-            $this->quoteString($prefix.$blueprint->getTable())
+            $this->quoteString($prefix . $blueprint->getTable())
         ));
 
         if (! $isColumnstoreTable) {
@@ -57,14 +57,15 @@ class SingleStoreSchemaGrammar extends MySqlGrammar
         $tempCommand = clone $command;
         $tempCommand->column = clone $command->column;
         $tempCommand->column->change = false;
-        $tempCommand->column->name = '__temp__'.$command->column->name;
+        $tempCommand->column->name = '__temp__' . $command->column->name;
         $tempCommand->column->after = is_null($command->column->after) && is_null($command->column->first)
             ? $command->column->name
             : $command->column->after;
 
         return [
             $this->compileAdd($blueprint, $tempCommand),
-            sprintf('update %s set %s = %s',
+            sprintf(
+                'update %s set %s = %s',
                 $this->wrapTable($blueprint),
                 $this->wrap($tempCommand->column),
                 $this->wrap($command->column)
@@ -258,7 +259,7 @@ class SingleStoreSchemaGrammar extends MySqlGrammar
         $wrapped = array_map([$this, 'wrap'], $columns);
 
         return implode(', ', array_map(function ($column) use ($direction) {
-            return $column.' '.$direction;
+            return $column . ' ' . $direction;
         }, $wrapped));
     }
 
@@ -285,7 +286,7 @@ class SingleStoreSchemaGrammar extends MySqlGrammar
     {
         $from = $this->wrapTable($blueprint);
 
-        return "alter table {$from} rename to ".$this->wrapTable($command->to);
+        return "alter table {$from} rename to " . $this->wrapTable($command->to);
     }
 
     /**
@@ -314,12 +315,12 @@ class SingleStoreSchemaGrammar extends MySqlGrammar
     {
         return sprintf(
             'select column_name as `name`, data_type as `type_name`, column_type as `type`, '
-                .'collation_name as `collation`, is_nullable as `nullable`, '
-                .'column_default as `default`, column_comment as `comment`, '
-                .'"" as `expression`, extra as `extra` '
-                .'from information_schema.columns where table_schema = %s and table_name = %s '
-                .'order by ordinal_position asc',
-            $this->quoteString($database),
+                . 'collation_name as `collation`, is_nullable as `nullable`, '
+                . 'column_default as `default`, column_comment as `comment`, '
+                . '"" as `expression`, extra as `extra` '
+                . 'from information_schema.columns where table_schema = %s and table_name = %s '
+                . 'order by ordinal_position asc',
+            $database ? $this->quoteString($database) : 'database()',
             $this->quoteString($table)
         );
     }
