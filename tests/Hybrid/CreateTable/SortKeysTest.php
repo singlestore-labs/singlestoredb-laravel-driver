@@ -3,10 +3,10 @@
 namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
-use PHPUnit\Framework\Attributes\Test;
 
 class SortKeysTest extends BaseTest
 {

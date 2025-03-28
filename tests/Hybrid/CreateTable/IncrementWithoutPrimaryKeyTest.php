@@ -2,11 +2,10 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
-use Illuminate\Foundation\Application;
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
-use PHPUnit\Framework\Attributes\Test;
 
 class IncrementWithoutPrimaryKeyTest extends BaseTest
 {

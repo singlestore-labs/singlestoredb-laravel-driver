@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Schema;
 use Mockery;
 use SingleStore\Laravel\Connect\Connection;
 use SingleStore\Laravel\Schema\Blueprint;
-use SingleStore\Laravel\Schema\SingleStoreSchemaGrammar;
 use SingleStore\Laravel\Schema\SingleStoreSchemaBuilder;
+use SingleStore\Laravel\Schema\SingleStoreSchemaGrammar;
 
 trait HybridTestHelpers
 {

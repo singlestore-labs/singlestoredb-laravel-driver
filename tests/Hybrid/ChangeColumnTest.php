@@ -2,13 +2,11 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Schema;
 use PHPUnit\Framework\Attributes\Test;
-use SingleStore\Laravel\Query\SingleStoreQueryGrammar;
 use SingleStore\Laravel\Schema\Blueprint;
-use SingleStore\Laravel\Schema\SingleStoreSchemaGrammar;
 use SingleStore\Laravel\Schema\SingleStoreSchemaBuilder;
+use SingleStore\Laravel\Schema\SingleStoreSchemaGrammar;
 use SingleStore\Laravel\Tests\BaseTest;
 
 class ChangeColumnTest extends BaseTest
@@ -37,8 +35,8 @@ class ChangeColumnTest extends BaseTest
                 $table->text('data')->nullable()->change();
             });
 
-            $this->assertEquals(['id', 'data'], Schema::getColumnListing("test"));
-            $this->assertEquals('text', Schema::getColumnType("test", 'data'));
+            $this->assertEquals(['id', 'data'], Schema::getColumnListing('test'));
+            $this->assertEquals('text', Schema::getColumnType('test', 'data'));
 
             $this->mockDatabaseConnection = $cached;
         }
@@ -80,8 +78,8 @@ class ChangeColumnTest extends BaseTest
                 $table->text('data')->nullable()->change();
             });
 
-            $this->assertEquals(['id', 'data'], Schema::getColumnListing("test"));
-            $this->assertEquals('text', Schema::getColumnType("test", 'data'));
+            $this->assertEquals(['id', 'data'], Schema::getColumnListing('test'));
+            $this->assertEquals('text', Schema::getColumnType('test', 'data'));
 
             $this->mockDatabaseConnection = $cached;
         }

@@ -5,8 +5,8 @@ namespace SingleStore\Laravel\Connect;
 use Illuminate\Database\MySqlConnection;
 use SingleStore\Laravel\Query\SingleStoreQueryBuilder;
 use SingleStore\Laravel\Query\SingleStoreQueryGrammar;
-use SingleStore\Laravel\Schema\SingleStoreSchemaGrammar;
 use SingleStore\Laravel\Schema\SingleStoreSchemaBuilder;
+use SingleStore\Laravel\Schema\SingleStoreSchemaGrammar;
 
 class Connection extends MySqlConnection
 {
@@ -35,7 +35,7 @@ class Connection extends MySqlConnection
 
     /**
      * Get the default schema grammar instance.
-     * 
+     *
      * @return SingleStoreSchemaGrammar
      */
     protected function getDefaultSchemaGrammar()

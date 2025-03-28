@@ -3,9 +3,9 @@
 namespace SingleStore\Laravel\Tests\Hybrid;
 
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
-use PHPUnit\Framework\Attributes\Test;
 
 class DropAllTablesTest extends BaseTest
 {

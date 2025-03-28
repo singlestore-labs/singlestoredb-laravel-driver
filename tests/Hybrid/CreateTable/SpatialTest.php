@@ -2,10 +2,10 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
-use PHPUnit\Framework\Attributes\Test;
 
 class SpatialTest extends BaseTest
 {

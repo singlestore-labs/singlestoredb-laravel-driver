@@ -3,10 +3,10 @@
 namespace SingleStore\Laravel\Tests\Hybrid;
 
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Schema\SingleStoreSchemaGrammar;
 use SingleStore\Laravel\Tests\BaseTest;
-use PHPUnit\Framework\Attributes\Test;
 
 class RenameTest extends BaseTest
 {
@@ -81,7 +81,7 @@ class RenameTest extends BaseTest
                 $table->renameColumn('data', 'data1');
             });
 
-            $columnNames = Schema::getColumnListing("test");
+            $columnNames = Schema::getColumnListing('test');
             $this->assertEquals(['id', 'data1'], $columnNames);
 
             $this->mockDatabaseConnection = $cached;
