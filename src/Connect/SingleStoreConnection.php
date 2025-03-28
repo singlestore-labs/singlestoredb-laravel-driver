@@ -8,7 +8,7 @@ use SingleStore\Laravel\Query\SingleStoreQueryGrammar;
 use SingleStore\Laravel\Schema\SingleStoreSchemaBuilder;
 use SingleStore\Laravel\Schema\SingleStoreSchemaGrammar;
 
-class Connection extends MySqlConnection
+class SingleStoreConnection extends MySqlConnection
 {
     public function getSchemaBuilder()
     {
