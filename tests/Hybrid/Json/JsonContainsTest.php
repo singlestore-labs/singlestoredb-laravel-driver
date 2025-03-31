@@ -3,6 +3,7 @@
 namespace SingleStore\Laravel\Tests\Hybrid\Json;
 
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
 
@@ -16,7 +17,7 @@ class JsonContainsTest extends BaseTest
     |--------------------------------------------------------------------------
     */
 
-    /** @test */
+    #[Test]
     public function json_contains_strings()
     {
         $query = DB::table('test')->whereJsonContains('data->array', 'en');
@@ -41,7 +42,7 @@ class JsonContainsTest extends BaseTest
         $this->assertEquals(1, $query->count());
     }
 
-    /** @test */
+    #[Test]
     public function json_contains_double()
     {
         $query = DB::table('test')->whereJsonContains('data->array', 1.5);
@@ -66,7 +67,7 @@ class JsonContainsTest extends BaseTest
         $this->assertEquals(1, $query->count());
     }
 
-    /** @test */
+    #[Test]
     public function json_contains_int()
     {
         $query = DB::table('test')->whereJsonContains('data->array', 1);
@@ -91,7 +92,7 @@ class JsonContainsTest extends BaseTest
         $this->assertEquals(1, $query->count());
     }
 
-    /** @test */
+    #[Test]
     public function json_contains_bool()
     {
         $query = DB::table('test')->whereJsonContains('data->array', true);
@@ -116,7 +117,7 @@ class JsonContainsTest extends BaseTest
         $this->assertEquals(1, $query->count());
     }
 
-    /** @test */
+    #[Test]
     public function json_contains_json()
     {
         $query = DB::table('test')->whereJsonContains('data->array', ['a' => 'b']);

@@ -2,6 +2,7 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
@@ -10,7 +11,7 @@ class TableModifiersTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    //    /** @test */
+    //    #[Test]
     //    public function all_modifiers_together()
     //    {
     //        // This shouldn't actually be done, as it doesn't produce
@@ -31,7 +32,7 @@ class TableModifiersTest extends BaseTest
     //        );
     //    }
 
-    /** @test */
+    #[Test]
     public function it_creates_a_standard_temp()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -46,7 +47,7 @@ class TableModifiersTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_a_global_temp()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -63,7 +64,7 @@ class TableModifiersTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_a_global_temp_chained()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -78,7 +79,7 @@ class TableModifiersTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_a_global_temp_style_two()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -94,7 +95,7 @@ class TableModifiersTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_a_global_temp_rowstore()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -111,7 +112,7 @@ class TableModifiersTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_a_reference()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -126,7 +127,7 @@ class TableModifiersTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_a_rowstore_reference()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -143,7 +144,7 @@ class TableModifiersTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_a_default()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {

@@ -2,8 +2,8 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid\Json;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
 
@@ -11,7 +11,7 @@ class JsonUpdateTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    /** @test */
+    #[Test]
     public function set_boolean_syntax()
     {
         [$logs] = DB::pretend(function ($database) {
@@ -26,7 +26,7 @@ class JsonUpdateTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function set_boolean_execution()
     {
         if (! $this->runHybridIntegrations()) {
@@ -47,7 +47,7 @@ class JsonUpdateTest extends BaseTest
         $this->assertEquals(1, DB::table('test')->where('data->value1', true)->count());
     }
 
-    /** @test */
+    #[Test]
     public function set_string_syntax()
     {
         if (! $this->runHybridIntegrations()) {
@@ -60,24 +60,15 @@ class JsonUpdateTest extends BaseTest
             ]);
         });
 
-        if (version_compare(Application::VERSION, '10.30.0', '>=')) {
-            // Laravel version >= 10.30.0
-            $this->assertEquals(
-                "update `test` set data = JSON_SET_JSON(data, 'value1', '\\\"foo\\\"')",
-                $logs['query']
-            );
-        } else {
-            // Laravel version < 10.30.0
-            $this->assertEquals(
-                "update `test` set data = JSON_SET_JSON(data, 'value1', ?)",
-                $logs['query']
-            );
-        }
+        $this->assertEquals(
+            "update `test` set data = JSON_SET_JSON(data, 'value1', '\\\"foo\\\"')",
+            $logs['query']
+        );
 
         $this->assertSame('"foo"', $logs['bindings'][0]);
     }
 
-    /** @test */
+    #[Test]
     public function set_string_execution()
     {
         if (! $this->runHybridIntegrations()) {
@@ -98,7 +89,7 @@ class JsonUpdateTest extends BaseTest
         $this->assertEquals(1, DB::table('test')->where('data->value1', 'bar')->count());
     }
 
-    /** @test */
+    #[Test]
     public function set_double_syntax()
     {
         [$logs] = DB::pretend(function ($database) {
@@ -107,24 +98,15 @@ class JsonUpdateTest extends BaseTest
             ]);
         });
 
-        if (version_compare(Application::VERSION, '10.30.0', '>=')) {
-            // Laravel version >= 10.30.0
-            $this->assertEquals(
-                "update `test` set data = JSON_SET_JSON(data, 'value1', 1.3)",
-                $logs['query']
-            );
-        } else {
-            // Laravel version < 10.30.0
-            $this->assertEquals(
-                "update `test` set data = JSON_SET_JSON(data, 'value1', ?)",
-                $logs['query']
-            );
-        }
+        $this->assertEquals(
+            "update `test` set data = JSON_SET_JSON(data, 'value1', 1.3)",
+            $logs['query']
+        );
 
         $this->assertSame(1.3, $logs['bindings'][0]);
     }
 
-    /** @test */
+    #[Test]
     public function set_double_execution()
     {
         if (! $this->runHybridIntegrations()) {
@@ -145,7 +127,7 @@ class JsonUpdateTest extends BaseTest
         $this->assertEquals(1, DB::table('test')->where('data->value1', 1.5)->count());
     }
 
-    /** @test */
+    #[Test]
     public function set_json_syntax()
     {
         if (! $this->runHybridIntegrations()) {
@@ -158,24 +140,15 @@ class JsonUpdateTest extends BaseTest
             ]);
         });
 
-        if (version_compare(Application::VERSION, '10.30.0', '>=')) {
-            // Laravel version >= 10.30.0
-            $this->assertEquals(
-                "update `test` set data = JSON_SET_JSON(data, 'value1', '{\\\"foo\\\":\\\"bar\\\"}')",
-                $logs['query']
-            );
-        } else {
-            // Laravel version < 10.30.0
-            $this->assertEquals(
-                "update `test` set data = JSON_SET_JSON(data, 'value1', ?)",
-                $logs['query']
-            );
-        }
+        $this->assertEquals(
+            "update `test` set data = JSON_SET_JSON(data, 'value1', '{\\\"foo\\\":\\\"bar\\\"}')",
+            $logs['query']
+        );
 
         $this->assertSame('{"foo":"bar"}', $logs['bindings'][0]);
     }
 
-    /** @test */
+    #[Test]
     public function set_json_execution()
     {
         if (! $this->runHybridIntegrations()) {

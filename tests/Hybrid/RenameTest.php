@@ -3,7 +3,9 @@
 namespace SingleStore\Laravel\Tests\Hybrid;
 
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Schema\Blueprint;
+use SingleStore\Laravel\Schema\SingleStoreSchemaGrammar;
 use SingleStore\Laravel\Tests\BaseTest;
 
 class RenameTest extends BaseTest
@@ -30,7 +32,7 @@ class RenameTest extends BaseTest
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function rename_table()
     {
         if ($this->runHybridIntegrations()) {
@@ -46,16 +48,23 @@ class RenameTest extends BaseTest
             $this->mockDatabaseConnection = $cached;
         }
 
-        $blueprint = new Blueprint('test');
+        $connection = $this->getConnection('test');
+        $grammar = new SingleStoreSchemaGrammar($connection);
+
+        $connection->shouldReceive('getSchemaGrammar')->andReturn($grammar);
+        $connection->shouldReceive('getDatabaseName')->andReturn('database');
+        $connection->shouldReceive('getTablePrefix')->andReturn('');
+
+        $blueprint = new Blueprint($connection, 'test');
         $blueprint->rename('test_renamed');
 
-        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+        $statements = $blueprint->toSql();
 
         $this->assertCount(1, $statements);
         $this->assertEquals('alter table `test` rename to `test_renamed`', $statements[0]);
     }
 
-    /** @test */
+    #[Test]
     public function rename_column()
     {
         if ($this->runHybridIntegrations()) {
@@ -78,10 +87,17 @@ class RenameTest extends BaseTest
             $this->mockDatabaseConnection = $cached;
         }
 
-        $blueprint = new Blueprint('test');
+        $connection = $this->getConnection('test');
+        $grammar = new SingleStoreSchemaGrammar($connection);
+
+        $connection->shouldReceive('getSchemaGrammar')->andReturn($grammar);
+        $connection->shouldReceive('getDatabaseName')->andReturn('database');
+        $connection->shouldReceive('getTablePrefix')->andReturn('');
+
+        $blueprint = new Blueprint($connection, 'test');
         $blueprint->renameColumn('data', 'data1');
 
-        $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
+        $statements = $blueprint->toSql();
 
         $this->assertCount(1, $statements);
         $this->assertEquals('alter table `test` change `data` `data1`', $statements[0]);

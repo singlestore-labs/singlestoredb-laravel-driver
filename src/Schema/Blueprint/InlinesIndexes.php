@@ -2,9 +2,7 @@
 
 namespace SingleStore\Laravel\Schema\Blueprint;
 
-use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Grammars\Grammar;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Arr;
 use SingleStore\Laravel\Schema\Blueprint as SingleStoreBlueprint;
 
@@ -109,13 +107,9 @@ trait InlinesIndexes
         }
     }
 
-    public function toSql(Connection $connection, Grammar $grammar)
+    public function toSql()
     {
-        if (version_compare(Application::VERSION, '10.0.0', '>=')) {
-            $this->addImpliedCommands($connection, $grammar);
-        } else {
-            $this->addImpliedCommands($grammar);
-        }
+        $this->addImpliedCommands();
         $this->addFluentSingleStoreIndexes();
 
         $statements = [];
@@ -129,9 +123,10 @@ trait InlinesIndexes
             $method = 'compile'.ucfirst($command->name);
             $isIndex = $this->isIndexCommand($command);
 
-            if (method_exists($grammar, $method) || $grammar::hasMacro($method)) {
-                if (! is_null($sql = $grammar->$method($this, $command, $connection))) {
+            if (method_exists($this->grammar, $method) || $this->grammar::hasMacro($method)) {
+                if (! is_null($sql = $this->grammar->$method($this, $command))) {
                     $statements = array_merge($statements, (array) $sql);
+
                     if ($isIndex) {
                         array_push($indexStatementKeys, count($statements) - 1);
                     }

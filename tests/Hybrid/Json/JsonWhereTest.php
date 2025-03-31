@@ -3,6 +3,7 @@
 namespace SingleStore\Laravel\Tests\Hybrid\Json;
 
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
 
@@ -10,7 +11,7 @@ class JsonWhereTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    /** @test */
+    #[Test]
     public function compile_unknown_as_string()
     {
         $query = DB::table('test')->where('data->value1->value2', 1);
@@ -23,7 +24,7 @@ class JsonWhereTest extends BaseTest
         $this->assertSame(1, $query->getBindings()[0]);
     }
 
-    /** @test */
+    #[Test]
     public function singlestore_will_cast_all_types()
     {
         $query1 = DB::table('test')->where('data->value1->value2', 'string');
@@ -55,7 +56,7 @@ class JsonWhereTest extends BaseTest
         $this->assertEquals(1, $query4->count());
     }
 
-    /** @test */
+    #[Test]
     public function json_boolean()
     {
         $query1 = DB::table('test')->where('data->value1->value2', true);
@@ -87,7 +88,7 @@ class JsonWhereTest extends BaseTest
         $this->assertEquals(1, $query1->count());
     }
 
-    /** @test */
+    #[Test]
     public function nested_where()
     {
         $query = DB::table('test')->where(function ($query) {
@@ -102,7 +103,7 @@ class JsonWhereTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function where_null()
     {
         $query = DB::table('test')->whereNull('data->value1')->orderBy('id');
@@ -128,7 +129,7 @@ class JsonWhereTest extends BaseTest
         $this->assertEquals($id3, $query->get()[1]->id);
     }
 
-    /** @test */
+    #[Test]
     public function where_null_raw()
     {
         $query = DB::table('test')->whereNull(DB::raw('(SELECT NULL)'))->orderBy('id');
@@ -155,7 +156,7 @@ class JsonWhereTest extends BaseTest
         $this->assertEquals($id4, $query->get()[3]->id);
     }
 
-    /** @test */
+    #[Test]
     public function where_not_null()
     {
         $query = DB::table('test')->whereNotNull('data->value1')->orderBy('id');
@@ -181,7 +182,7 @@ class JsonWhereTest extends BaseTest
         $this->assertEquals($id4, $query->get()[1]->id);
     }
 
-    /** @test */
+    #[Test]
     public function where_not_null_raw()
     {
         $query = DB::table('test')->whereNotNull(DB::raw('(SELECT 1)'))->orderBy('id');

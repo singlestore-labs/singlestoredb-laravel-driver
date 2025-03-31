@@ -2,6 +2,7 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
@@ -10,7 +11,7 @@ class ShardKeysTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    /** @test */
+    #[Test]
     public function it_adds_a_shard_key_standalone()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -25,7 +26,7 @@ class ShardKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_a_shard_key_fluent()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -38,7 +39,7 @@ class ShardKeysTest extends BaseTest
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_a_dual_shard_key()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {

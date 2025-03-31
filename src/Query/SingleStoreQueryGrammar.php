@@ -3,18 +3,21 @@
 namespace SingleStore\Laravel\Query;
 
 use Exception;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Support\Facades\Log;
 
-class Grammar extends MySqlGrammar
+class SingleStoreQueryGrammar extends MySqlGrammar
 {
     private $ignoreOrderByInDeletes;
 
     private $ignoreOrderByInUpdates;
 
-    public function __construct($ignoreOrderByInDeletes, $ignoreOrderByInUpdates)
+    public function __construct(Connection $connection, $ignoreOrderByInDeletes, $ignoreOrderByInUpdates)
     {
+        parent::__construct($connection);
+
         $this->ignoreOrderByInDeletes = $ignoreOrderByInDeletes;
         $this->ignoreOrderByInUpdates = $ignoreOrderByInUpdates;
     }

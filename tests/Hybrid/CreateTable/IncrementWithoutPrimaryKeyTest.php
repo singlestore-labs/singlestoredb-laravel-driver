@@ -2,7 +2,7 @@
 
 namespace SingleStore\Laravel\Tests\Hybrid\CreateTable;
 
-use Illuminate\Foundation\Application;
+use PHPUnit\Framework\Attributes\Test;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Tests\BaseTest;
 use SingleStore\Laravel\Tests\Hybrid\HybridTestHelpers;
@@ -11,7 +11,7 @@ class IncrementWithoutPrimaryKeyTest extends BaseTest
 {
     use HybridTestHelpers;
 
-    /** @test */
+    #[Test]
     public function it_adds_a_big_increments_without_primary_key()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -21,20 +21,13 @@ class IncrementWithoutPrimaryKeyTest extends BaseTest
             $table->primary(['id', 'uuid']);
         });
 
-        if (version_compare(Application::VERSION, '10.38.0', '>=')) {
-            $this->assertCreateStatement(
-                $blueprint,
-                'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key (`id`, `uuid`))'
-            );
-        } else {
-            $this->assertCreateStatement(
-                $blueprint,
-                'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key `test_id_uuid_primary`(`id`, `uuid`))'
-            );
-        }
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key (`id`, `uuid`))'
+        );
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_an_id_without_primary_key()
     {
         $blueprint = $this->createTable(function (Blueprint $table) {
@@ -44,16 +37,9 @@ class IncrementWithoutPrimaryKeyTest extends BaseTest
             $table->primary(['id', 'uuid']);
         });
 
-        if (version_compare(Application::VERSION, '10.38.0', '>=')) {
-            $this->assertCreateStatement(
-                $blueprint,
-                'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key (`id`, `uuid`))'
-            );
-        } else {
-            $this->assertCreateStatement(
-                $blueprint,
-                'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key `test_id_uuid_primary`(`id`, `uuid`))'
-            );
-        }
+        $this->assertCreateStatement(
+            $blueprint,
+            'create table `test` (`id` bigint unsigned not null auto_increment, `uuid` char(36) not null, primary key (`id`, `uuid`))'
+        );
     }
 }

@@ -4,4 +4,4 @@ namespace SingleStore\Laravel\Connect;
 
 use Illuminate\Database\Connectors\MySqlConnector;
 
-class Connector extends MySqlConnector {}
+class SingleStoreConnector extends MySqlConnector {}
