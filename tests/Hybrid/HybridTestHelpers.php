@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Mockery;
-use SingleStore\Laravel\Connect\Connection;
+use SingleStore\Laravel\Connect\SingleStoreConnection;
 use SingleStore\Laravel\Schema\Blueprint;
 use SingleStore\Laravel\Schema\SingleStoreSchemaBuilder;
 use SingleStore\Laravel\Schema\SingleStoreSchemaGrammar;
@@ -38,7 +38,7 @@ trait HybridTestHelpers
 
     protected function mockedConnection()
     {
-        $connection = Mockery::mock(Connection::class);
+        $connection = Mockery::mock(SingleStoreConnection::class);
         $grammar = new SingleStoreSchemaGrammar($connection);
 
         $connection->shouldReceive('getConfig')->atMost()->once()->with('charset')->andReturn(null);
