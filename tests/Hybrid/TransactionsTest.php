@@ -31,7 +31,6 @@ class TransactionsTest extends BaseTest
 
         DB::beginTransaction();
         DB::rollBack();
-        DB::insert('select 1');
         DB::beginTransaction();
         DB::rollBack();
     }
