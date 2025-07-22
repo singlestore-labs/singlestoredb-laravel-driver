@@ -28,9 +28,9 @@ trait ModifiesIndexes
     /**
      * @return SpatialIndexCommand
      */
-    public function spatialIndex($columns, $name = null)
+    public function spatialIndex($columns, $name = null, $operatorClass = null)
     {
-        parent::spatialIndex($columns, $name);
+        parent::spatialIndex($columns, $name, $operatorClass);
 
         return $this->recastLastCommand(SpatialIndexCommand::class);
     }
