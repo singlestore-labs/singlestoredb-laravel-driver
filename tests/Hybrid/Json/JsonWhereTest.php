@@ -110,7 +110,7 @@ class JsonWhereTest extends BaseTest
 
         $this->assertEquals(
             // @TODO check docs
-            "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') IS NULL OR JSON_GET_TYPE(JSON_EXTRACT_JSON(data, 'value1')) = 'NULL') order by `id` asc",
+            "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') IS NULL OR JSON_GET_TYPE(JSON_EXTRACT_JSON(data, 'value1')) = 'null') order by `id` asc",
             $query->toSql()
         );
 
@@ -127,6 +127,7 @@ class JsonWhereTest extends BaseTest
 
         echo "DEBUG OUTPUT\n";
         echo $query->get();
+        echo "\n";
         $this->assertEquals($id2, $query->get()[0]->id);
         $this->assertEquals($id3, $query->get()[1]->id);
     }
@@ -165,7 +166,7 @@ class JsonWhereTest extends BaseTest
 
         $this->assertEquals(
             // @TODO check docs
-            "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') IS NOT NULL AND JSON_GET_TYPE(JSON_EXTRACT_JSON(data, 'value1')) != 'NULL') order by `id` asc",
+            "select * from `test` where (JSON_EXTRACT_JSON(data, 'value1') IS NOT NULL AND JSON_GET_TYPE(JSON_EXTRACT_JSON(data, 'value1')) != 'null') order by `id` asc",
             $query->toSql()
         );
 
@@ -181,6 +182,7 @@ class JsonWhereTest extends BaseTest
         ]);
         echo "DEBUG OUTPUT\n";
         echo $query->get();
+        echo "\n";
         $this->assertEquals($id1, $query->get()[0]->id);
         $this->assertEquals($id4, $query->get()[1]->id);
     }
