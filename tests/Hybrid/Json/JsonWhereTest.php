@@ -125,6 +125,8 @@ class JsonWhereTest extends BaseTest
             ['value1' => ['value2' => 1]],
         ]);
 
+        echo "DEBUG OUTPUT\n";
+        echo $query->get();
         $this->assertEquals($id2, $query->get()[0]->id);
         $this->assertEquals($id3, $query->get()[1]->id);
     }
@@ -177,7 +179,8 @@ class JsonWhereTest extends BaseTest
             [null],
             ['value1' => ['value2' => 1]],
         ]);
-
+        echo "DEBUG OUTPUT\n";
+        echo $query->get();
         $this->assertEquals($id1, $query->get()[0]->id);
         $this->assertEquals($id4, $query->get()[1]->id);
     }
