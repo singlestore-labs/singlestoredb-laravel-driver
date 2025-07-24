@@ -48,6 +48,8 @@ trait HybridTestHelpers
         $connection->shouldReceive('getSchemaGrammar')->andReturn($grammar);
         $connection->shouldReceive('getTablePrefix')->andReturn('');
         $connection->shouldReceive('getSchemaBuilder')->andReturn(new SingleStoreSchemaBuilder($connection));
+        $connection->allows('isMaria')->andReturn(false);
+        $connection->allows('getServerVersion')->andReturn('8.9.0');
 
         return $connection;
     }

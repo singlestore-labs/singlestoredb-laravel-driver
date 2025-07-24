@@ -28,9 +28,19 @@ trait ModifiesIndexes
     /**
      * @return SpatialIndexCommand
      */
-    public function spatialIndex($columns, $name = null)
+    public function spatialIndex(...$args)
     {
-        parent::spatialIndex($columns, $name);
+        $columns = $args[0] ?? null;
+        $name = $args[1] ?? null;
+        $operatorClass = $args[2] ?? null;
+
+        // Laravel 12.21.0+ passes: $columns, $name = null, $operatorClass = null
+        // Laravel <12.21.0 passes: $columns, $name = null
+        if ((new \ReflectionMethod(parent::class, 'spatialIndex'))->getNumberOfParameters() === 3) {
+            return parent::spatialIndex($columns, $name, $operatorClass);
+        } else {
+            return parent::spatialIndex($columns, $name);
+        }
 
         return $this->recastLastCommand(SpatialIndexCommand::class);
     }

@@ -146,7 +146,7 @@ class SingleStoreQueryGrammar extends MySqlGrammar
         if ($this->isJsonSelector($columnValue)) {
             [$field, $path] = $this->wrapJsonFieldAndPath($where['column']);
 
-            return '(JSON_EXTRACT_JSON('.$field.$path.') IS NULL OR JSON_GET_TYPE(JSON_EXTRACT_JSON('.$field.$path.')) = \'NULL\')';
+            return '(JSON_EXTRACT_JSON('.$field.$path.') IS NULL OR JSON_GET_TYPE(JSON_EXTRACT_JSON('.$field.$path.')) = \'null\')';
         }
 
         return $this->wrap($where['column']).' is null';
@@ -158,7 +158,7 @@ class SingleStoreQueryGrammar extends MySqlGrammar
         if ($this->isJsonSelector($columnValue)) {
             [$field, $path] = $this->wrapJsonFieldAndPath($where['column']);
 
-            return '(JSON_EXTRACT_JSON('.$field.$path.') IS NOT NULL AND JSON_GET_TYPE(JSON_EXTRACT_JSON('.$field.$path.')) != \'NULL\')';
+            return '(JSON_EXTRACT_JSON('.$field.$path.') IS NOT NULL AND JSON_GET_TYPE(JSON_EXTRACT_JSON('.$field.$path.')) != \'null\')';
         }
 
         return $this->wrap($where['column']).' is not null';
