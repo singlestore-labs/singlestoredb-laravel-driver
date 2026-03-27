@@ -44,12 +44,12 @@ sudo apt-get purge -y \
     powershell \
     mono-devel \
     hhvm \
-    php* \
-    dotnet-sdk-* \
-    temurin-* \
-    openjdk-* \
-    mysql-client* \
-    postgresql-client* \
+    '^php' \
+    '^dotnet-sdk-' \
+    '^temurin-' \
+    '^openjdk-' \
+    '^mysql-client' \
+    '^postgresql-client' \
     || true
 
 sudo apt-get autoremove -y || true
