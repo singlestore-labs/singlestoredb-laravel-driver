@@ -46,6 +46,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Clean Disk Space
+        run: |
+          ./.github/workflows/clean_disk_github_runner.sh
+
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
