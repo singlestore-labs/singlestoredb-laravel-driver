@@ -33,6 +33,7 @@ This repository contains the official SingleStoreDB Driver for Laravel. This dri
   - [Increment Columns without Primary Key](#increment-columns-without-primary-key)
   - [Full-text search using FULLTEXT indexes](#full-text-search-using-fulltext-indexes)
 - [Testing](#testing)
+- [Release Process](#release-process)
 - [License](#license)
 - [Resources](#resources)
 - [User agreement](#user-agreement)
@@ -469,6 +470,29 @@ Now when executing your tests, enable the integration tests by running
 ```shell
 HYBRID_INTEGRATION=1 ./vendor/bin/phpunit
 ```
+
+## Release process
+
+Releases are fully automated. The only step required is to push a version tag.
+Use semantic versioning with a `v` prefix:
+
+```
+v<major>.<minor>.<patch>
+```
+
+Examples: `v2.0.0`, `v2.0.3`
+
+```bash
+git tag v2.0.3
+git push origin v2.0.3
+```
+
+Pushing a tag triggers the [Release workflow](.github/workflows/release.yml), which:
+
+1. Runs the test suite
+2. Creates a [GitHub Release](https://github.com/singlestore-labs/singlestoredb-laravel-driver/releases) with auto-generated release notes
+
+[Packagist](https://packagist.org/packages/singlestoredb/singlestoredb-laravel) auto-updates from GitHub tags, so the new version will be available there shortly after the tag is pushed.
 
 ## Compatibility matrix 
 <table>
