@@ -14,7 +14,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-22.04
-    if: github.event_name == 'workflow_call' || !contains(github.event.head_commit.message, 'ci skip')
+    if: startsWith(github.ref, 'refs/tags/') || !contains(github.event.head_commit.message, 'ci skip')
     strategy:
       fail-fast: false
       matrix:
