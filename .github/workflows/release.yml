@@ -11,6 +11,9 @@ permissions:
 jobs:
   tests:
     uses: ./.github/workflows/tests.yml
+    permissions:
+      contents: read
+      actions: write
 
   release:
     needs: tests
