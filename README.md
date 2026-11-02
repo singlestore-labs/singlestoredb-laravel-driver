@@ -53,6 +53,8 @@ composer require singlestoredb/singlestoredb-laravel
 To enable the driver, head to your `config/database.php` file and create a new entry for SingleStore in your `connections`, and update your `default` to point to that new connection:
 
 ```php
+use Pdo\Mysql;
+
 [
     'default' => env('DB_CONNECTION', 'singlestore'),
 
@@ -73,8 +75,8 @@ To enable the driver, head to your `config/database.php` file and create a new e
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-                PDO::ATTR_EMULATE_PREPARES => true,
+                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                Mysql::ATTR_EMULATE_PREPARES => true,
             ]) : [],
         ],
     ]
@@ -101,9 +103,11 @@ If you are encountering issues connecting to the SingleStore Managed Service, it
 * In the Laravel SingleStore connection configuration, point the variable `PDO::MYSQL_ATTR_SSL_CA` at `singlestore_bundle.pem`:
 
 ```php
+use Pdo\Mysql;
+
 'options' => extension_loaded('pdo_mysql') ? array_filter([
-    PDO::MYSQL_ATTR_SSL_CA => 'path/to/singlestore_bundle.pem',
-    PDO::ATTR_EMULATE_PREPARES => true,
+    Mysql::ATTR_SSL_CA => 'path/to/singlestore_bundle.pem',
+    Mysql::ATTR_EMULATE_PREPARES => true,
 ]) : [],
 ```
 
@@ -118,10 +122,12 @@ Also, note that SingleStoreDB in it's default configuration can handle very larg
 To enable this feature, simply update your options to include `PDO::ATTR_PERSISTENT => true`:
 
 ```php
+use Pdo\Mysql;
+
 'options' => extension_loaded('pdo_mysql') ? array_filter([
-    PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-    PDO::ATTR_EMULATE_PREPARES => true,
-    PDO::ATTR_PERSISTENT => true,
+    Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+    Mysql::ATTR_EMULATE_PREPARES => true,
+    Mysql::ATTR_PERSISTENT => true,
 ]) : [],
 ```
 
